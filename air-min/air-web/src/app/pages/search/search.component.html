@@ -1,0 +1,9 @@
+<div style="max-width:720px;margin:32px auto;">
+  <h1>🔎 Cerca voli</h1>
+  <form (ngSubmit)="search()" #f="ngForm" style="display:grid;gap:12px;">
+    <input name="from" [(ngModel)]="from" placeholder="Da (es. FCO)" required>
+    <input name="to" [(ngModel)]="to" placeholder="A (es. CTA)" required>
+    <input type="date" name="date" [(ngModel)]="date">
+    <button type="submit">Cerca</button>
+  </form>
+</div>

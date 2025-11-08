@@ -1,0 +1,30 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: air-min-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  api:
+    build: ./backend
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/airdb
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+
+  web:
+    build:
+      context: ./air-web     # <— QUI!
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+
+volumes:
+  mongo_data:
+    driver: local
