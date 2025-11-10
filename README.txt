@@ -1,5 +1,7 @@
 # air-min (Angular + Express)
-
+Appena pullato bisogna entrare in backend tramite terminale e scrivere 
+npm install per scaricare le dipendenze necessarie, stessa cosa con frontend 
+aggiungendo se non basta npm i @angular/router@^17.3.0.
 Avvio classico (senza Docker):
 1) Backend
    cd backend
@@ -7,12 +9,11 @@ Avvio classico (senza Docker):
    npm.cmd run dev
 
 2) Frontend
-   cd air-web
+   cd frontend
    npm.cmd i
    npm.cmd run start
 
 # Avvio con Docker
-cd air-min
 docker compose up --build -d
 
 - Frontend: http://localhost:8080
@@ -30,7 +31,6 @@ docker compose up --build -d
 
 ### Avvio con Docker
 ```bat
-cd air-min
 docker compose up --build -d
 ```
 - Frontend: http://localhost:8080

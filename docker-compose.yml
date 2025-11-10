@@ -20,7 +20,7 @@ services:
 
   web:
     build:
-      context: ./air-web     # <— QUI!
+      context: ./frontend     # <— QUI!
       dockerfile: Dockerfile
     ports:
       - "8080:80"
