@@ -1,6 +1,610 @@
-:root { font-family: system-ui, Arial, sans-serif; }
-body { margin: 0; }
-nav a { text-decoration: none; padding: .25rem .5rem; }
-nav a.router-link-active { font-weight: 600; }
-label { display: flex; gap: .5rem; align-items: center; }
-input, button { padding: .4rem .6rem; }
+/* ----------------------------
+   VARIABILI & RESET
+   ---------------------------- */
+/* Variabili CSS per colori, ombre, raggi, transizioni ecc. */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #60a5fa;
+  --primary-bg: #e0e7ff;
+  --secondary: #4f46e5;
+  --danger: #ef4444;
+  --danger-dark: #dc2626;
+  --success: #10b981;
+  --warning: #2563eb;
+  --text: #111827;
+  --text-light: #6b7280;
+  --bg: #f8fafc;
+  --bg-light: #ffffff;
+  --border: #e5e7eb;
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+  --radius: 0.5rem;
+  --transition: all 0.2s ease;
+}
+
+/* Reset del box model e degli spazi */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----------------------------
+   LAYOUT BASE & SFONDO
+   ---------------------------- */
+/* Impostazioni generali per il body e la pagina delle compagnie */
+body,
+.airline-body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden; /* Evita lo scroll orizzontale */
+  background-image: url("assets/path1.svg");
+  background-repeat: repeat;
+  background-size: 50% auto;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Sfondi specifici per la pagina compagnia */
+.airline-body {
+  background-image: url("assets/path2.svg");
+  background-repeat: repeat-x;
+  background-size: 30% auto;
+  background-position: bottom;
+}
+
+/* ----------------------------
+   TIPOGRAFIA
+   ---------------------------- */
+/* Titoli principali e sottotitoli */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+h1 { font-size: 2rem; margin-bottom: 1.5rem; }
+h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+
+/* ----------------------------
+   CONTENITORE PRINCIPALE
+   ---------------------------- */
+/* Limita la larghezza massima e centra il contenuto */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  flex: 1;
+}
+
+/* ----------------------------
+   HEADER
+   ---------------------------- */
+/* Barra superiore con logo e navigazione */
+.main-header {
+  background: var(--bg-light);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.header-content {
+  width: 100%;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo { display: flex; justify-content: center; }
+.header-section { display: flex; padding: 0 0.5rem; }
+.header-section:first-child { justify-content: flex-start; }
+.header-section:last-child { justify-content: flex-end; }
+
+/* Logo con effetto gradiente */
+.logo-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary);
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  padding: 0 0.5rem;
+}
+.logo-text::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 3px;
+}
+.user-greeting { display: flex; align-items: center; gap: 0.75rem; }
+.welcome-text { font-weight: 500; color: var(--text-light); margin-right: 0.5rem; }
+
+/* ----------------------------
+   CARD COMPONENTS
+   ---------------------------- */
+/* Stili generici per le card */
+.card,
+.search-card,
+.booking-card,
+.passenger-baggage-card,
+.passenger-card,
+.passengers-card,
+.login-card,
+.signup-card,
+.airline-card,
+.airline-login-card,
+.airport-card,
+.plane-card {
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin: 2rem auto;
+  border: 1px solid var(--border);
+}
+
+/* Larghezze massime per le card */
+.search-card, .passenger-card, .passengers-card, .signup-card, .airline-card { max-width: 800px; }
+.booking-card { max-width: 700px; }
+.login-card, .airline-login-card, .airport-card, .plane-card { max-width: 500px; }
+.passenger-baggage-card, .form-card { max-width: 650px; }
+
+/* ----------------------------
+   TITOLI
+   ---------------------------- */
+/* Titoli delle varie sezioni e pagine */
+.page-title,
+.form-title,
+.passenger-baggage-title,
+.booking-title,
+.signup-title,
+.login-title,
+.airline-title,
+.airport-title,
+.plane-title,
+.passengers-title {
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+.section-title {
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+}
+
+/* ----------------------------
+   FORM
+   ---------------------------- */
+/* Stili per i form e i gruppi di input */
+.flight-search-form,
+.signup-form,
+.login-form,
+.airline-form,
+.airline-login-form,
+.airport-form,
+.plane-form,
+.passenger-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+label { font-weight: 600; color: var(--text); font-size: 0.9rem; }
+.required { color: var(--danger); }
+input, select {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  background: var(--bg-light);
+  transition: var(--transition);
+  width: 100%;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+/* ----------------------------
+   SWITCHES
+   ---------------------------- */
+/* Interruttori stile switch per opzioni */
+.form-switch { display: flex; align-items: center; margin: 0.5rem 0; }
+.switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: relative;
+  width: 50px;
+  height: 24px;
+  background-color: #ccc;
+  transition: var(--transition);
+  border-radius: 24px;
+  margin-right: 0.75rem;
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: var(--transition);
+  border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--primary); }
+input:checked + .slider:before { transform: translateX(26px); }
+.switch-label { font-weight: 500; color: var(--text); }
+
+/* ----------------------------
+   BOTTONI
+   ---------------------------- */
+/* Stili generici per tutti i bottoni */
+.btn, .btn-primary, .btn-secondary, .btn-outline, .btn-airline, .btn-submit, .btn-booking, .btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  font-size: 1rem;
+}
+/* Varianti di colore per i bottoni */
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-secondary { background: var(--secondary); color: white; }
+.btn-secondary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+.btn-outline:hover { background: rgba(37,99,235,0.1); }
+.btn-airline { background: var(--warning); color: white; }
+.btn-airline:hover { background: #1d4ed8; transform: translateY(-1px); }
+.btn-submit { background: var(--primary); color: white; padding: 1rem; font-size: 1.1rem; margin-top: 0.5rem; width: 100%; }
+.btn-submit:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-booking { background: var(--success); color: white; width: 100%; margin-top: 1rem; }
+.btn-booking:hover { background: #0ea371; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: var(--danger-dark); }
+.btn-icon { margin-right: 0.5rem; }
+.btn-back { padding: 0.5rem 1rem; font-size: 0.9rem; margin-right: auto; }
+
+/* ----------------------------
+   RISULTATI VOLI
+   ---------------------------- */
+/* Card e lista dei risultati della ricerca voli */
+.results-section { margin-top: 3rem; }
+.results-title { text-align: center; color: var(--text); margin-bottom: 1.5rem; }
+.flight-list { display: grid; gap: 1rem; }
+.flight-card, .flight-item {
+  background: var(--bg-light);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  position: relative;
+}
+.flight-card:hover, .flight-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+.flight-card.connection { border-left: 4px solid var(--warning); }
+.flight-header { display: flex; flex-direction: column; margin-bottom: 0.75rem; }
+.airline { font-weight: 600; color: var(--text-light); font-size: 0.9rem; }
+.flight-route { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+.flight-stop { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+.flight-details { display: flex; gap: 1rem; color: var(--text-light); font-size: 0.9rem; }
+.no-flights { text-align: center; padding: 2rem; color: var(--text-light); }
+
+/* ----------------------------
+   MESSAGGI FLASH
+   ---------------------------- */
+/* Messaggi di notifica e errore */
+.flash-messages { list-style: none; margin: 1rem 0; }
+.flash-message {
+  padding: 1rem;
+  background: #d1fae5;
+  color: var(--success);
+  border-radius: var(--radius);
+  text-align: center;
+  font-weight: 500;
+}
+.flash-wrap { display: flex; justify-content: center; margin: 1rem 0 1.25rem; }
+.flash {
+  padding: .75rem 1rem;
+  border-radius: .5rem;
+  border: 1px solid;
+  text-align: center;
+  font-weight: 700;
+  max-width: 780px;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,.06));
+}
+.flash-danger {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+/* ----------------------------
+   RIEPILOGO VOLO & PRENOTAZIONE
+   ---------------------------- */
+/* Card riepilogo volo e passeggeri */
+.flight-summary, .passenger-summary {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+.flight-airline-tag {
+  position: absolute;
+  right: 1.8rem;
+  bottom: 5.3rem;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 1rem;
+  z-index: 2;
+}
+.summary-item, .passenger-summary-item { display: flex; margin-bottom: 0.5rem; }
+.summary-label, .passenger-summary-label { font-weight: 600; color: var(--text-light); min-width: 100px; }
+.summary-value, .passenger-summary-value { color: var(--text); }
+.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+/* ----------------------------
+   PAGINA PASSEGGERI & BAGAGLI
+   ---------------------------- */
+/* Sezione per la selezione dei passeggeri e bagagli */
+.passenger-section { margin-bottom: 2rem; }
+.passenger-section-title { color: var(--primary); font-size: 1.1rem; margin-bottom: 0.8rem; font-weight: 600; }
+.passenger-select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 0.8rem;
+  font-family: inherit;
+  background: var(--bg-light);
+  transition: var(--transition);
+}
+.passenger-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
+}
+.passenger-add-btn { margin-bottom: 1.5rem; display: inline-block; }
+
+/* Stili per la scelta del bagaglio */
+.baggage-section { margin-bottom: 1.8rem; }
+.baggage-title { font-size: 1rem; color: var(--text-light); margin-bottom: 0.8rem; font-weight: 500; }
+.baggage-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+.baggage-card {
+  display: block;
+  background: #f8fafc;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+.baggage-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: var(--primary-light);
+}
+.baggage-card input[type="radio"] { position: absolute; opacity: 0; }
+.baggage-card-content { padding: 1rem; text-align: center; }
+.baggage-type { display: block; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; font-size: 0.95rem; }
+.baggage-included { font-size: 0.85rem; color: var(--success); font-weight: 500; }
+.baggage-price { font-size: 0.95rem; color: var(--primary); font-weight: 700; }
+.baggage-card input[type="radio"]:checked + .baggage-card-content {
+  background-color: var(--primary-bg);
+  border-left: 3px solid var(--primary);
+}
+
+/* ----------------------------
+   FORM RADIO & SEPARATORE
+   ---------------------------- */
+/* Gruppi di radio button */
+.radio-group { display: flex; gap: 1rem; margin-top: 0.5rem; }
+.radio-group label { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; color: var(--text); cursor: pointer; }
+.radio-group input[type="radio"] { width: 1rem; height: 1rem; accent-color: var(--primary); }
+.form-separator { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+/* ----------------------------
+   SCELTA CLASSE PASSEGGERO
+   ---------------------------- */
+/* Card per la selezione della classe (Economy, Business, First) */
+.class-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.class-cards .baggage-card input[type="radio"]:checked + .baggage-card-content {
+  background-color: var(--primary-bg);
+  border-left: 3px solid var(--primary);
+}
+.class-cards .baggage-card-content {
+  padding: 1rem;
+  text-align: center;
+}
+
+/* ----------------------------
+   VARIANTE BOTTONE DANGER
+   ---------------------------- */
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: var(--danger-dark); }
+
+/* ----------------------------
+   FOOTER LOGIN & SIGNUP
+   ---------------------------- */
+/* Footer per le pagine di login e registrazione */
+.login-footer, .signup-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-light);
+}
+
+/* ----------------------------
+   MESSAGGIO DI ERRORE
+   ---------------------------- */
+/* Messaggio di errore generico */
+.error-message {
+  color: var(--danger);
+  background-color: #fee2e2;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  text-align: center;
+  display: none;
+  margin-bottom: 0.5rem;
+}
+
+/* ----------------------------
+   AREA COMPAGNIA AEREA
+   ---------------------------- */
+/* Sezione per la gestione delle classi di posti */
+.seat-class-section {
+  background: var(--primary-bg);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.seat-class-section h3 { color: var(--primary); margin-bottom: 0.5rem; }
+.form-links { display: flex; justify-content: center; margin: 0.5rem 0; }
+.btn-link { color: var(--primary); text-decoration: none; font-weight: 500; transition: var(--transition); }
+.btn-link:hover { text-decoration: underline; }
+.flights-list { margin-top: 3rem; }
+.flights-title { color: var(--primary); text-align: center; margin-bottom: 1.5rem; }
+.flight-items { display: grid; gap: 1rem; }
+
+/* ----------------------------
+   I TUOI PASSEGGERI
+   ---------------------------- */
+/* Card e dettagli dei passeggeri */
+.passenger-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.passenger-detail {
+  color: var(--text-light);
+  font-size: 0.97rem;
+}
+.passenger-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  align-items: stretch;
+}
+.passenger-actions .btn {
+  min-width: 140px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 0.65rem 1.2rem;
+  box-sizing: border-box;
+}
+
+/* ----------------------------
+   SCELTA POSTO
+   ---------------------------- */
+/* Card per la selezione della preferenza del posto */
+.seat-pref-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.seat-pref-card {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  transition: transform 0.18s;
+  display: block;
+}
+.seat-pref-card input[type="radio"] { display: none; }
+.seat-pref-content {
+  background: var(--bg-light);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+  border: 2px solid var(--border);
+  padding: 1.2rem 0.5rem;
+  text-align: center;
+  min-width: 90px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.seat-pref-card input[type="radio"]:checked + .seat-pref-content {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.12);
+  background: var(--primary-bg);
+}
+.seat-pref-type {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: block;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.5px;
+}
+.seat-pref-price {
+  font-size: 1rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+.seat-pref-info-card {
+  background: #e0f2fe;
+  border-radius: 1rem;
+  padding: 1.1rem 1.2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.seat-pref-info-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.08rem;
+  margin-bottom: 0.2rem;
+}
+.seat-pref-info-options {
+  color: var(--text);
+  font-size: 1rem;
+}

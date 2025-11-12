@@ -1,11 +1,13 @@
-// src/main.ts
-import 'zone.js';
-import { bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication, provideClientHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { AppComponent } from './app/app.component';
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
+import { AppComponent } from './app/app.component';
 
-console.log('[BOOT] air-min/air-web - avvio Angular');
-
-bootstrapApplication(AppComponent, { providers: [provideRouter(routes)] })
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient(),
+    provideClientHydration()
+  ]
+}).catch(err => console.error(err));

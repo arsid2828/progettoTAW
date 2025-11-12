@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { SearchComponent } from './pages/search/search.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'search' },
+  { path: '', component: SearchComponent, pathMatch: 'full' },
   { path: 'search', component: SearchComponent },
-  { path: '**', redirectTo: 'search' }
+  // aggiungerai qui le altre pagine
 ];
