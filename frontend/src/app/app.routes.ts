@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
-import { SearchComponent } from './pages/search/search.component';
 
 export const routes: Routes = [
-  { path: '', component: SearchComponent, pathMatch: 'full' },
-  { path: 'search', component: SearchComponent },
-  // aggiungerai qui le altre pagine
+  { path: 'search', loadComponent: () => import('./pages/search/search.component').then(m => m.SearchComponent) },
+  { path: '', pathMatch: 'full', redirectTo: 'search' },
+  { path: '**', redirectTo: 'search' }
 ];

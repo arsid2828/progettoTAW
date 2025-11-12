@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <h2>Login</h2>
-    <p>Per ora il login non è implementato.</p>
-  `
+  imports: [CommonModule, RouterLink],
+  templateUrl: './login.component.html'
 })
-export class LoginComponent {}
+export class LoginComponent {
+  messages: string[] = [];
+}

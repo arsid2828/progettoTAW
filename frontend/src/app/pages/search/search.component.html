@@ -1,113 +1,61 @@
-<app-header></app-header>
+<section class="search-wrapper">
+  <h1 class="title">Cerca voli</h1>
 
-<main class="container">
-  <div class="search-card">
-    <h1 class="page-title">Trova il tuo volo ideale</h1>
-    <p class="subtle">Compila i campi per cercare voli diretti o con scalo.</p>
-
-    <!-- FORM RICERCA VOLI -->
-    <form class="flight-search-form" (ngSubmit)="search()" #f="ngForm">
-      <div class="form-group">
-        <label for="from_airport">Aeroporto di partenza <span class="required">*</span></label>
-        <input id="from_airport" name="from_airport" [(ngModel)]="from_airport"
-               placeholder="Es: Roma, Milano..." required>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="search-form">
+    <div class="row">
+      <div class="field">
+        <label for="from">Da</label>
+        <input id="from" type="text" formControlName="from" placeholder="VCE (Venezia)">
       </div>
-
-      <div class="form-group">
-        <label for="to_airport">Aeroporto di arrivo</label>
-        <input id="to_airport" name="to_airport" [(ngModel)]="to_airport" placeholder="Es: New York, Tokyo...">
+      <div class="field">
+        <label for="to">A</label>
+        <input id="to" type="text" formControlName="to" placeholder="FCO (Roma)">
       </div>
+    </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="date">Data</label>
-          <input id="date" name="date" type="date" [(ngModel)]="date">
-        </div>
-        <div class="form-group">
-          <label for="passengers">Passeggeri</label>
-          <input id="passengers" name="passengers" type="number" min="1" [(ngModel)]="passengers">
+    <div class="row">
+      <div class="field">
+        <label for="departDate">Partenza</label>
+        <input id="departDate" type="date" formControlName="departDate">
+      </div>
+      <div class="field">
+        <label for="returnDate">Ritorno</label>
+        <input id="returnDate" type="date" formControlName="returnDate" [disabled]="form.get('oneWay')?.value">
+        <div class="check">
+          <input id="oneWay" type="checkbox" formControlName="oneWay" (change)="onTripTypeChange()">
+          <label for="oneWay">Solo andata</label>
         </div>
       </div>
+    </div>
 
-      <div class="row">
-        <button class="btn btn-primary" type="submit" [disabled]="loading()">Cerca</button>
-        <span *ngIf="loading()" class="badge">Caricamento...</span>
+    <div class="row">
+      <div class="field">
+        <label for="passengers">Passeggeri</label>
+        <input id="passengers" type="number" min="1" formControlName="passengers">
       </div>
-    </form>
-
-    <!-- FLASH / MESSAGGI -->
-    <ul *ngIf="messages()?.length" class="grid" style="margin-top:10px;">
-      <li *ngFor="let m of messages()" class="flash-message">{{ m }}</li>
-    </ul>
-
-    <!-- RISULTATI (stesso layout di base.html) -->
-    <section class="results-section" *ngIf="result() as r">
-      <h2 class="results-title">Risultati ricerca</h2>
-
-      <div class="flight-list">
-        <ng-container *ngIf="r.flights?.length; else noFlights">
-          <ng-container *ngFor="let item of r.flights">
-            <!-- Scalo -->
-            <div class="flight-card connection" *ngIf="isConnection(item.flight_tuple)" style="position:relative;">
-              <div class="flight-header">
-                <span class="flight-route">
-                  {{ item.flight_tuple[0].from_airport_rel.name }} ({{ item.flight_tuple[0].from_airport_rel.code }})
-                  → {{ item.flight_tuple[0].to_airport_rel.name }} ({{ item.flight_tuple[0].to_airport_rel.code }})
-                  → {{ item.flight_tuple[1].to_airport_rel.name }} ({{ item.flight_tuple[1].to_airport_rel.code }})
-                </span>
-                <span class="flight-stop">
-                  Scalo a {{ item.flight_tuple[0].to_airport_rel.name }} ({{ item.flight_tuple[0].to_airport_rel.code }})
-                </span>
-              </div>
-
-              <div class="flight-details" style="gap:.75rem;align-items:center;">
-                <span class="flight-date">{{ item.flight_tuple[0].date_departure }}</span>
-                <span class="flight-time">{{ item.flight_tuple[0].departure }} → {{ item.flight_tuple[1].arrival }}</span>
-                <span class="seats-left">Posti rimanenti: {{ remainingForTuple(item.flight_tuple) }}</span>
-              </div>
-
-              <div class="flight-airline-tag">
-                Airline: {{ item.flight_tuple[0].airline.name }}
-              </div>
-
-              <button class="btn btn-booking" (click)="startBookingMulti(item.flight_tuple[0].id, item.flight_tuple[1].id, passengers)">
-                Da €{{ item.best_price.toFixed(2) }} - Prenota
-              </button>
-            </div>
-
-            <!-- Diretto -->
-            <div class="flight-card" *ngIf="!isConnection(item.flight_tuple)" style="position:relative;">
-              <div class="flight-header">
-                <span class="flight-route">
-                  {{ item.flight_tuple.from_airport_rel.name }} ({{ item.flight_tuple.from_airport_rel.code }})
-                  → {{ item.flight_tuple.to_airport_rel.name }} ({{ item.flight_tuple.to_airport_rel.code }})
-                </span>
-              </div>
-
-              <div class="flight-details" style="gap:.75rem;align-items:center;">
-                <span class="flight-date">{{ item.flight_tuple.date_departure }}</span>
-                <span class="flight-time">{{ item.flight_tuple.departure }}</span>
-                <span class="seats-left">Posti rimanenti: {{ remainingForTuple(item.flight_tuple) }}</span>
-              </div>
-
-              <div class="flight-airline-tag">
-                Airline: {{ item.flight_tuple.airline.name }}
-              </div>
-
-              <button class="btn btn-booking" (click)="startBooking(item.flight_tuple.id, passengers)">
-                Da €{{ item.best_price.toFixed(2) }} - Prenota
-              </button>
-            </div>
-          </ng-container>
-        </ng-container>
-
-        <ng-template #noFlights>
-          <div class="no-flights">
-            <p>Nessun volo trovato con i criteri selezionati.</p>
-            <p>Prova a modificare la tua ricerca.</p>
-          </div>
-        </ng-template>
+      <div class="field">
+        <label for="cabin">Classe</label>
+        <select id="cabin" formControlName="cabin">
+          <option value="economy">Economy</option>
+          <option value="premium">Premium Economy</option>
+          <option value="business">Business</option>
+          <option value="first">First</option>
+        </select>
       </div>
-    </section>
-  </div>
-</main>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" type="submit">Cerca</button>
+    </div>
+  </form>
+</section>
+
+<style>
+.search-wrapper { max-width: 900px; margin: 2rem auto; padding: 1.25rem; background: rgba(255,255,255,0.9); border-radius: 12px; }
+.search-form .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem; }
+.field { display: flex; flex-direction: column; }
+.field input, .field select { padding: .6rem .7rem; border-radius: 8px; border: 1px solid #ddd; }
+.actions { display: flex; justify-content: flex-end; }
+.btn { padding: .6rem 1rem; border-radius: 8px; border: 1px solid transparent; cursor: pointer; }
+.btn-primary { background: #2563eb; color: #fff; }
+</style>

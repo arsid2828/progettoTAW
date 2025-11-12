@@ -1,0 +1,66 @@
+<!-- 
+login.html – Template per l’accesso all’account utente.
+Contiene un form con email e password, pulsante di login e link alla pagina di registrazione.
+Visualizza eventuali messaggi flash in caso di errore o notifiche.
+-->
+
+
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyJourney - Accedi</title>
+</head>
+<body>
+  <!-- HEADER: link di ritorno alla ricerca voli + logo -->
+  <header class="main-header">
+  <div class="header-content">
+    <div class="header-section">
+      <a [routerLink]="['/search_flights']" class="btn btn-outline btn-back">← Torna indietro</a>
+    </div>
+    <div class="header-logo"><span class="logo-text">SkyJourney</span></div>
+    <div class="header-section"></div>
+  </div>
+</header>
+
+  <main class="container">
+    <div class="login-card">
+      <h1 class="login-title">Accedi al tuo account</h1>
+
+      <!-- Form login: email + password -->
+      <form method="post" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="mario.rossi@email.com" required autofocus>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit" class="btn btn-submit">Accedi</button>
+      </form>
+
+      <!-- Link rapido alla pagina di registrazione -->
+      <div class="login-footer">
+        <span>Non hai un account?</span>
+        <a class="btn btn-outline" [routerLink]="['/signup']">Registrati</a>
+      </div>
+
+      <!-- Messaggi flash (errori credenziali, ecc.) -->
+      <!-- TODO: manual template logic here -->
+        <ng-container *ngIf="messages">
+          <ul class="flash-messages">
+            <ng-container *ngFor="let msg of messages; let i = index">
+              <li class="flash-message">{{ msg }}</li>
+            </ng-container>
+          </ul>
+        </ng-container>
+      <!-- TODO: manual template logic here -->
+    </div>
+  </main>
+
+</body>
+</html>
