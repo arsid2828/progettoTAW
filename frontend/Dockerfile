@@ -32,3 +32,7 @@ COPY --from=build /app/dist/air-web/browser/ /usr/share/nginx/html/
 RUN chmod -R a+r /usr/share/nginx/html
 
 EXPOSE 80
+
+COPY src/ ./src/
+COPY angular.json ./angular.json
+COPY tsconfig.json ./tsconfig.json

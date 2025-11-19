@@ -1,0 +1,1 @@
+import 'zone.js';  // Necessario per Angular
