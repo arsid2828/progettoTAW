@@ -6,7 +6,8 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
   selector: 'app-search',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './search.component.html'
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
   constructor(private fb: FormBuilder) {}

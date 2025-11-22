@@ -1,0 +1,7 @@
+<div *ngIf="loggedIn">
+    ciao {{ userName }}!
+</div>
+<form method="post" *ngIf="!loggedIn">
+    <!--Raffazzonato TODO:-->
+    <button type="submit" class="btn btn-submit">Accedi</button>
+</form>

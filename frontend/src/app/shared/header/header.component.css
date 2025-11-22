@@ -1,0 +1,5 @@
+.contenitore {
+  display: flex;
+  justify-content: center; /* Centra gli elementi */
+  align-items: center; /* Centra gli elementi verticalmente */
+}

@@ -2,7 +2,7 @@
 login.html – Template per l’accesso all’account utente.
 Contiene un form con email e password, pulsante di login e link alla pagina di registrazione.
 Visualizza eventuali messaggi flash in caso di errore o notifiche.
--->
+
 
 
 <!doctype html>
@@ -13,7 +13,7 @@ Visualizza eventuali messaggi flash in caso di errore o notifiche.
   <title>SkyJourney - Accedi</title>
 </head>
 <body>
-  <!-- HEADER: link di ritorno alla ricerca voli + logo -->
+  < !-- HEADER: link di ritorno alla ricerca voli + logo -- >
   <header class="main-header">
   <div class="header-content">
     <div class="header-section">
@@ -25,7 +25,7 @@ Visualizza eventuali messaggi flash in caso di errore o notifiche.
 </header>
 
   <main class="container">
-    <div class="login-card">
+    <div class="login-card">-->
       <h1 class="login-title">Accedi al tuo account</h1>
 
       <!-- Form login: email + password -->
@@ -43,14 +43,14 @@ Visualizza eventuali messaggi flash in caso di errore o notifiche.
         <button type="submit" class="btn btn-submit">Accedi</button>
       </form>
 
-      <!-- Link rapido alla pagina di registrazione -->
+      <!-- Link rapido alla pagina di registrazione -- >
       <div class="login-footer">
         <span>Non hai un account?</span>
         <a class="btn btn-outline" [routerLink]="['/signup']">Registrati</a>
       </div>
 
-      <!-- Messaggi flash (errori credenziali, ecc.) -->
-      <!-- TODO: manual template logic here -->
+      < !-- Messaggi flash (errori credenziali, ecc.) -->
+      <!-- TODO: manual template logic here -- > 
         <ng-container *ngIf="messages">
           <ul class="flash-messages">
             <ng-container *ngFor="let msg of messages; let i = index">
@@ -58,9 +58,9 @@ Visualizza eventuali messaggi flash in caso di errore o notifiche.
             </ng-container>
           </ul>
         </ng-container>
-      <!-- TODO: manual template logic here -->
+      < !-- TODO: manual template logic here -- >
     </div>
   </main>
 
 </body>
-</html>
+</html>-->
