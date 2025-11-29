@@ -1,7 +1,12 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { IProfile } from './i-profile';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3000/api/';
+  
   // usiamo Angular signals per semplicità
   private _isLoggedIn = signal<boolean>(false);
   private _userName   = signal<string | null>(null);
@@ -32,4 +37,10 @@ export class AuthService {
     this._userName.set(null);
     localStorage.removeItem('sj_user');
   }
+
+  signup(newUser:IProfile) {
+    console.log('Registrazione utente:', newUser);
+    return this.http.post<IProfile>(this.apiUrl+"profile", newUser);
+  }
+  
 }

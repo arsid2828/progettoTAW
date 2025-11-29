@@ -22,5 +22,11 @@ app.use('/api/flights', flightsRoute);
 // health
 app.get('/api/health', (_,res)=>res.json({ ok:true }));
 
+
+
+const profileRouter = require('./routes/profile');
+app.use('/api/profile', profileRouter);   
+app.use('/api/profile/', profileRouter);   
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

@@ -3,41 +3,7 @@ signup.html — Pagina di registrazione utenti.
 Permette di creare un nuovo account inserendo dati personali
 e credenziali, con validazione JavaScript per la password.
 -->
-<!doctype html>
-<html lang="it">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyJourney - Registrazione</title>
-  
-  <script>
-    // Controllo che le due password coincidano
-    function validaPassword() {
-      const password = document.getElementById("password").value;
-      const password2 = document.getElementById("password2").value;
-      const errorePwd = document.getElementById("errorePwd");
-      
-      if (password === password2) {
-        errorePwd.style.display = "none";
-        document.getElementById("registrazione").submit();
-        return true;
-      } else {
-        errorePwd.style.display = "block";
-        return false;
-      }
-    }
-  </script>
-</head>
-<body>
 
-  <!-- ===== HEADER ===== -->
-  <header class="main-header">
-    <div class="header-content">
-      <div class="header-section"></div>
-      <div class="header-logo"><span class="logo-text">SkyJourney</span></div>
-      <div class="header-section"></div>
-    </div>
-  </header>
 
   <!-- ===== MAIN ===== -->
   <main class="container">
@@ -45,56 +11,56 @@ e credenziali, con validazione JavaScript per la password.
       <h1 class="signup-title">Crea il tuo account</h1>
       
       <!-- Form registrazione -->
-      <form id="registrazione"
+      <!--<form id="registrazione"
             method="post"
             class="signup-form"
-            onsubmit="return validaPassword()">
+            onsubmit="return validaPassword()">-->
 
         <!-- Nome e cognome -->
         <div class="form-row">
           <div class="form-group">
             <label for="nome">Nome</label>
-            <input id="nome" name="nome" type="text" placeholder="Mario" required>
+            <input id="nome" name="nome" type="text" placeholder="Mario" required [(ngModel)]="nome">
           </div>
           <div class="form-group">
             <label for="cognome">Cognome</label>
-            <input id="cognome" name="cognome" type="text" placeholder="Rossi" required>
+            <input id="cognome" name="cognome" type="text" placeholder="Rossi" required [(ngModel)]="cognome" >
           </div>
         </div>
 
         <!-- Email -->
         <div class="form-group">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" placeholder="mario.rossi@email.com" required>
+          <input id="email" name="email" type="email" placeholder="mario.rossi@email.com" required [(ngModel)]="email">
         </div>
 
         <!-- Telefono e data di nascita -->
         <div class="form-row">
           <div class="form-group">
             <label for="telefono">Telefono</label>
-            <input id="telefono" name="telefono" type="text" placeholder="3331234567">
+            <input id="telefono" name="telefono" type="text" placeholder="3331234567" [(ngModel)]="telefono">
           </div>
           <div class="form-group">
             <label for="data_nascita">Data di nascita</label>
-            <input id="data_nascita" name="data_nascita" type="date" [max]="today" required>
+            <input id="data_nascita" name="data_nascita" type="date" [max]="today" required [(ngModel)]="data_nascita">{{data_nascita}}
           </div>
         </div>
 
         <!-- Indirizzo -->
         <div class="form-group">
           <label for="indirizzo">Indirizzo</label>
-          <input id="indirizzo" name="indirizzo" type="text" placeholder="Via Roma 1, Milano">
+          <input id="indirizzo" name="indirizzo" type="text" placeholder="Via Roma 1, Milano" [(ngModel)]="indirizzo">
         </div>
 
         <!-- Nazionalità e città di nascita -->
         <div class="form-row">
           <div class="form-group">
             <label for="nazionalita">Nazionalità</label>
-            <input id="nazionalita" name="nazionalita" type="text" placeholder="Italiana">
+            <input id="nazionalita" name="nazionalita" type="text" placeholder="Italiana" [(ngModel)]="nazionalita">
           </div>
           <div class="form-group">
             <label for="citta_nascita">Città di nascita</label>
-            <input id="citta_nascita" name="citta_nascita" type="text" placeholder="Milano" required>
+            <input id="citta_nascita" name="citta_nascita" type="text" placeholder="Milano" required [(ngModel)]="citta_nascita">
           </div>
         </div>
 
@@ -102,9 +68,9 @@ e credenziali, con validazione JavaScript per la password.
         <div class="form-group">
           <label>Sesso</label>
           <div class="radio-group">
-            <input type="radio" id="maschio" name="sesso" value="0" checked>
+            <input type="radio" id="maschio" name="sesso" value="0" checked [(ngModel)]="maschio">
             <label for="maschio">Maschio</label>
-            <input type="radio" id="femmina" name="sesso" value="1">
+            <input type="radio" id="femmina" name="sesso" value="1" [(ngModel)]="femmina">
             <label for="femmina">Femmina</label>
           </div>
         </div>
@@ -112,7 +78,7 @@ e credenziali, con validazione JavaScript per la password.
         <div class="form-separator"></div>
 
         <!-- Messaggio di errore password -->
-        <div id="errorePwd" class="error-message">
+        <div id="errorePwd" class="error-message" *ngIf="!areValidPasswords()">
           Le password non coincidono!
         </div>
 
@@ -120,17 +86,17 @@ e credenziali, con validazione JavaScript per la password.
         <div class="form-row">
           <div class="form-group">
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="Password sicura" required>
+            <input id="password" name="password" type="password" placeholder="Password sicura" [(ngModel)]="password" required>
           </div>
           <div class="form-group">
             <label for="password2">Conferma Password</label>
-            <input id="password2" name="password2" type="password" placeholder="Conferma Password" required>
+            <input id="password2" name="password2" type="password" placeholder="Conferma Password" [(ngModel)]="password2" required > 
           </div>
         </div>
 
         <!-- Bottone Registrati -->
-        <button type="submit" class="btn btn-submit">Registrati</button>
-      </form>
+        <button  class="btn btn-submit" (click)="onSubmit()">Registrati</button>
+      <!--</form>-->
       
       <!-- Link login -->
       <div class="signup-footer">
@@ -150,5 +116,4 @@ e credenziali, con validazione JavaScript per la password.
       <!-- TODO: manual template logic here -->
     </div>
   </main>
-</body>
-</html>
+
