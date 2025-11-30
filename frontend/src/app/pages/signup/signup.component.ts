@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../shared/auth.service';
 import { IProfile } from '@app/shared/i-profile';
@@ -28,14 +29,22 @@ export class SignupComponent {
   password: string = '';
   password2: string = '';
   authService: AuthService = inject(AuthService);
+  router: Router = inject(Router);
+  isValidPassword(): boolean {
+    return this.password === this.password2 && this.password.length > 4;
+  }
 
   areValidPasswords(): boolean {
-    if (this.password !== this.password2 && (this.password2.length > this.password.length - 1)) {
+    if (!this.isValidPassword() && (this.password2.length >= 4)) {
       return false;
     }
     return true;
   }
   onSubmit() {
+    if (!this.isValidPassword()) { alert('Le password non corrispondono'); return; }
+    if (this.data_nascita && this.data_nascita >= new Date()) { alert('La data di nascita deve essere nel passato'); return; }
+    if (!this.data_nascita) { alert('La data di nascita è obbligatoria'); return; }
+    //<TODO>if("tutti i campi"!="tutti i campi") 
     let newUser: IProfile = {
       email: this.email,
       password: this.password,
@@ -48,8 +57,13 @@ export class SignupComponent {
       citta_nascita: this.citta_nascita,
     }
     this.authService.signup(newUser).subscribe({
-      next: (risposta) => console.log('Utente creato!', risposta),
+      next: (risposta) => {
+        console.log('Utente creato!', risposta);
+        this.router.navigate(['/login']);
+      },
       error: (err) => console.error('Errore', err)
     });
   }
 }
+
+

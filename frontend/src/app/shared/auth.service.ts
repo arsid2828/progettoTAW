@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IProfile } from './i-profile';
+import { ILogData } from './i-log-data';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -26,10 +27,12 @@ export class AuthService {
     }
   }
 
-  login(name: string) {
-    this._isLoggedIn.set(true);
-    this._userName.set(name);
-    localStorage.setItem('sj_user', JSON.stringify({ name }));
+  login(data: ILogData) {
+   // this._isLoggedIn.set(true);
+    //this._userName.set(name);
+    //localStorage.setItem('sj_user', JSON.stringify({ name }));
+
+    return this.http.post<ILogData>(this.apiUrl+"session", data);
   }
 
   logout() {

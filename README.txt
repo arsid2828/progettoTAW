@@ -41,3 +41,18 @@ Se vuoi avviare senza Docker:
 1) avvia Mongo locale (o modifica MONGO_URI in `backend/.env`), poi
 2) backend: `cd backend && npm.cmd i && npm.cmd run dev`
 3) frontend: `cd air-web && npm.cmd i && npm.cmd run start`
+
+
+
+
+
+
+per creare un componente 
+ng generate component nome-separato-con-trattini
+
+per un interfaccia fate
+ng generate interface i-nome-separato-con-trattini
+
+
+per i servizi  fate
+ng generate service nome-separato-con-trattini

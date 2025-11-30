@@ -93,7 +93,7 @@ e credenziali, con validazione JavaScript per la password.
             <input id="password2" name="password2" type="password" placeholder="Conferma Password" [(ngModel)]="password2" required > 
           </div>
         </div>
-
+        {{areValidPasswords()}}
         <!-- Bottone Registrati -->
         <button  class="btn btn-submit" (click)="onSubmit()">Registrati</button>
       <!--</form>-->

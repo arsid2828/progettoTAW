@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import flightsRoute from './routes/flights';
 import profileRouter from './routes/profile';
+import sessionRouter from './routes/session';
 
 const app = express();
 app.use(cors());
@@ -24,7 +25,7 @@ app.use('/api/flights', flightsRoute);
 app.get('/api/health', (_,res)=>res.json({ ok:true }));
 
 
-
+app.use('/api/session', sessionRouter);
 app.use('/api/profile', profileRouter);   
 app.use('/api/profile/', profileRouter);   
 
