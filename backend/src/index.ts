@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import flightsRoute from './routes/flights';
+import profileRouter from './routes/profile';
 
 const app = express();
 app.use(cors());
@@ -24,7 +25,6 @@ app.get('/api/health', (_,res)=>res.json({ ok:true }));
 
 
 
-const profileRouter = require('./routes/profile');
 app.use('/api/profile', profileRouter);   
 app.use('/api/profile/', profileRouter);   
 
