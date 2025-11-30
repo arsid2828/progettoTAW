@@ -79,9 +79,18 @@ router.get('/me', async (req, res) => {
 });*/
 // LOGOUT (globale e immediato)
 router.post('/logout', async (req, res) => {
+    console.log('BODY RICEVUTO:', req.body);
   const { refreshToken } = req.body;
-  if (refreshToken) await redis.del(`rt:${refreshToken}`);
-  res.json({ msg: 'Logged out everywhere' });
+    console.log('refreshToken RICEVUTO:', refreshToken);let deleted = 0;
+  if (refreshToken) {
+    deleted = await redis.del(`rt:${refreshToken}`); // ← 1 se esiste, 0 se no
+  }
+
+  res.json({
+    msg: 'Logout eseguito',
+    tokenEliminato: !!deleted,
+    numeroChiaviCancellate: deleted   // sarà 0 o 1
+  });
 });
 
 export default router;

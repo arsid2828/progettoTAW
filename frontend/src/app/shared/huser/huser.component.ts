@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-huser',
@@ -11,6 +12,10 @@ import { CommonModule } from '@angular/common';
 
 //Variabili per capire se si è loggati oppure no 
 export class HuserComponent {
- userName: string | null = 'username';
- loggedIn: boolean = false;
+  userName: string | null = 'username';
+  loggedIn: boolean = false;
+    router: Router = inject(Router);
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
 }

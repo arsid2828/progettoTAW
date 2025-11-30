@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FlightService } from '@app/shared/flight.service';
 
 @Component({
   selector: 'app-search',
@@ -26,8 +27,25 @@ export class SearchComponent {
     if (this.form.get('oneWay')!.value) this.form.get('returnDate')!.reset();
   }
 
+  //***** */
+
+  flightService = inject(FlightService);
   onSubmit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    console.log('Ricerca voli:', this.form.value);
+    //*****  FACCIO UNA RICHIESTA AL BACKEND, LA VEDI SUGLI STRUMENTI DI SVILUPPO
+    /*if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    console.log('Ricerca voli:', this.form.value);*/
+    this.flightService.getFlights("niente").subscribe({
+      next: (response) => {
+        console.log('Risposta dal backend:', response);
+      },
+      error: (error) => {
+        console.error('Errore nella richiesta:', error);
+      }
+    });
+
+    
+
+
+
   }
 }

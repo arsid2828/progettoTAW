@@ -19,11 +19,13 @@ export class LoginComponent {
 
     let loginData: ILogData = {
       email: this.email,
-      password: this.password,
+      password: this.password
     }
     this.authService.login(loginData).subscribe({
       next: (risposta) => {
         console.log('Utente loggato!', risposta);
+        localStorage.setItem('accessToken', risposta.accessToken!)
+        localStorage.setItem('refreshToken', risposta.refreshToken!)
         this.router.navigate(['/search']);
       },
       error: (err) => console.error('Errore', err)

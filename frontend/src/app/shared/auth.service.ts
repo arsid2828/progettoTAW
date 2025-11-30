@@ -1,19 +1,34 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { IProfile } from './i-profile';
 import { ILogData } from './i-log-data';
+import { tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  // services/auth.service.ts
+  addToken(req: HttpRequest<any>) {
+    const token = localStorage.getItem('accessToken');
+    return token ? req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    }) : req;
+  }
+
+  refresh() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<{ accessToken: string }>('/auth/refresh', { refreshToken }).pipe(
+      tap(res => localStorage.setItem('accessToken', res.accessToken))
+    );
+  }
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:3000/api/';
-  
+
   // usiamo Angular signals per semplicità
   private _isLoggedIn = signal<boolean>(false);
-  private _userName   = signal<string | null>(null);
+  private _userName = signal<string | null>(null);
 
   isLoggedIn = this._isLoggedIn.asReadonly();
-  userName   = this._userName.asReadonly();
+  userName = this._userName.asReadonly();
 
   constructor() {
     // bootstrap da localStorage (se avevi già loggato)
@@ -28,11 +43,12 @@ export class AuthService {
   }
 
   login(data: ILogData) {
-   // this._isLoggedIn.set(true);
-    //this._userName.set(name);
-    //localStorage.setItem('sj_user', JSON.stringify({ name }));
-
-    return this.http.post<ILogData>(this.apiUrl+"session/login", data);
+    return this.http.post<ILogData>(this.apiUrl + "session/login", data).pipe( //***** */
+    tap(response => {
+      localStorage.setItem('accessToken', response.accessToken!);
+      localStorage.setItem('refreshToken', response.refreshToken! );
+    })
+  );
   }
 
   logout() {
@@ -41,9 +57,9 @@ export class AuthService {
     localStorage.removeItem('sj_user');
   }
 
-  signup(newUser:IProfile) {
+  signup(newUser: IProfile) {
     console.log('Registrazione utente:', newUser);
-    return this.http.post<IProfile>(this.apiUrl+"profile", newUser);
+    return this.http.post<IProfile>(this.apiUrl + "profile", newUser);
   }
-  
+
 }

@@ -3,5 +3,5 @@
 </div>
 <form method="post" *ngIf="!loggedIn">
     <!--Raffazzonato TODO:-->
-    <button type="submit" class="btn btn-submit">Accedi</button>
+    <button type="button" class="btn btn-submit" (click)="goToLogin()">Accedi</button>
 </form>
