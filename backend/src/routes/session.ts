@@ -2,52 +2,86 @@ import express from 'express';
 import crypto from 'crypto';
 import { Profile } from '../models/Profile';
 import { Session } from '../models/session';
+import jwt from 'jsonwebtoken';
+import { randomUUID } from 'crypto';
+import { redis } from '../redis';
 
 const router = express.Router();
-
+const ACCESS_SECRET = 'access-secret-lungo';
+const REFRESH_SECRET = 'refresh-secret-ancora-piu-lungo';
 // 1. LOGIN → crea sessione e restituisce token
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  const user = await Profile.findOne({ email });
-  if (!user || user.password !== crypto.createHash('sha256').update(password).digest('hex')) {
-    return res.status(401).json({ message: 'Credenziali errate' });
-  }
+    const user = await Profile.findOne({ email });
+    const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+    if (!user || user.password !== hashedPassword) {
+        return res.status(401).json({ message: 'Credenziali errate db='+(user?user.password:'')+" ric"+hashedPassword });
+    }
 
-  const token = crypto.randomBytes(48).toString('hex');
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 giorni
+    const token = crypto.randomBytes(48).toString('hex');
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 giorni
 
-  await Session.create({
-    userId: user._id,
-    token,
+
+
+    const userId = user._id.toString();
+
+    // Access token 15 min
+    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
+
+    // Refresh token 30 giorni + salvato in Redis
+    const refreshToken = randomUUID();
+    await redis.set(`rt:${refreshToken}`, userId, 'EX', 30 * 24 * 60 * 60);
+
+    /*await Session.create({
+        userId: user._id,
+        accessToken,
+        refreshToken
     expiresAt,
-    ipAddress: req.ip,
-    userAgent: req.get('User-Agent')
-  });
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent')
+    });*/
 
-  res.json({ token });
+    res.json({ accessToken, refreshToken });
+
 });
+// REFRESH
+router.post('/refresh', async (req, res) => {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).json({ msg: 'No refresh' });
 
+    const userId = await redis.get(`rt:${refreshToken}`);
+    if (!userId) return res.status(401).json({ msg: 'Invalid refresh' });
+
+    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
+    res.json({ accessToken });
+});
 // 2. ME → restituisce dati utente loggato
 router.get('/me', async (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Token mancante' });
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Token mancante' });
 
-  const session = await Session.findOne({ token, isActive: true })
-                                .populate('userId', 'nome cognome email');
+    const session = await Session.findOne({ token, isActive: true })
+        .populate('userId', 'nome cognome email');
 
-  if (!session) return res.status(401).json({ message: 'Sessione non valida' });
+    if (!session) return res.status(401).json({ message: 'Sessione non valida' });
 
-  res.json(session.userId);
+    res.json(session.userId);
 });
 
 // 3. LOGOUT → invalida il token
+/*router.post('/logout', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (token) {
+        await Session.updateOne({ token }, { isActive: false });
+    }
+    res.json({ message: 'Logout ok' });
+});*/
+// LOGOUT (globale e immediato)
 router.post('/logout', async (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (token) {
-    await Session.updateOne({ token }, { isActive: false });
-  }
-  res.json({ message: 'Logout ok' });
+  const { refreshToken } = req.body;
+  if (refreshToken) await redis.del(`rt:${refreshToken}`);
+  res.json({ msg: 'Logged out everywhere' });
 });
 
 export default router;

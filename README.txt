@@ -56,3 +56,17 @@ ng generate interface i-nome-separato-con-trattini
 
 per i servizi  fate
 ng generate service nome-separato-con-trattini
+
+
+
+PEr usare jwt e redis serve Fare 
+cd backend
+npm install jsonwebtoken ioredis
+npm install -D @types/jsonwebtoken
+avviare un container
+
+# 1. Crea la network (una volta sola)
+docker network create taw
+
+# 2. Avvia Redis sulla network taw
+docker run -d   --name redis   --network taw   -p 6379:6379   redis:alpine

@@ -26,6 +26,7 @@ app.get('/api/health', (_,res)=>res.json({ ok:true }));
 
 
 app.use('/api/session', sessionRouter);
+app.use('/api/session/', sessionRouter);
 app.use('/api/profile', profileRouter);   
 app.use('/api/profile/', profileRouter);   
 

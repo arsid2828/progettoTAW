@@ -8,7 +8,12 @@ const sessionSchema = new mongoose.Schema({
     required: true,     // non puoi creare sessione senza utente
     index: true         // velocizza le query tipo Session.find({ userId: ... })
   },
-  token: {
+  accessToken: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  refreshToken: {
     type: String,
     required: true,
     unique: true

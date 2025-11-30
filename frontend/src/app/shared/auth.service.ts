@@ -32,7 +32,7 @@ export class AuthService {
     //this._userName.set(name);
     //localStorage.setItem('sj_user', JSON.stringify({ name }));
 
-    return this.http.post<ILogData>(this.apiUrl+"session", data);
+    return this.http.post<ILogData>(this.apiUrl+"session/login", data);
   }
 
   logout() {

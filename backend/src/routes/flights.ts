@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { auth } from '../middleware/auth';
 
 const router = Router();
 
@@ -7,7 +8,8 @@ function directFlight(id: string, from: any, to: any, airline: any, date: string
   return { id, from_airport_rel: from, to_airport_rel: to, airline, date_departure: date, departure: time };
 }
 
-router.get('/search', (req, res) => {
+//<TODO> eliminare auth dalla riga sotto setve solo per verificare se i token funzionano
+router.get('/search', auth,(req, res) => {
   const { from_airport = '', to_airport = '', date = '', passengers = '1' } = req.query as Record<string,string>;
   const messages: string[] = [];
   if (!from_airport.trim()) messages.push('Inserisci l’aeroporto di partenza');
