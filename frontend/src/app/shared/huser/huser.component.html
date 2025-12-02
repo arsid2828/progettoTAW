@@ -1,7 +1,8 @@
-<div *ngIf="loggedIn">
-    ciao {{ userName }}!
+<div *ngIf="isLoggedIn()">
+    ciao {{ userName() }}!
+     <button type="button" class="btn btn-outline" (click)="authService.logout()">Esci</button>
 </div>
-<form method="post" *ngIf="!loggedIn">
+<form method="post" *ngIf="!isLoggedIn()">
     <!--Raffazzonato TODO:-->
     <button type="button" class="btn btn-submit" (click)="goToLogin()">Accedi</button>
 </form>

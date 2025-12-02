@@ -27,11 +27,10 @@ export class SearchComponent {
     if (this.form.get('oneWay')!.value) this.form.get('returnDate')!.reset();
   }
 
-  //***** */
 
   flightService = inject(FlightService);
   onSubmit() {
-    //*****  FACCIO UNA RICHIESTA AL BACKEND, LA VEDI SUGLI STRUMENTI DI SVILUPPO
+    //  FACCIO UNA RICHIESTA AL BACKEND, LA VEDI SUGLI STRUMENTI DI SVILUPPO (F12) NELLA SEZIONE RETE sul browser
     /*if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     console.log('Ricerca voli:', this.form.value);*/
     this.flightService.getFlights("niente").subscribe({

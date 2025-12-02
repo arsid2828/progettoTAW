@@ -19,6 +19,7 @@ export const authInterceptor = (
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
+      console.log('Errore intercettato nell\'interceptor:', error);
       if (error.status === 401 && !req.url.includes('/refresh')) {
         return authService.refresh().pipe(
           switchMap(() => next(authService.addToken(req))),

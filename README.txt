@@ -70,3 +70,36 @@ docker network create taw
 
 # 2. Avvia Redis sulla network taw
 docker run -d   --name redis   --network taw   -p 6379:6379   redis:alpine
+
+
+docker rm -f redis    # -f forza lo stop e la rimozione anche se è in esecuzione
+docker run -d --name redis --network taw -p 6379:6379 redis:alpine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INTERFACCE (I-..)
+servono per definire dei tipi da assegnare a variabili o come parametro dei themeplate
+
+I service
+sono una sorta di model del MODEL VIEW CONTROLLER (MVC) , forniscono dei servizi ai componenti
+in genere le richieste http (post,get) vanno messe nei service
+
+per usare i service si usa il DEPENCIES INJECTION (cerca injection con la lente) ad esempio
+  authService = inject(AuthService);
+
+i servizzi con l'injection sono in realtà sempre lo stesso, quindi se gli imposto una variabile a partire da un componente
+quel valore è visibile anche negli altri componenti che usano lo stesso service
+

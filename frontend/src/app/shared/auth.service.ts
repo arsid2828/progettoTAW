@@ -16,8 +16,13 @@ export class AuthService {
 
   refresh() {
     const refreshToken = localStorage.getItem('refreshToken');
-    return this.http.post<{ accessToken: string }>('/auth/refresh', { refreshToken }).pipe(
-      tap(res => localStorage.setItem('accessToken', res.accessToken))
+    return this.http.post<{ accessToken: string }>(this.apiUrl + 'session/refresh', { refreshToken }).pipe(
+      tap(res => {
+        this._isLoggedIn.set(true);
+        this._userName.set(localStorage.getItem('email'));
+        localStorage.setItem('accessToken', res.accessToken);
+
+      })
     );
   }
   private http = inject(HttpClient);
@@ -43,18 +48,23 @@ export class AuthService {
   }
 
   login(data: ILogData) {
-    return this.http.post<ILogData>(this.apiUrl + "session/login", data).pipe( //***** */
-    tap(response => {
-      localStorage.setItem('accessToken', response.accessToken!);
-      localStorage.setItem('refreshToken', response.refreshToken! );
-    })
-  );
+    return this.http.post<ILogData>(this.apiUrl + "session/login", data).pipe(
+      tap(response => {
+        this._isLoggedIn.set(true);
+        this._userName.set(data.email);
+        localStorage.setItem('email', data.email);
+        localStorage.setItem('accessToken', response.accessToken!);
+        localStorage.setItem('refreshToken', response.refreshToken!);
+      })
+    );
   }
 
   logout() {
     this._isLoggedIn.set(false);
     this._userName.set(null);
-    localStorage.removeItem('sj_user');
+    localStorage.removeItem('email');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }
 
   signup(newUser: IProfile) {

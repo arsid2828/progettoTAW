@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-huser',
@@ -12,8 +13,9 @@ import { Router } from '@angular/router';
 
 //Variabili per capire se si è loggati oppure no 
 export class HuserComponent {
-  userName: string | null = 'username';
-  loggedIn: boolean = false;
+  authService = inject(AuthService);
+  isLoggedIn = this.authService.isLoggedIn;
+  userName = this.authService.userName;
     router: Router = inject(Router);
   goToLogin() {
     this.router.navigate(['/login']);
