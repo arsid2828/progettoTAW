@@ -1,5 +1,65 @@
-.contenitore {
+.header-container {
   display: flex;
-  justify-content: center; /* Centra gli elementi */
-  align-items: center; /* Centra gli elementi verticalmente */
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 1rem; /* thinner vertical spacing */
+  gap: 1rem;
+  background: var(--bg-light); /* make the whole header area white */
+  box-shadow: var(--shadow);
+  min-height: 48px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.header-center {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.header-logo .logo-text {
+  font-weight: 700;
+  font-size: 1.6rem; /* slightly larger central logo */
+  line-height: 1;
+}
+
+.header-strip {
+  display: none; /* replaced by full white header background */
+}
+
+/* Keep existing button visual styles intact; only spacing/placement changed */
+.btn-airline {
+  /* kept for backward compatibility */
+  background: var(--warning);
+  color: #fff;
+}
+
+/* Ensure header buttons (Accedi and Area Compagnie) have same appearance and do not expand full-width */
+.header-right .btn, .header-left .btn {
+  width: auto !important; /* override .btn-submit width:100% when used in header */
+  padding: 0.6rem 1.25rem; /* make both header buttons identical in size */
+  font-size: 1.05rem; /* slightly larger to match Accedi */
+  line-height: 1;
+  border-radius: 0.6rem;
+  box-sizing: border-box;
+}
+
+/* if one button still visually differs, ensure minimum width parity */
+.header-left .btn, .header-right .btn { min-width: 110px; }
+
+/* adjust underline of logo if necessary (keeps it centered and not too far below) */
+.header-center .logo-text::after {
+  bottom: -6px;
+  height: 3px;
 }

@@ -1,30 +1,18 @@
-<div class="contenitore">
-<div class="header-logo"><span class="logo-text">SkyJourney</span></div>
-<app-huser></app-huser>
+<div class="header-container">
+  <div class="header-left">
+    <!-- Keep the existing huser component (Accedi) on the left -->
+    <app-huser></app-huser>
+  </div>
+
+  <div class="header-center">
+    <div class="header-logo"><span class="logo-text">SkyJourney</span></div>
+  </div>
+
+  <div class="header-right">
+    <!-- Area Compagnie moved to the right and styled like the Accedi button -->
+    <button type="button" class="btn btn-submit">Area Compagnie</button>
+  </div>
 </div>
-<!--questo è l'header
 
-
-    
-    <div class="header-content">
-      <div class="header-section">
-        < !-- Se loggato: saluto + link; altrimenti: Accedi/Registrati -- >
-        <ng-container *ngIf="auth.isLoggedIn(); else loggedOut">
-          <div class="user-greeting">
-            <span class="welcome-text">Ciao, {{ auth.userName() }}!</span>
-            <a class="btn btn-secondary" [routerLink]="['/passengers']">I tuoi Passeggeri</a>
-            <a class="btn btn-secondary" [routerLink]="['/my-flights']">I miei voli</a>
-            <button class="btn btn-outline" type="button" (click)="onLogout()">Logout</button>
-          </div>
-        </ng-container>
-        <ng-template #loggedOut>
-          <a class="btn btn-primary" [routerLink]="['/login']">Accedi / Registrati</a>
-        </ng-template>
-      </div>
-
-      <div class="header-logo"><span class="logo-text">SkyJourney</span></div>
-
-      <div class="header-section">
-        <a class="btn btn-airline" [routerLink]="['/airline']">Area Compagnie</a>
-      </div>
-    </div>-->
+<!-- white strip below the header -->
+<div class="header-strip"></div>
