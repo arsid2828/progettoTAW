@@ -7,7 +7,15 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-
+  redis:
+    image: redis:7-alpine           # versione leggera e velocissima
+    container_name: air-min-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"                  # opzionale: togli se non ti serve accedere dall’host
+    volumes:
+      - redis_data:/data              # persiste anche la cache se vuoi
+    command: redis-server --save 60 1 --loglevel warning   # salva su disco ogni 60 sec se c’è almeno 1 modifica
   api:
     build: ./backend
     environment:
@@ -15,9 +23,9 @@ services:
       - MONGO_URI=mongodb://mongo:27017/airdb
     depends_on:
       - mongo
+      - redis
     ports:
       - "3000:3000"
-
   web:
     build:
       context: ./frontend     # <— QUI!
@@ -27,4 +35,6 @@ services:
 
 volumes:
   mongo_data:
+    driver: local
+  redis_data:                       
     driver: local
