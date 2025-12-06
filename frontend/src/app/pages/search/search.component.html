@@ -1,51 +1,53 @@
 <section class="search-wrapper">
-  <h1 class="title">Cerca voli</h1>
+  <h1 class="title">Trova il tuo volo ideale</h1>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="search-form">
-    <div class="row">
+    <div class="row full-width">
       <div class="field">
-        <label for="from">Da</label>
-        <input id="from" type="text" formControlName="from" placeholder="VCE (Venezia)">
+        <label for="from">Aeroporto di partenza <span class="required">*</span></label>
+        <input id="from" type="text" formControlName="from" placeholder="Es: Roma, Milano...">
       </div>
+    </div>
+
+    <div class="row full-width">
       <div class="field">
-        <label for="to">A</label>
-        <input id="to" type="text" formControlName="to" placeholder="FCO (Roma)">
+        <label for="to">Aeroporto di arrivo</label>
+        <input id="to" type="text" formControlName="to" placeholder="Es: New York, Tokyo...">
       </div>
     </div>
 
     <div class="row">
       <div class="field">
-        <label for="departDate">Partenza</label>
-        <input id="departDate" type="date" formControlName="departDate">
+        <label for="departDate">Data</label>
+        <input id="departDate" type="date" formControlName="departDate" placeholder="gg/mm/aaaa">
       </div>
-      <div class="field">
-        <label for="returnDate">Ritorno</label>
-        <input id="returnDate" type="date" formControlName="returnDate" [disabled]="form.get('oneWay')?.value">
-        <div class="check">
-          <input id="oneWay" type="checkbox" formControlName="oneWay" (change)="onTripTypeChange()">
-          <label for="oneWay">Solo andata</label>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="field">
         <label for="passengers">Passeggeri</label>
         <input id="passengers" type="number" min="1" formControlName="passengers">
       </div>
-      <div class="field">
-        <label for="cabin">Classe</label>
-        <select id="cabin" formControlName="cabin">
-          <option value="economy">Economy</option>
-          <option value="premium">Premium Economy</option>
-          <option value="business">Business</option>
-          <option value="first">First</option>
+    </div>
+
+    <div class="row options-row">
+      <div class="field switch-field">
+        <label class="switch">
+          <input id="oneWay" type="checkbox" formControlName="oneWay" (change)="onTripTypeChange()">
+          <span class="slider"></span>
+        </label>
+        <label class="switch-label" for="oneWay">Solo andata</label>
+      </div>
+      <div class="field sort-field">
+        <label for="sort">Ordina per</label>
+        <select id="sort" formControlName="sort">
+          <option value="price">Prezzo (cres.)</option>
+          <option value="depart">Data e ora partenza</option>
+          <option value="duration">Tempo di percorrenza</option>
+          <option value="stops">Numero di soste</option>
         </select>
       </div>
     </div>
 
     <div class="actions">
-      <button class="btn btn-primary" type="button" (click)="onSubmit()">Cerca</button>
+      <button class="btn btn-primary full" type="button" (click)="onSubmit()">✈️ Cerca voli</button>
     </div>
   </form>
 </section>

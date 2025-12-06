@@ -20,7 +20,7 @@ export class SearchComponent {
     returnDate: [''],
     oneWay: [false],
     passengers: [1, [Validators.required, Validators.min(1)]],
-    cabin: ['economy', Validators.required],
+    sort: ['price'],
   });
 
   onTripTypeChange() {
