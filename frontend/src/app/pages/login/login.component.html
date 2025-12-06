@@ -1,42 +1,33 @@
-<!-- 
-login.html – Template per l’accesso all’account utente.
-Contiene un form con email e password, pulsante di login e link alla pagina di registrazione.
-Visualizza eventuali messaggi flash in caso di errore o notifiche. -->
-<h1 class="login-title">Accedi al tuo account</h1>
+<!-- Clean centered login card layout. Only visual changes; logic unchanged -->
+<div class="container">
+  <div class="login-card card">
+    <h1 class="login-title">Accedi al tuo account</h1>
 
-      <!-- Form login: email + password -->
-      <form method="post" class="login-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input id="email" name="email" type="email" placeholder="mario.rossi@email.com" required autofocus [(ngModel)]="email">
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" placeholder="Password" required [(ngModel)]="password">
-        </div>
-
-        <button type="button" (click)="onSubmit()" class="btn btn-submit">Accedi</button>
-      </form>
-
-      <!-- Link rapido alla pagina di registrazione -- >
-      <div class="login-footer">
-        <span>Non hai un account?</span>
-        <a class="btn btn-outline" [routerLink]="['/signup']">Registrati</a>
+    <form method="post" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="mario.rossi@email.com" required autofocus [(ngModel)]="email">
       </div>
 
-      < !-- Messaggi flash (errori credenziali, ecc.) -->
-      <!-- TODO: manual template logic here -- > 
-        <ng-container *ngIf="messages">
-          <ul class="flash-messages">
-            <ng-container *ngFor="let msg of messages; let i = index">
-              <li class="flash-message">{{ msg }}</li>
-            </ng-container>
-          </ul>
-        </ng-container>
-      < !-- TODO: manual template logic here -- >
-    </div>
-  </main>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="Password" required [(ngModel)]="password">
+      </div>
 
-</body>
-</html>-->
+      <button type="button" (click)="onSubmit()" class="btn btn-submit">Accedi</button>
+    </form>
+
+    <div class="login-footer" style="text-align:center; margin-top:1rem;">
+      <div style="margin-bottom:.6rem; color:var(--text-light);">Non hai un account?</div>
+      <a class="btn btn-outline" [routerLink]="['/signup']">Registrati</a>
+    </div>
+
+    <!--<ng-container *ngIf="messages">
+      <ul class="flash-messages">
+        <ng-container *ngFor="let msg of messages"> 
+          <li class="flash-message">{{ msg }}</li>
+        </ng-container>
+      </ul>
+    </ng-container>-->
+  </div>
+</div>
