@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { HuserComponent } from '../huser/huser.component';
 
@@ -13,6 +13,18 @@ import { HuserComponent } from '../huser/huser.component';
 })
 export class HeaderComponent {
   auth = inject(AuthService);
+  router = inject(Router);
+
+  isAuthPage(): boolean {
+    // Show back button and hide Area Compagnie on login/signup pages
+    const currentUrl = this.router.url;
+    return currentUrl.includes('/login') || currentUrl.includes('/signup');
+  }
+
+  goBack(): void {
+    // Navigate back to search page
+    this.router.navigate(['/search']);
+  }
 
   onLogout() {
     this.auth.logout();

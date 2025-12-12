@@ -1,7 +1,12 @@
-<div class="header-container">
+<div class="header-container" [class.auth-page]="isAuthPage()">
   <div class="header-left">
-    <!-- Keep the existing huser component (Accedi) on the left -->
-    <app-huser></app-huser>
+    <!-- Show back button on login/signup pages, otherwise show Accedi button -->
+    <ng-container *ngIf="isAuthPage(); else showAccedi">
+      <button type="button" class="btn btn-submit" (click)="goBack()">← Indietro</button>
+    </ng-container>
+    <ng-template #showAccedi>
+      <app-huser></app-huser>
+    </ng-template>
   </div>
 
   <div class="header-center">
@@ -9,8 +14,10 @@
   </div>
 
   <div class="header-right">
-    <!-- Area Compagnie moved to the right and styled like the Accedi button -->
-    <button type="button" class="btn btn-submit">Area Compagnie</button>
+    <!-- Area Compagnie button only visible on search/home page (not on login/signup) -->
+    <ng-container *ngIf="!isAuthPage()">
+      <button type="button" class="btn btn-submit">Area Compagnie</button>
+    </ng-container>
   </div>
 </div>
 

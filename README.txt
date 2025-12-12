@@ -103,3 +103,16 @@ per usare i service si usa il DEPENCIES INJECTION (cerca injection con la lente)
 i servizzi con l'injection sono in realtà sempre lo stesso, quindi se gli imposto una variabile a partire da un componente
 quel valore è visibile anche negli altri componenti che usano lo stesso service
 
+
+
+
+a volte se non carica robe:
+
+cd c:\Users\arsid\Desktop\progettoTAW\frontend
+cmd /c "npm ci"
+cmd /c "npx ng build"
+# poi servi la cartella dist (opzione rapida con http-server)
+cd dist\air-web\browser
+cmd /c "npx http-server -p 8080 -c-1"
+
+se usi localhost disable cache in f12 e poi ctrl shift r , dopo aver fatto docker compose up --build -d
