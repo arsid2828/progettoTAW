@@ -1,0 +1,219 @@
+<div class="airline-body">
+    <!-- ===== HEADER (Assuming header is handled by main layout, but adding airline specific header part if needed or just title) ===== -->
+    <!-- The provided HTML has a custom header. In Angular, usually header is global. 
+         However, the request asks to convert the specific page. 
+         I will wrap the content in a container as per the 'airline-card' in the source. -->
+
+    <div class="container">
+        <div class="airline-card">
+
+            <!-- Titolo compagnia -->
+            <h1 class="company-title">
+                {{ airlineName }}
+            </h1>
+
+            <!-- KPI riepilogo compagnia -->
+            <div class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-label">Incasso totale</div>
+                    <div class="kpi-value">€{{ totalRevenue | number:'1.2-2' }}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Biglietti venduti</div>
+                    <div class="kpi-value">{{ totalSold }}</div>
+                    <!-- or default 0 handling in TS -->
+                </div>
+            </div>
+
+            <!-- Tratte più richieste -->
+            <div *ngIf="topRoutes && topRoutes.length > 0" class="flights-list">
+                <h2 class="flights-title">Tratte maggiormente richieste</h2>
+                <ul class="flight-items">
+                    <li *ngFor="let r of topRoutes" class="flight-item">
+                        <div class="flight-route">{{ r.from_name }} → {{ r.to_name }}</div>
+                        <div class="flight-details">Biglietti venduti: <strong>{{ r.sold }}</strong></div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Form inserimento nuovo volo -->
+            <h1 class="airline-title">Inserisci un nuovo volo</h1>
+            <form (ngSubmit)="onAddFlight()" #flightForm="ngForm" class="airline-form">
+                <!-- Città partenza e arrivo -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="from_city">Città di partenza</label>
+                        <input id="from_city" name="from_city" type="text" placeholder="Es: Roma"
+                            [(ngModel)]="newFlight.fromCity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="to_city">Città di arrivo</label>
+                        <input id="to_city" name="to_city" type="text" placeholder="Es: Milano"
+                            [(ngModel)]="newFlight.toCity" required>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary" (click)="loadAirports()">
+                    Scegli aeroporti
+                </button>
+
+                <!-- Selezione aeroporti -->
+                <div *ngIf="availableFromAirports.length > 0 || availableToAirports.length > 0" class="form-row">
+                    <div class="form-group">
+                        <label for="from_airport_id">Aeroporto di partenza</label>
+                        <select id="from_airport_id" name="from_airport_id" [(ngModel)]="newFlight.fromAirportId"
+                            required>
+                            <option *ngFor="let airport of availableFromAirports" [value]="airport.id">
+                                {{ airport.name }} ({{ airport.code }})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="to_airport_id">Aeroporto di arrivo</label>
+                        <select id="to_airport_id" name="to_airport_id" [(ngModel)]="newFlight.toAirportId" required>
+                            <option *ngFor="let airport of availableToAirports" [value]="airport.id">
+                                {{ airport.name }} ({{ airport.code }})
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Link aggiunta aeroporto -->
+                <div class="form-links">
+                    <a routerLink="/add-airport" [queryParams]="{city: newFlight.fromCity}" class="btn btn-link">
+                        Aggiungi nuovo aeroporto
+                    </a>
+                </div>
+
+                <!-- Date -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_departure">Data partenza</label>
+                        <input id="date_departure" name="date_departure" type="date"
+                            [(ngModel)]="newFlight.dateDeparture" [min]="today" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_arrival">Data arrivo</label>
+                        <input id="date_arrival" name="date_arrival" type="date" [(ngModel)]="newFlight.dateArrival"
+                            [min]="newFlight.dateDeparture || today" required>
+                    </div>
+                </div>
+
+                <!-- Orari -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departure">Ora partenza</label>
+                        <input id="departure" name="departure" type="time" [(ngModel)]="newFlight.timeDeparture"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrival">Ora arrivo</label>
+                        <input id="arrival" name="arrival" type="time" [(ngModel)]="newFlight.timeArrival" required>
+                    </div>
+                </div>
+
+                <!-- Aereo -->
+                <div class="form-group">
+                    <label for="plane_id">Aereo</label>
+                    <select id="plane_id" name="plane_id" [(ngModel)]="newFlight.planeId" required>
+                        <option *ngFor="let plane of planes" [value]="plane.id">
+                            {{ plane.id }} - {{ plane.model }}
+                        </option>
+                    </select>
+                    <a routerLink="/add-plane" class="btn btn-link">Aggiungi nuovo aereo</a>
+                </div>
+
+                <!-- Sezioni classi di volo -->
+                <div class="seat-class-section">
+                    <h3>Economy</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price_economy">Prezzo</label>
+                            <input id="price_economy" name="price_economy" type="number" step="0.01"
+                                placeholder="Prezzo" [(ngModel)]="newFlight.priceEconomy" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="seats_economy">Posti</label>
+                            <input id="seats_economy" name="seats_economy" type="number" min="0" placeholder="Posti"
+                                [(ngModel)]="newFlight.seatsEconomy" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="seat-class-section">
+                    <h3>Business</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price_business">Prezzo</label>
+                            <input id="price_business" name="price_business" type="number" step="0.01"
+                                placeholder="Prezzo" [(ngModel)]="newFlight.priceBusiness" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="seats_business">Posti</label>
+                            <input id="seats_business" name="seats_business" type="number" min="0" placeholder="Posti"
+                                [(ngModel)]="newFlight.seatsBusiness" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="seat-class-section">
+                    <h3>First</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price_first">Prezzo</label>
+                            <input id="price_first" name="price_first" type="number" step="0.01" placeholder="Prezzo"
+                                [(ngModel)]="newFlight.priceFirst" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="seats_first">Posti</label>
+                            <input id="seats_first" name="seats_first" type="number" min="0" placeholder="Posti"
+                                [(ngModel)]="newFlight.seatsFirst" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prezzi bagagli -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="price_of_bag">Prezzo bagaglio cabina</label>
+                        <input id="price_of_bag" name="price_of_bag" type="number" step="0.01" min="0"
+                            placeholder="Es: 25.00" [(ngModel)]="newFlight.priceBag" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price_of_baggage">Prezzo bagaglio stiva</label>
+                        <input id="price_of_baggage" name="price_of_baggage" type="number" step="0.01" min="0"
+                            placeholder="Es: 45.00" [(ngModel)]="newFlight.priceBaggage" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Aggiungi volo
+                </button>
+            </form>
+
+            <!-- Elenco voli della compagnia -->
+            <div *ngIf="flights && flights.length > 0" class="flights-list">
+                <h2 class="flights-title">I tuoi voli</h2>
+                <ul class="flight-items">
+                    <li *ngFor="let f of flights" class="flight-item">
+                        <div class="flight-route">
+                            {{ f.from_airport_rel.name }} → {{ f.to_airport_rel.name }}
+                        </div>
+                        <div class="flight-details">
+                            {{ f.date_departure }} {{ f.departure }} •
+                            <span *ngFor="let seat_type of f.seat_types">
+                                {{ seat_type.type | titlecase }} €{{ seat_type.price | number:'1.2-2' }} •
+                            </span>
+                        </div>
+                        <!-- Stats map logic needs to be handled in TS helper or structure -->
+                        <!-- Assuming 'f' has stats attached or we use a pipe/helper method -->
+                        <div class="flight-details" style="gap:.75rem;flex-wrap:wrap;">
+                            <span>Biglietti venduti: <strong>{{ getSold(f.id) }}</strong></span>
+                            <span>Incasso volo: <strong>€{{ getRevenue(f.id) | number:'1.2-2' }}</strong></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

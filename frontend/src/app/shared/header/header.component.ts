@@ -15,10 +15,18 @@ export class HeaderComponent {
   auth = inject(AuthService);
   router = inject(Router);
 
+  get user() {
+    return { role: this.auth.userRole() };
+  }
+
   isAuthPage(): boolean {
     // Show back button and hide Area Compagnie on login/signup pages
     const currentUrl = this.router.url;
     return currentUrl.includes('/login') || currentUrl.includes('/signup');
+  }
+
+  isAirlinePage(): boolean {
+    return this.router.url.includes('/airline-area');
   }
 
   goBack(): void {

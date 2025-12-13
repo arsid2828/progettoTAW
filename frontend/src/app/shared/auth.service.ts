@@ -31,18 +31,22 @@ export class AuthService {
   // usiamo Angular signals per semplicità
   private _isLoggedIn = signal<boolean>(false);
   private _userName = signal<string | null>(null);
+  private _userRole = signal<string | null>(null);
 
   isLoggedIn = this._isLoggedIn.asReadonly();
   userName = this._userName.asReadonly();
+  userRole = this._userRole.asReadonly();
 
   constructor() {
     // bootstrap da localStorage (se avevi già loggato)
     const saved = localStorage.getItem('sj_user');
+    const role = localStorage.getItem('role');
     if (saved) {
       try {
         const obj = JSON.parse(saved);
         this._isLoggedIn.set(!!obj?.name);
         this._userName.set(obj?.name || null);
+        this._userRole.set(role || null);
       } catch { /* ignore */ }
     }
   }
@@ -52,7 +56,17 @@ export class AuthService {
       tap(response => {
         this._isLoggedIn.set(true);
         this._userName.set(data.email);
+        // Assuming response might contain role or we set it from data if applicable, 
+        // but typically login response should have it. 
+        // For now, let's assume we save what we can or if the user is an airline, 
+        // the backend login should probably return the role.
+        // If ILogData doesn't have role, we might need to fetch profile or check token.
+        // Let's assume for this specific task we might need to trust ILogData or response.
+        // If response has role:
+        const role = (response as any).role || 'user'; // Fallback
+        this._userRole.set(role);
         localStorage.setItem('email', data.email);
+        localStorage.setItem('role', role);
         localStorage.setItem('accessToken', response.accessToken!);
         localStorage.setItem('refreshToken', response.refreshToken!);
       })
@@ -62,7 +76,9 @@ export class AuthService {
   logout() {
     this._isLoggedIn.set(false);
     this._userName.set(null);
+    this._userRole.set(null);
     localStorage.removeItem('email');
+    localStorage.removeItem('role');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   }

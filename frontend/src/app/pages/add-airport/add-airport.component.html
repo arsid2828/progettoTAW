@@ -1,0 +1,34 @@
+<div class="airline-body">
+    <!-- HEADER -->
+    <div class="container">
+        <div class="header-content" style="margin-bottom: 2rem;">
+            <a routerLink="/airline-area" class="btn btn-outline" style="text-decoration:none;">← Torna all'area
+                compagnia</a>
+        </div>
+
+        <div class="airport-card">
+            <h1 class="airport-title">Aggiungi nuovo aeroporto</h1>
+
+            <!-- FORM INSERIMENTO -->
+            <form (ngSubmit)="onAddAirport()" #airportForm="ngForm" class="airport-form">
+                <div class="form-group">
+                    <label for="name">Nome aeroporto</label>
+                    <input id="name" name="name" type="text" placeholder="Es: Aeroporto Leonardo da Vinci"
+                        [(ngModel)]="airport.name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">Città</label>
+                    <input id="city" name="city" type="text" placeholder="Es: Roma" [(ngModel)]="airport.city" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="code">Codice IATA</label>
+                    <input id="code" name="code" type="text" placeholder="Es: FCO" [(ngModel)]="airport.code" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Aggiungi aeroporto</button>
+            </form>
+        </div>
+    </div>
+</div>

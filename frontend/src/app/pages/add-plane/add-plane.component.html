@@ -1,0 +1,23 @@
+<div class="airline-body">
+    <!-- HEADER -->
+    <div class="container">
+        <div class="header-content" style="margin-bottom: 2rem;">
+            <a routerLink="/airline-area" class="btn btn-outline" style="text-decoration:none;">← Torna all'area
+                compagnia</a>
+        </div>
+
+        <div class="plane-card">
+            <h1 class="plane-title">Aggiungi nuovo aereo</h1>
+
+            <form (ngSubmit)="onAddPlane()" #planeForm="ngForm" class="plane-form">
+                <div class="form-group">
+                    <label for="model">Modello aereo</label>
+                    <input id="model" name="model" type="text" placeholder="Es: Airbus A320" [(ngModel)]="model"
+                        required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Aggiungi aereo</button>
+            </form>
+        </div>
+    </div>
+</div>

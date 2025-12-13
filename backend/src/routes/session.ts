@@ -16,7 +16,7 @@ router.post('/login', async (req, res) => {
     const user = await Profile.findOne({ email });
     const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
     if (!user || user.password !== hashedPassword) {
-        return res.status(401).json({ message: 'Credenziali errate db='+(user?user.password:'')+" ric"+hashedPassword });
+        return res.status(401).json({ message: 'Credenziali errate db=' + (user ? user.password : '') + " ric" + hashedPassword });
     }
 
     const token = crypto.randomBytes(48).toString('hex');
@@ -80,17 +80,17 @@ router.get('/me', async (req, res) => {
 // LOGOUT (globale e immediato)
 router.post('/logout', async (req, res) => {
     console.log('BODY RICEVUTO:', req.body);
-  const { refreshToken } = req.body;
-    console.log('refreshToken RICEVUTO:', refreshToken);let deleted = 0;
-  if (refreshToken) {
-    deleted = await redis.del(`rt:${refreshToken}`); // ← 1 se esiste, 0 se no
-  }
+    const { refreshToken } = req.body;
+    console.log('refreshToken RICEVUTO:', refreshToken); let deleted = 0;
+    if (refreshToken) {
+        deleted = await redis.del(`rt:${refreshToken}`); // ← 1 se esiste, 0 se no
+    }
 
-  res.json({
-    msg: 'Logout eseguito',
-    tokenEliminato: !!deleted,
-    numeroChiaviCancellate: deleted   // sarà 0 o 1
-  });
+    res.json({
+        msg: 'Logout eseguito',
+        tokenEliminato: !!deleted,
+        numeroChiaviCancellate: deleted   // sarà 0 o 1
+    });
 });
 
 export default router;

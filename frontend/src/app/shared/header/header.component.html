@@ -5,7 +5,8 @@
       <button type="button" class="btn btn-submit" (click)="goBack()">← Indietro</button>
     </ng-container>
     <ng-template #showAccedi>
-      <app-huser></app-huser>
+      <app-huser *ngIf="!isAirlinePage()"></app-huser>
+      <a *ngIf="isAirlinePage()" routerLink="/" class="btn btn-submit" style="text-decoration:none;">← Home</a>
     </ng-template>
   </div>
 
@@ -16,7 +17,8 @@
   <div class="header-right">
     <!-- Area Compagnie button only visible on search/home page (not on login/signup) -->
     <ng-container *ngIf="!isAuthPage()">
-      <button type="button" class="btn btn-submit">Area Compagnie</button>
+      <a routerLink="/airline-area" class="btn btn-submit" style="text-decoration:none; display:inline-block;">Area
+        Compagnie</a>
     </ng-container>
   </div>
 </div>
