@@ -22,9 +22,9 @@ const flightSchema = new mongoose.Schema<FlightDoc>({
   to_airport:   { type: mongoose.Schema.Types.ObjectId, ref: 'Airport', required: true },
   price_of_bag: Number,
   price_of_baggage: Number,
-  departure: { type: String, required: true },
-  arrival:   { type: String, required: true },
-  date_departure: { type: Date, required: true },
+ // departure: { type: String, required: true }, todo
+ // arrival:   { type: String, required: true }, abbiamo fatto na cacata, TENIAMO L'ORARIO NELLA DATE
+  date_departure: { type: Date, required: true },     
   date_arrival:   { type: Date, required: true }
 }, { timestamps:true });
 
