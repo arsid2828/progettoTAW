@@ -84,12 +84,6 @@ docker run -d --name redis --network taw -p 6379:6379 redis:alpine
 
 
 
-
-
-
-
-
-
 INTERFACCE (I-..)
 servono per definire dei tipi da assegnare a variabili o come parametro dei themeplate
 
@@ -116,3 +110,15 @@ cd dist\air-web\browser
 cmd /c "npx http-server -p 8080 -c-1"
 
 se usi localhost disable cache in f12 e poi ctrl shift r , dopo aver fatto docker compose up --build -d
+
+
+
+
+SE NON FUNZIONA IL BUILD che aggiunge gli aereoporti al mongodb
+docker compose build --no-cache
+docker compose up
+
+
+FARE 
+npm install bcrypt
+npm install -D @types/bcrypt

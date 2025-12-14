@@ -5,6 +5,7 @@ import flightsRoute from './routes/flights';
 import profileRouter from './routes/profile';
 import sessionRouter from './routes/session';
 import { seedAirports } from './seed/airports';
+import { seedAll } from './seed/seed';
 
 const app = express();
 app.use(cors());
@@ -27,8 +28,8 @@ const startServer = async () => {
     console.log('MongoDB connesso');
 
     // B. Esegui il Seed (SOLO dopo che il DB è connesso)
-    await seedAirports(); 
 
+    await seedAll(); 
     // C. Avvia il server (SOLO dopo che i dati sono pronti)
     app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
 
