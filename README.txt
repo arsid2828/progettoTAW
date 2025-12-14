@@ -122,3 +122,6 @@ docker compose up
 FARE 
 npm install bcrypt
 npm install -D @types/bcrypt
+
+
+docker compose up -d api

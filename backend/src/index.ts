@@ -26,6 +26,51 @@ const startServer = async () => {
     // A. Connessione al DB
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
+    console.log('MongoDB connesso');
 
     // B. Esegui il Seed (SOLO dopo che il DB è connesso)
 
@@ -54,4 +99,4 @@ app.use('/api/profile', profileRouter);
 app.use('/api/profile/', profileRouter);   
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+//app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
