@@ -63,7 +63,10 @@ router.get('/search', async (req, res) => {
       const seats = await SeatType.find({ flight: f._id });
 
       const totalSeats = seats.reduce((acc, s) => acc + s.number_available, 0);
-      const minPrice = seats.reduce((min, s) => (s.price < min ? s.price : min), Infinity);
+
+      // Cerca classe Economy (case-insensitive) o usa il minimo
+      const economySeat = seats.find(s => s.seat_class && s.seat_class.toLowerCase() === 'economy');
+      const minPrice = economySeat ? economySeat.price : seats.reduce((min, s) => (s.price < min ? s.price : min), Infinity);
 
       return {
         type: 'DIRECT',

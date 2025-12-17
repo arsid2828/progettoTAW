@@ -75,7 +75,7 @@
         <div class="flight-meta">
           <span class="date">{{ res.legs[0].date_departure | date:'yyyy-MM-dd' }}</span>
           <span class="time">{{ res.legs[0].date_departure | date:'HH:mm' }}</span>
-          <span class="seats-badge">Posti rimanenti: {{ getSeats(res) }}</span>
+          <span class="seats-badge">Posti rimanenti: {{ res.available_seats }}</span>
         </div>
 
         <div class="airline-info">
@@ -86,7 +86,7 @@
       <div class="card-footer">
         <!-- Using total_price from response or fallback -->
         <button class="btn btn-book">
-          Da €{{ (res.total_price || 99) | number:'1.2-2' }} - Prenota
+          Da €{{ res.total_price | number:'1.2-2' }} - Prenota
         </button>
       </div>
     </ng-container>
