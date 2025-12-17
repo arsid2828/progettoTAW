@@ -9,11 +9,7 @@ export class FlightService {
   private apiUrl = 'http://localhost:3000/api/';
   constructor() { }
 
-    getFlights(data:any) { //<TODO> togliere any e mettere uninterfaccia
-      // this._isLoggedIn.set(true);
-      //this._userName.set(name);
-      //localStorage.setItem('sj_user', JSON.stringify({ name }));
-  
-      return this.http.get(this.apiUrl + "flights/search", data);
-    }
+  getFlights(data: any) {
+    return this.http.get(this.apiUrl + "flights/search", { params: data });
+  }
 }

@@ -56,10 +56,7 @@ export class SearchComponent {
     });
   }
 
-  // Helper to get seats (mocked for now as backend doesn't return it yet)
-  getSeats(flight: any): number {
-    return Math.floor(Math.random() * 50) + 10;
-  }
+
 
   // Helper to get airline name safely
   getAirlineName(leg: any): string {
