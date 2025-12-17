@@ -215,9 +215,28 @@
 .flight-meta {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     color: #6b7280;
     font-size: 0.9rem;
+}
+
+.meta-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #9ca3af;
+    margin-bottom: 0.2rem;
+}
+
+.meta-arrow {
+    font-size: 1.25rem;
+    color: #d1d5db;
+    margin-top: 0.5rem;
 }
 
 .seats-badge {

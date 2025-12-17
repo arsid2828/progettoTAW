@@ -15,8 +15,8 @@ export class SearchComponent {
 
   form = this.fb.group({
     from: ['', Validators.required],
-    to: ['', Validators.required],
-    departDate: ['', Validators.required],
+    to: [''],
+    departDate: [new Date().toISOString().split('T')[0], Validators.required],
     returnDate: [''],
     oneWay: [false],
     passengers: [1, [Validators.required, Validators.min(1)]],
@@ -42,7 +42,9 @@ export class SearchComponent {
     const queryParams = {
       from: this.form.value.from,
       to: this.form.value.to,
-      date: this.form.value.departDate
+      date: this.form.value.departDate,
+      sort: this.form.value.sort,
+      passengers: this.form.value.passengers
     };
 
     this.flightService.getFlights(queryParams).subscribe({

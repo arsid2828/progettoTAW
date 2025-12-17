@@ -15,8 +15,8 @@ router.get('/search', async (req, res) => {
     // Esempio URL: /search?from=Roma&to=New York&date=2026-04-01
     const { from, to, date } = req.query;
 
-    if (!from || !to || !date) {
-      return res.status(400).json({ message: "Parametri 'from', 'to' e 'date' obbligatori." });
+    if (!from || !date) {
+      return res.status(400).json({ message: "Parametri 'from' e 'date' obbligatori." });
     }
 
     const searchDate = new Date(date as string);
@@ -30,28 +30,38 @@ router.get('/search', async (req, res) => {
       $or: [{ name: new RegExp(from as string, 'i') }, { city: new RegExp(from as string, 'i') }]
     });
 
-    const destAirport = await Airport.findOne({
-      $or: [{ name: new RegExp(to as string, 'i') }, { city: new RegExp(to as string, 'i') }]
-    });
-
-    if (!originAirport || !destAirport) {
-      return res.status(404).json({ message: "Aeroporto di partenza o destinazione non trovato." });
+    let destAirport = null;
+    if (to) {
+      destAirport = await Airport.findOne({
+        $or: [{ name: new RegExp(to as string, 'i') }, { city: new RegExp(to as string, 'i') }]
+      });
     }
 
-    // Definiamo l'intervallo di tempo per la ricerca (Tutto il giorno specificato)
+    if (!originAirport) {
+      return res.status(404).json({ message: "Aeroporto di partenza non trovato." });
+    }
+
+    if (to && !destAirport) {
+      return res.status(404).json({ message: "Aeroporto di destinazione non trovato." });
+    }
+
+    // Definiamo l'intervallo di tempo per la ricerca (Dalla data specificata in poi)
     const startOfDay = new Date(searchDate);
     startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date(searchDate);
-    endOfDay.setHours(23, 59, 59, 999);
 
-    // console.log(`🔎 Ricerca voli da ${originAirport.name} a ${destAirport.name} il ${startOfDay.toISOString().split('T')[0]}`);
+    // console.log(`🔎 Ricerca voli da ${originAirport.name} a ${destAirport ? destAirport.name : 'QUALUNQUE'} dal ${startOfDay.toISOString().split('T')[0]}`);
 
     // --- STRATEGIA A: VOLI DIRETTI ---
-    const directFlights = await Flight.find({
+    const query: any = {
       from_airport: originAirport._id,
-      to_airport: destAirport._id,
-      date_departure: { $gte: startOfDay, $lte: endOfDay }
-    })
+      date_departure: { $gte: startOfDay }
+    };
+
+    if (destAirport) {
+      query.to_airport = destAirport._id;
+    }
+
+    const directFlights = await Flight.find(query)
       .populate('airline')
       .populate('from_airport')
       .populate('to_airport')
@@ -121,10 +131,27 @@ router.get('/search', async (req, res) => {
           }
         }
     */
-    // Ordiniamo per data partenza
-    results.sort((a, b) => a.legs[0].date_departure.getTime() - b.legs[0].date_departure.getTime());
+    // 4. Ordinamento
+    const sort = req.query.sort as string || 'price';
 
-    res.status(200).json(results);
+    results.sort((a, b) => {
+      if (sort === 'price') {
+        return a.total_price - b.total_price;
+      } else if (sort === 'duration') {
+        return a.duration_hours - b.duration_hours;
+      } else if (sort === 'stops') {
+        return a.legs.length - b.legs.length;
+      } else if (sort === 'depart') {
+        return a.legs[0].date_departure.getTime() - b.legs[0].date_departure.getTime();
+      }
+      return 0;
+    });
+
+    // 5. Filtro per numero passeggeri
+    const passengers = parseInt(req.query.passengers as string) || 1;
+    const filteredResults = results.filter(r => r.available_seats >= passengers);
+
+    res.status(200).json(filteredResults);
 
   } catch (error) {
     console.error("Errore nella ricerca voli:", error);

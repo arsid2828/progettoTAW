@@ -37,7 +37,7 @@
       </div>
       <div class="field sort-field">
         <label for="sort">Ordina per</label>
-        <select id="sort" formControlName="sort">
+        <select id="sort" formControlName="sort" (change)="onSubmit()">
           <option value="price">Prezzo (cres.)</option>
           <option value="depart">Data e ora partenza</option>
           <option value="duration">Tempo di percorrenza</option>
@@ -73,9 +73,19 @@
 
       <div class="card-body">
         <div class="flight-meta">
-          <span class="date">{{ res.legs[0].date_departure | date:'yyyy-MM-dd' }}</span>
-          <span class="time">{{ res.legs[0].date_departure | date:'HH:mm' }}</span>
-          <span class="seats-badge">Posti rimanenti: {{ res.available_seats }}</span>
+          <div class="meta-col">
+            <span class="meta-label">Partenza</span>
+            <span class="date">{{ res.legs[0].date_departure | date:'dd/MM/yyyy' }}</span>
+            <span class="time">{{ res.legs[0].date_departure | date:'HH:mm' }}</span>
+          </div>
+          <div class="meta-arrow">➝</div>
+          <div class="meta-col">
+            <span class="meta-label">Arrivo</span>
+            <span class="date">{{ res.legs[res.legs.length-1].date_arrival | date:'dd/MM/yyyy' }}</span>
+            <span class="time">{{ res.legs[res.legs.length-1].date_arrival | date:'HH:mm' }}</span>
+          </div>
+
+          <span class="seats-badge">Posti: {{ res.available_seats }}</span>
         </div>
 
         <div class="airline-info">
