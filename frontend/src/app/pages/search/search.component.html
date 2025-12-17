@@ -52,3 +52,43 @@
   </form>
 </section>
 
+<section *ngIf="searched" class="results-wrapper">
+  <h2 class="section-title">Risultati ricerca</h2>
+
+  <div *ngIf="results.length === 0" class="no-results">
+    <p>Nessun volo trovato per questa ricerca.</p>
+  </div>
+
+  <div *ngFor="let res of results" class="result-card">
+    <!-- Assuming "legs" array has at least one flight. Using first leg for main info for now -->
+    <ng-container *ngIf="res.legs && res.legs.length > 0">
+      <div class="card-header">
+        <div class="route-info">
+          <span class="city">{{ res.legs[0].from_airport.city }} ({{ res.legs[0].from_airport.code }})</span>
+          <span class="arrow">→</span>
+          <span class="city">{{ res.legs[res.legs.length-1].to_airport.city }} ({{
+            res.legs[res.legs.length-1].to_airport.code }})</span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="flight-meta">
+          <span class="date">{{ res.legs[0].date_departure | date:'yyyy-MM-dd' }}</span>
+          <span class="time">{{ res.legs[0].date_departure | date:'HH:mm' }}</span>
+          <span class="seats-badge">Posti rimanenti: {{ getSeats(res) }}</span>
+        </div>
+
+        <div class="airline-info">
+          Airline: {{ getAirlineName(res.legs[0]) }}
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <!-- Using total_price from response or fallback -->
+        <button class="btn btn-book">
+          Da €{{ (res.total_price || 99) | number:'1.2-2' }} - Prenota
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</section>

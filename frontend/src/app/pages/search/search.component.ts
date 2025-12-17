@@ -11,7 +11,7 @@ import { FlightService } from '@app/shared/flight.service';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   form = this.fb.group({
     from: ['', Validators.required],
@@ -23,6 +23,9 @@ export class SearchComponent {
     sort: ['price'],
   });
 
+  results: any[] = [];
+  searched = false;
+
   onTripTypeChange() {
     if (this.form.get('oneWay')!.value) this.form.get('returnDate')!.reset();
   }
@@ -30,21 +33,36 @@ export class SearchComponent {
 
   flightService = inject(FlightService);
   onSubmit() {
-    //  FACCIO UNA RICHIESTA AL BACKEND, LA VEDI SUGLI STRUMENTI DI SVILUPPO (F12) NELLA SEZIONE RETE sul browser
-    /*if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    console.log('Ricerca voli:', this.form.value);*/
-    this.flightService.getFlights("niente").subscribe({
-      next: (response) => {
+    this.searched = true;
+    this.results = []; // Clear previous results
+
+    console.log('Ricerca voli:', this.form.value);
+
+    // Map form values to query params expected by backend
+    const queryParams = {
+      from: this.form.value.from,
+      to: this.form.value.to,
+      date: this.form.value.departDate
+    };
+
+    this.flightService.getFlights(queryParams).subscribe({
+      next: (response: any) => {
         console.log('Risposta dal backend:', response);
+        this.results = response;
       },
       error: (error) => {
         console.error('Errore nella richiesta:', error);
       }
     });
+  }
 
-    
+  // Helper to get seats (mocked for now as backend doesn't return it yet)
+  getSeats(flight: any): number {
+    return Math.floor(Math.random() * 50) + 10;
+  }
 
-
-
+  // Helper to get airline name safely
+  getAirlineName(leg: any): string {
+    return leg.airline ? (leg.airline.name || 'SkyJourney') : 'Airline';
   }
 }
