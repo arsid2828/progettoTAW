@@ -5,7 +5,9 @@
       <button type="button" class="btn btn-submit" (click)="goBack()">← Indietro</button>
     </ng-container>
     <ng-template #showAccedi>
+      <!-- Keep Accedi (app-huser) first, Biglietti right of it and only when logged-in -->
       <app-huser *ngIf="!isAirlinePage()"></app-huser>
+      <a *ngIf="isHome() && auth.isLoggedIn()" routerLink="/biglietti" class="btn btn-submit" style="text-decoration:none; margin-left:8px;">Biglietti</a>
       <a *ngIf="isAirlinePage()" routerLink="/" class="btn btn-submit" style="text-decoration:none;">← Home</a>
     </ng-template>
   </div>

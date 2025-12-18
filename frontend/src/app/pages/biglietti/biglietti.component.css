@@ -1,0 +1,7 @@
+.tickets-page{display:flex;justify-content:center;padding:40px 0}
+.tickets-card{width:640px;background:#fff;border-radius:8px;padding:24px;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+.tickets-card h2{text-align:center;color:#1d6ff0;margin-bottom:18px}
+.ticket{border:1px solid #eee;padding:12px;border-radius:6px;margin-bottom:12px}
+.ticket-title{font-weight:700;color:#1a56b8}
+.ticket-meta{font-size:13px;color:#444;margin-top:6px}
+.no-tickets{text-align:center;padding:18px;color:#666}

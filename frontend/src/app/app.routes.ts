@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent, title: 'Registrati' },
   { path: 'login', component: LoginComponent, title: 'Accedi' },
   { path: 'passengers', component: PassengersComponent, title: 'Passeggeri' },
+  { path: 'biglietti', loadComponent: () => import('./pages/biglietti/biglietti.component').then(m => m.BigliettiComponent), title: 'I miei biglietti' },
   { path: 'airline-area', component: AirlineAreaComponent, title: 'Area Compagnia' },
   //{ path: 'airline-area', loadComponent: () => import('./pages/airline-area/airline-area.component').then(m => m.AirlineAreaComponent), title: 'Area Compagnia' },
   { path: 'add-plane', loadComponent: () => import('./pages/add-plane/add-plane.component').then(m => m.AddPlaneComponent), title: 'Aggiungi Aereo' },

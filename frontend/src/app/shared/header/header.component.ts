@@ -29,6 +29,11 @@ export class HeaderComponent {
     return this.router.url.includes('/airline-area');
   }
 
+  isHome(): boolean {
+    const url = this.router.url || '';
+    return url === '/' || url === '/search' || url.startsWith('/search?');
+  }
+
   goBack(): void {
     // Navigate back to search page
     this.router.navigate(['/search']);

@@ -1,0 +1,16 @@
+<div class="tickets-page">
+  <div class="tickets-card">
+    <h2>I miei biglietti</h2>
+
+    <div *ngIf="tickets && tickets.length; else noTickets">
+      <div class="ticket" *ngFor="let t of tickets">
+        <div class="ticket-title">{{t.title}}</div>
+        <div class="ticket-meta">{{t.date}} · Passeggero: {{t.passenger}} · Prezzo: {{t.price}}</div>
+      </div>
+    </div>
+
+    <ng-template #noTickets>
+      <div class="no-tickets">Non ci sono biglietti disponibili.</div>
+    </ng-template>
+  </div>
+</div>
