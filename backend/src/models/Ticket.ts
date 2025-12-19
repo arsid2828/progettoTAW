@@ -13,7 +13,7 @@ export type TicketDoc = {
 const schema = new mongoose.Schema<TicketDoc>({
   flight: { type: mongoose.Schema.Types.ObjectId, ref: 'Flight', required: true },
   profile: { type: mongoose.Schema.Types.ObjectId, ref: 'Profile', required: true },
-  seat_class: { type: mongoose.Schema.Types.ObjectId, ref: 'SeatClass', required: true },
+  seat_class: { type: mongoose.Schema.Types.ObjectId, ref: 'SeatType', required: true },
   price_paid: { type: Number, required: true },
   p_nome: String,
   p_cognome: String,

@@ -1,16 +1,25 @@
 <div class="tickets-page">
   <div class="tickets-card">
-    <h2>I miei biglietti</h2>
-
-    <div *ngIf="tickets && tickets.length; else noTickets">
-      <div class="ticket" *ngFor="let t of tickets">
-        <div class="ticket-title">{{t.title}}</div>
-        <div class="ticket-meta">{{t.date}} · Passeggero: {{t.passenger}} · Prezzo: {{t.price}}</div>
+    <h2>I miei {{tickets.length }} biglietti</h2>
+   
+    <div *ngIf="tickets.length > 0">
+      <div class="tickets" *ngFor="let t of tickets">
+        <div class="ticket-title">
+          {{ t.flight?.from_airport?.city }} ({{ t.flight?.from_airport?.code }}) 
+          → 
+          {{ t.flight?.to_airport?.city }} ({{ t.flight?.to_airport?.code }})
+        </div>
+        <div class="ticket-meta">
+          {{ t.p_nome }} {{ t.p_cognome }} · 
+          {{ t.flight?.date_departure | date:'dd/MM/yyyy HH:mm' }} · 
+          Classe: {{ t.seat_class?.seat_class }} ·
+          Prezzo: €{{ t.price_paid | number:'1.2-2' }}
+        </div>
       </div>
     </div>
 
-    <ng-template #noTickets>
-      <div class="no-tickets">Non ci sono biglietti disponibili.</div>
-    </ng-template>
+    <div *ngIf="tickets.length === 0" class="no-tickets">
+      Non ci sono biglietti disponibili.
+    </div>
   </div>
 </div>

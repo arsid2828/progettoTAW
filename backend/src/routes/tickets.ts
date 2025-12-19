@@ -18,7 +18,13 @@ router.get('/',auth, async (req, res) => {
 
         // Recupera tutti i biglietti dell'utente
         const tickets = await Ticket.find({ profile: userId })
-            .populate('flight')
+            .populate({
+                path: 'flight',
+                populate: [
+                    { path: 'from_airport' },
+                    { path: 'to_airport' }
+                ]
+            })
             .populate('seat_class')
             .populate('profile');
 
