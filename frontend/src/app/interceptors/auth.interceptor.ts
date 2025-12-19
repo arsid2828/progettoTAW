@@ -24,7 +24,8 @@ export const authInterceptor = (
         return authService.refresh().pipe(
           switchMap(() => next(authService.addToken(req))),
           catchError(() => {
-            authService.logout();
+            // Instead of logging out, emit an event or handle session expiration gracefully
+            console.warn('Session expired. Please log in again.');
             return throwError(() => error);
           })
         );

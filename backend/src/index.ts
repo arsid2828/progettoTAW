@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import flightsRoute from './routes/flights';
+import ticketsRoute from './routes/tickets';
 import profileRouter from './routes/profile';
 import sessionRouter from './routes/session';
 import { seedAirports } from './seed/airports';
@@ -25,53 +26,6 @@ const startServer = async () => {
   try {
     // A. Connessione al DB
     await mongoose.connect(MONGO_URI);
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-    console.log('MongoDB connesso');
-
     // B. Esegui il Seed (SOLO dopo che il DB è connesso)
 
     await seedAll(); 
@@ -88,6 +42,7 @@ const startServer = async () => {
 startServer();
 // rotte
 app.use('/api/flights', flightsRoute);
+app.use('/api/tickets', ticketsRoute);
 
 // health
 app.get('/api/health', (_,res)=>res.json({ ok:true }));

@@ -3,13 +3,15 @@ import { auth } from '../middleware/auth';
 import { Airport } from '../models/Airport';
 import { Flight } from '../models/Flight';
 import { SeatType } from '../models/SeatType';
+import { Ticket } from '../models/Ticket';
+import { Profile } from '../models/Profile';
 
 const router = Router();
 
 // Helper per validare le date
 const isValidDate = (d: any) => d instanceof Date && !isNaN(d.getTime());
 //<TODO> eliminare auth dalla riga sotto setve solo per verificare se i token funzionano
-router.get('/search', async (req, res) => {
+router.get('', async (req, res) => {
   try {
     // 1. Estrazione Query Params
     // Esempio URL: /search?from=Roma&to=New York&date=2026-04-01
@@ -159,4 +161,12 @@ router.get('/search', async (req, res) => {
   }
 });
 
+
 export default router;
+
+// Extend the Request interface to include the user property
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: { _id: string };
+  }
+}

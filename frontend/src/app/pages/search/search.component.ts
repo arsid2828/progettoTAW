@@ -58,6 +58,22 @@ export class SearchComponent {
     });
   }
 
+  bookTicket(flightId: string) {
+    const requestData = { flightId };
+
+    this.flightService.bookTicket(requestData).subscribe({
+      next: (response: any) => {
+        console.log('Ticket booked successfully:', response);
+        alert('Ticket booked successfully!');
+        this.onSubmit(); // Refresh search results
+      },
+      error: (error) => {
+        console.error('Error booking ticket:', error);
+        alert('Failed to book ticket. Please try again.');
+      }
+    });
+  }
+
 
 
   // Helper to get airline name safely

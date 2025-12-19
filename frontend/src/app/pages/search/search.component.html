@@ -95,7 +95,7 @@
 
       <div class="card-footer">
         <!-- Using total_price from response or fallback -->
-        <button class="btn btn-book">
+        <button class="btn btn-book" (click)="bookTicket(res.legs[0]._id)" [disabled]="res.available_seats === 0">
           Da €{{ res.total_price | number:'1.2-2' }} - Prenota
         </button>
       </div>

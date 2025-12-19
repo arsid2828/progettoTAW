@@ -1,17 +1,26 @@
-import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { Profile } from '../models/Profile';
 
-const ACCESS_SECRET = 'access-secret-lungo'; // o process.env.ACCESS_SECRET
-
-export const auth = (req: any, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ msg: 'No token' });
-
+export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const payload = jwt.verify(token, ACCESS_SECRET) as { id: string };
-    req.user = payload;    // importante: ora tutte le route hanno req.user
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authorization header missing or invalid' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+
+    const user = await Profile.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    req.user = { _id: user._id.toString() };
     next();
   } catch (error) {
-    return res.status(401).json({ msg: 'Token scaduto o invalido' });
+    console.error('Authentication errorWWaWW:', error);
+    return res.status(401).json({ message: 'Unauthorized!!!!'+ (error instanceof Error ? ': ' + error.message : '') });
   }
 };

@@ -21,6 +21,7 @@ services:
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb://mongo:27017/airdb
+      - JWT_SECRET=access-secret-lungo
     depends_on:
       - mongo
       - redis

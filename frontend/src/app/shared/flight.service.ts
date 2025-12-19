@@ -10,6 +10,10 @@ export class FlightService {
   constructor() { }
 
   getFlights(data: any) {
-    return this.http.get(this.apiUrl + "flights/search", { params: data });
+    return this.http.get(this.apiUrl + "flights", { params: data });
+  }
+
+  bookTicket(data: any) {
+    return this.http.post(this.apiUrl + "tickets", data);
   }
 }
