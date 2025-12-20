@@ -3,6 +3,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import flightsRoute from './routes/flights';
 import ticketsRoute from './routes/tickets';
+import airportsRoute from './routes/airports';
+import planesRoute from './routes/planes';
 import profileRouter from './routes/profile';
 import sessionRouter from './routes/session';
 import { seedAirports } from './seed/airports';
@@ -28,7 +30,7 @@ const startServer = async () => {
     await mongoose.connect(MONGO_URI);
     // B. Esegui il Seed (SOLO dopo che il DB è connesso)
 
-    await seedAll(); 
+    await seedAll();
     // C. Avvia il server (SOLO dopo che i dati sono pronti)
     app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
 
@@ -43,15 +45,17 @@ startServer();
 // rotte
 app.use('/api/flights', flightsRoute);
 app.use('/api/tickets', ticketsRoute);
+app.use('/api/airports', airportsRoute);
+app.use('/api/planes', planesRoute); // Registered
 
 // health
-app.get('/api/health', (_,res)=>res.json({ ok:true }));
+app.get('/api/health', (_, res) => res.json({ ok: true }));
 
 
 app.use('/api/session', sessionRouter);
 app.use('/api/session/', sessionRouter);
-app.use('/api/profile', profileRouter);   
-app.use('/api/profile/', profileRouter);   
+app.use('/api/profile', profileRouter);
+app.use('/api/profile/', profileRouter);
 
 const PORT = process.env.PORT || 3000;
 //app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

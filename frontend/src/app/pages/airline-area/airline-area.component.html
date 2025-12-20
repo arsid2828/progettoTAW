@@ -116,8 +116,8 @@
                 <div class="form-group">
                     <label for="plane_id">Aereo</label>
                     <select id="plane_id" name="plane_id" [(ngModel)]="newFlight.planeId" required>
-                        <option *ngFor="let plane of planes" [value]="plane.id">
-                            {{ plane.id }} - {{ plane.model }}
+                        <option *ngFor="let plane of planes" [value]="plane._id">
+                            {{ plane.brand }} {{ plane.model }} ({{ plane.registration }})
                         </option>
                     </select>
                     <a routerLink="/add-plane" class="btn btn-link">Aggiungi nuovo aereo</a>
@@ -197,19 +197,18 @@
                 <ul class="flight-items">
                     <li *ngFor="let f of flights" class="flight-item">
                         <div class="flight-route">
-                            {{ f.from_airport_rel.name }} → {{ f.to_airport_rel.name }}
+                            {{ f.from_airport?.name }} ({{f.from_airport?.code}}) → {{ f.to_airport?.name }}
+                            ({{f.to_airport?.code}})
                         </div>
                         <div class="flight-details">
-                            {{ f.date_departure }} {{ f.departure }} •
+                            {{ f.date_departure | date:'shortDate' }} {{ f.departure }} •
                             <span *ngFor="let seat_type of f.seat_types">
                                 {{ seat_type.type | titlecase }} €{{ seat_type.price | number:'1.2-2' }} •
                             </span>
                         </div>
-                        <!-- Stats map logic needs to be handled in TS helper or structure -->
-                        <!-- Assuming 'f' has stats attached or we use a pipe/helper method -->
                         <div class="flight-details" style="gap:.75rem;flex-wrap:wrap;">
-                            <span>Biglietti venduti: <strong>{{ getSold(f.id) }}</strong></span>
-                            <span>Incasso volo: <strong>€{{ getRevenue(f.id) | number:'1.2-2' }}</strong></span>
+                            <span>Biglietti venduti: <strong>{{ getSold(f._id) }}</strong></span>
+                            <span>Incasso volo: <strong>€{{ getRevenue(f._id) | number:'1.2-2' }}</strong></span>
                         </div>
                     </li>
                 </ul>

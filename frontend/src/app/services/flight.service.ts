@@ -11,16 +11,19 @@ export interface Route {
 export interface Airport {
     id: string;
     name: string;
+    city: string;
     code: string;
 }
 export interface Plane {
-    id: string;
+    _id: string; // MongoDB ID
+    brand: string;
     model: string;
+    registration: string;
 }
 export interface Flight {
-    id: string;
-    from_airport_rel: { name: string };
-    to_airport_rel: { name: string };
+    _id: string;
+    from_airport: { name: string, city: string, code: string };
+    to_airport: { name: string, city: string, code: string };
     date_departure: string;
     departure: string;
     seat_types: any[];
@@ -36,57 +39,25 @@ export class FlightService {
     constructor(private http: HttpClient) { }
 
     getAirlineStats(): Observable<any> {
-        // return this.http.get(`${this.apiUrl}/airline/stats`);
+        // For now, keep mock or implement backend route later if needed.
+        // User focused on ADDING flights, so stats are secondary.
         return of({
-            revenue: 15000.50,
-            sold: 342,
-            topRoutes: [
-                { from_name: 'Roma', to_name: 'Milano', sold: 120 },
-                { from_name: 'Parigi', to_name: 'Londra', sold: 95 }
-            ]
+            revenue: 0,
+            sold: 0,
+            topRoutes: []
         });
     }
 
     getPlanes(): Observable<Plane[]> {
-        // return this.http.get<Plane[]>(`${this.apiUrl}/airline/planes`);
-        return of([
-            { id: 'P001', model: 'Boeing 737' },
-            { id: 'P002', model: 'Airbus A320' }
-        ]);
+        return this.http.get<Plane[]>(`${this.apiUrl}/planes`);
     }
 
     getFlights(): Observable<Flight[]> {
-        // return this.http.get<Flight[]>(`${this.apiUrl}/airline/flights`);
-        return of([
-            {
-                id: 'F001',
-                from_airport_rel: { name: 'Fiumicino' },
-                to_airport_rel: { name: 'Malpensa' },
-                date_departure: '2025-12-25',
-                departure: '10:00',
-                seat_types: [
-                    { type: 'economy', price: 50 },
-                    { type: 'business', price: 150 }
-                ]
-            }
-        ]);
+        return this.http.get<Flight[]>(`${this.apiUrl}/flights/my-flights`);
     }
 
-    getAirports(city: string): Observable<Airport[]> {
-        // return this.http.get<Airport[]>(`${this.apiUrl}/airports?city=${city}`);
-        if (city.toLowerCase().includes('roma')) {
-            return of([
-                { id: 'A001', name: 'Fiumicino', code: 'FCO' },
-                { id: 'A002', name: 'Ciampino', code: 'CIA' }
-            ]);
-        } else if (city.toLowerCase().includes('milano')) {
-            return of([
-                { id: 'A003', name: 'Malpensa', code: 'MXP' },
-                { id: 'A004', name: 'Linate', code: 'LIN' }
-            ]);
-        } else {
-            return of([]);
-        }
+    getAirports(city?: string): Observable<Airport[]> {
+        return this.http.get<Airport[]>(`${this.apiUrl}/airports`);
     }
 
     addFlight(flightData: any): Observable<any> {
@@ -94,8 +65,7 @@ export class FlightService {
     }
 
     addPlane(plane: any): Observable<any> {
-        // return this.http.post(`${this.apiUrl}/airline/planes`, plane);
-        return of(plane);
+        return this.http.post(`${this.apiUrl}/planes`, plane);
     }
 
     getFlightById(id: string) {
@@ -103,8 +73,7 @@ export class FlightService {
     }
 
     addAirport(airport: any): Observable<any> {
-        // return this.http.post(`${this.apiUrl}/airports`, airport);
-        return of(airport);
+        return this.http.post(`${this.apiUrl}/airports`, airport);
     }
 }
 

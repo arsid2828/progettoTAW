@@ -10,6 +10,98 @@ const router = Router();
 
 // Helper per validare le date
 const isValidDate = (d: any) => d instanceof Date && !isNaN(d.getTime());
+
+// GET /api/flights/my-flights - Get flights for the logged-in airline
+router.get('/my-flights', auth, async (req, res) => {
+  try {
+    const flights = await Flight.find({ airline: req.user?._id })
+      .populate('from_airport')
+      .populate('to_airport')
+      .populate('plane')
+      .sort({ date_departure: 1 });
+
+    // Populate seat types manually or virtually if needed, but for listing basic info is enough
+    const results = await Promise.all(flights.map(async (f) => {
+      const seats = await SeatType.find({ flight: f._id });
+      return {
+        ...f.toObject(),
+        seat_types: seats // Attach seat info for display
+      };
+    }));
+
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// POST /api/flights - Create new flight
+router.post('/', auth, async (req, res) => {
+  try {
+    const {
+      fromAirportId, toAirportId, dateDeparture, dateArrival,
+      timeDeparture, timeArrival, planeId,
+      priceEconomy, seatsEconomy,
+      priceBusiness, seatsBusiness,
+      priceFirst, seatsFirst,
+      priceBag, priceBaggage
+    } = req.body;
+
+    // Combine date and time
+    const startDateTime = new Date(`${dateDeparture}T${timeDeparture}`);
+    const endDateTime = new Date(`${dateArrival}T${timeArrival}`);
+
+    if (!isValidDate(startDateTime) || !isValidDate(endDateTime)) {
+      return res.status(400).json({ message: 'Date o orari non validi' });
+    }
+
+    // Create Flight
+    const newFlight = await Flight.create({
+      airline: req.user?._id, // Assumes auth middleware populates user (airline)
+      from_airport: fromAirportId,
+      to_airport: toAirportId,
+      plane: planeId,
+      date_departure: startDateTime,
+      date_arrival: endDateTime,
+      departure: timeDeparture,
+      arrival: timeArrival,
+      check_in: 'Open', // Default
+      bag_price: priceBag,
+      baggage_price: priceBaggage
+    });
+
+    // Create SeatTypes
+    const seatTypesData = [
+      { type: 'Economy', price: priceEconomy, seats: seatsEconomy },
+      { type: 'Business', price: priceBusiness, seats: seatsBusiness },
+      { type: 'First', price: priceFirst, seats: seatsFirst }
+    ];
+
+    const seatPromises = seatTypesData.map(st => {
+      if (st.price && st.seats) {
+        return SeatType.create({
+          flight: newFlight._id,
+          seat_class: st.type,
+          price: st.price,
+          number_available: st.seats,
+          number_total: st.seats, // Assuming total = available initially
+          baggage: false, // Default
+          type: st.type.toLowerCase() // 'economy', 'business', etc.
+        });
+      }
+      return Promise.resolve();
+    });
+
+    await Promise.all(seatPromises);
+
+    res.status(201).json(newFlight);
+  } catch (err) {
+    console.error("Errore creazione volo:", err);
+    res.status(500).json({ message: "Errore interno server" });
+  }
+});
+
 //<TODO> eliminare auth dalla riga sotto setve solo per verificare se i token funzionano
 router.get('', async (req, res) => {
   try {
@@ -27,23 +119,20 @@ router.get('', async (req, res) => {
     }
 
     // 2. Risoluzione Aeroporti (Da Nome/Città a ID)
-    // Usiamo una Regex per cercare parzialmente (es. "milano" trova "Milano Malpensa")
-    const originAirport = await Airport.findOne({
+    // TROVIAMO TUTTI GLI AEROPORTI CHE MATCHANO (es. "Roma" -> [FCO, CIA])
+    const originAirports = await Airport.find({
       $or: [{ name: new RegExp(from as string, 'i') }, { city: new RegExp(from as string, 'i') }]
     });
 
-    let destAirport = null;
-    if (to) {
-      destAirport = await Airport.findOne({
-        $or: [{ name: new RegExp(to as string, 'i') }, { city: new RegExp(to as string, 'i') }]
-      });
-    }
+    const destAirports = to ? await Airport.find({
+      $or: [{ name: new RegExp(to as string, 'i') }, { city: new RegExp(to as string, 'i') }]
+    }) : [];
 
-    if (!originAirport) {
+    if (originAirports.length === 0) {
       return res.status(404).json({ message: "Aeroporto di partenza non trovato." });
     }
 
-    if (to && !destAirport) {
+    if (to && destAirports.length === 0) {
       return res.status(404).json({ message: "Aeroporto di destinazione non trovato." });
     }
 
@@ -51,16 +140,14 @@ router.get('', async (req, res) => {
     const startOfDay = new Date(searchDate);
     startOfDay.setHours(0, 0, 0, 0);
 
-    // console.log(`🔎 Ricerca voli da ${originAirport.name} a ${destAirport ? destAirport.name : 'QUALUNQUE'} dal ${startOfDay.toISOString().split('T')[0]}`);
-
     // --- STRATEGIA A: VOLI DIRETTI ---
     const query: any = {
-      from_airport: originAirport._id,
+      from_airport: { $in: originAirports.map(a => a._id) }, // Check ANY matching airport
       date_departure: { $gte: startOfDay }
     };
 
-    if (destAirport) {
-      query.to_airport = destAirport._id;
+    if (destAirports.length > 0) {
+      query.to_airport = { $in: destAirports.map(a => a._id) };
     }
 
     const directFlights = await Flight.find(query)

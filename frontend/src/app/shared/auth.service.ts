@@ -18,23 +18,14 @@ export class AuthService {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http.post<{ accessToken: string }>(this.apiUrl + 'session/refresh', { refreshToken }).pipe(
       tap(res => {
-        this._isLoggedIn.set(true);
-        // Try to refresh profile name
-        this.http.get<any>(this.apiUrl + 'session/me').subscribe({
-          next: p => {
-            // p is the user/airline object
-            // Airline has 'name', Profile has 'nome' + 'cognome'
-            let full = '';
-            if (p?.name) {
-              full = p.name;
-            } else if (p?.nome) {
-              full = p.nome + (p.cognome ? (' ' + p.cognome) : '');
-            }
-            this._userName.set(full || (localStorage.getItem('email') || ''));
-          }, error: () => { this._userName.set(localStorage.getItem('email') || ''); }
-        });
+        // 1. Save new token IMMEDIATELY
         localStorage.setItem('accessToken', res.accessToken);
+        this._isLoggedIn.set(true);
 
+        // LOOP FIX: Do NOT call session/me here. 
+        // If it fails (401), the interceptor might trigger refresh() again => Infinite Loop.
+        // We accept that the username might just be the email until next full reload or navigation.
+        this._userName.set(localStorage.getItem('email') || 'User');
       })
     );
   }

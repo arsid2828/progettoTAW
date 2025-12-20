@@ -12,13 +12,17 @@ import { FlightService } from '../../services/flight.service';
     styleUrls: ['./add-plane.component.css']
 })
 export class AddPlaneComponent {
-    model: string = '';
+    plane = {
+        brand: '',
+        model: '',
+        registration: ''
+    };
 
     constructor(private flightService: FlightService, private router: Router) { }
 
     onAddPlane() {
-        if (this.model) {
-            this.flightService.addPlane({ model: this.model }).subscribe({
+        if (this.plane.brand && this.plane.model && this.plane.registration) {
+            this.flightService.addPlane(this.plane).subscribe({
                 next: () => {
                     console.log('Plane added');
                     this.router.navigate(['/airline-area']);

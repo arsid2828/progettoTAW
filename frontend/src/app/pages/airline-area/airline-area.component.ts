@@ -80,25 +80,40 @@ export class AirlineAreaComponent implements OnInit {
             this.flights = data;
             // Mock stats for loaded flights
             this.flights.forEach(f => {
-                this.statsMap[f.id] = { sold: 50, revenue: 2500 }; // Mock values
+                this.flights.forEach(f => {
+                    this.statsMap[f._id] = { sold: 50, revenue: 2500 }; // Mock values
+                });
             });
         });
     }
 
     loadAirports(): void {
-        if (this.newFlight.fromCity) {
-            this.flightService.getAirports(this.newFlight.fromCity).subscribe(data => {
+        this.flightService.getAirports().subscribe(data => {
+            // Filter if city is typed, otherwise show all OR show all and let select handle it
+            // Simple approach: show all available in DB for selection
+            if (this.newFlight.fromCity) {
+                this.availableFromAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()));
+            } else {
                 this.availableFromAirports = data;
-            });
-        }
-        if (this.newFlight.toCity) {
-            this.flightService.getAirports(this.newFlight.toCity).subscribe(data => {
+            }
+
+            if (this.newFlight.toCity) {
+                this.availableToAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.toCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.toCity.toLowerCase()));
+            } else {
                 this.availableToAirports = data;
-            });
-        }
+            }
+        });
     }
 
     onAddFlight(): void {
+        console.log('Validating flight form...', this.newFlight);
+        // Check if required fields are present (basic check)
+        if (!this.newFlight.fromAirportId || !this.newFlight.toAirportId || !this.newFlight.planeId) {
+            console.error('Missing required fields');
+            alert('Compila tutti i campi obbligatori (Aeroporti, Aereo, Date)');
+            return;
+        }
+
         console.log('Adding flight:', this.newFlight);
         this.flightService.addFlight(this.newFlight).subscribe({
             next: (res) => {

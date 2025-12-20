@@ -54,7 +54,9 @@ export class HeaderComponent {
 
   onLogout() {
     this.auth.logout();
-    // navigate back to search/home after logout
-    this.router.navigate(['/search']);
+    this.router.navigate(['/search']).then(() => {
+      // Optional: reload if state persists oddly
+      window.location.reload();
+    });
   }
 }
