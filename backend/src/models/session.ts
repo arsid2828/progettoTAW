@@ -3,10 +3,16 @@ import mongoose from 'mongoose';
 
 const sessionSchema = new mongoose.Schema({
   userId: {
-    type: mongoose.Schema.Types.ObjectId,  // è un ObjectId di MongoDB (es. 507f1f77bcf86cd799439011)
-    ref: 'Profile',     // quando fai .populate('userId') ti tira fuori il documento del model "Profile"
-    required: true,     // non puoi creare sessione senza utente
-    index: true         // velocizza le query tipo Session.find({ userId: ... })
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    refPath: 'userModel', // Riferimento dinamico
+    index: true
+  },
+  userModel: {
+    type: String,
+    required: true,
+    enum: ['Profile', 'Airline'],
+    default: 'Profile' // Opzionale, per backward compatibility
   },
   accessToken: {
     type: String,

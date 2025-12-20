@@ -1,8 +1,10 @@
 import express from 'express';
 import crypto from 'crypto';
 import { Profile } from '../models/Profile';
+import { Airline } from '../models/Airline';
 import { Session } from '../models/session';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { redis } from '../redis';
 
@@ -13,10 +15,49 @@ const REFRESH_SECRET = 'refresh-secret-ancora-piu-lungo';
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await Profile.findOne({ email });
-    const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
-    if (!user || user.password !== hashedPassword) {
-        return res.status(401).json({ message: 'Credenziali errate db=' + (user ? user.password : '') + " ric" + hashedPassword });
+    // 1. Cerca in Profile
+    let user: any = await Profile.findOne({ email });
+    let userModelType = 'Profile';
+
+    // 2. Se non trovato, cerca in Airline
+    if (!user) {
+        user = await Airline.findOne({ email });
+        userModelType = 'Airline';
+    }
+
+    if (!user) {
+        return res.status(401).json({ message: 'Credenziali errate (Utente non trovato)' });
+    }
+
+    // 3. Verifica password
+    let isValidByHash = false;
+    let isValidByBcrypt = false;
+
+    // Tentativo 1: SHA256 (Vecchio sistema Profile)
+    const hashedSHA256 = crypto.createHash('sha256').update(password).digest('hex');
+    if (user.password === hashedSHA256) {
+        isValidByHash = true;
+    }
+
+    // Tentativo 2: BCrypt (Nuovo sistema Airline)
+    // Nota: bcrypt.compare funziona solo se la psw nel DB è un hash bcrypt valido.
+    // Se è uno SHA256, bcrypt.compare darà false o errore, quindi lo gestiamo in try/catch o fidandoci del tipo.
+    // Per sicurezza, se è Profile usiamo SHA256 (come sopra), se è Airline usiamo bcrypt.
+    if (userModelType === 'Airline') {
+        isValidByBcrypt = await bcrypt.compare(password, user.password);
+    }
+
+    // Combinazione check
+    // Se è Profile -> deve matchare SHA256
+    // Se è Airline -> deve matchare Bcrypt
+    // O più genericamente: se uno dei due match è valido e coerente col tipo.
+
+    let isAuthenticated = false;
+    if (userModelType === 'Profile' && isValidByHash) isAuthenticated = true;
+    if (userModelType === 'Airline' && isValidByBcrypt) isAuthenticated = true;
+
+    if (!isAuthenticated) {
+        return res.status(401).json({ message: 'Credenziali errate' });
     }
 
     const token = crypto.randomBytes(48).toString('hex');
@@ -33,14 +74,16 @@ router.post('/login', async (req, res) => {
     const refreshToken = randomUUID();
     await redis.set(`rt:${refreshToken}`, userId, 'EX', 30 * 24 * 60 * 60);
 
-    /*await Session.create({
+    // Crea sessione su DB
+    await Session.create({
         userId: user._id,
+        userModel: userModelType, // 'Profile' o 'Airline'
         accessToken,
-        refreshToken
-    expiresAt,
+        refreshToken,
+        expiresAt,
         ipAddress: req.ip,
         userAgent: req.get('User-Agent')
-    });*/
+    });
 
     res.json({ accessToken, refreshToken });
 
@@ -58,11 +101,11 @@ router.post('/refresh', async (req, res) => {
 });
 // 2. ME → restituisce dati utente loggato
 router.get('/me', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Token mancante' });
+    const accessToken = req.headers.authorization?.split(' ')[1];
+    if (!accessToken) return res.status(401).json({ message: 'Token mancante' });
 
-    const session = await Session.findOne({ token, isActive: true })
-        .populate('userId', 'nome cognome email');
+    const session = await Session.findOne({ accessToken, isActive: true })
+        .populate('userId', 'nome cognome email name');
 
     if (!session) return res.status(401).json({ message: 'Sessione non valida' });
 

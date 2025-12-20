@@ -20,10 +20,19 @@ export class AuthService {
       tap(res => {
         this._isLoggedIn.set(true);
         // Try to refresh profile name
-        this.http.get<any>(this.apiUrl + 'profile/me').subscribe({ next: p => {
-          const full = (p?.nome || '') + (p?.cognome ? (' ' + p.cognome) : '');
-          this._userName.set(full || (localStorage.getItem('email') || ''));
-        }, error: () => { this._userName.set(localStorage.getItem('email') || ''); } });
+        this.http.get<any>(this.apiUrl + 'session/me').subscribe({
+          next: p => {
+            // p is the user/airline object
+            // Airline has 'name', Profile has 'nome' + 'cognome'
+            let full = '';
+            if (p?.name) {
+              full = p.name;
+            } else if (p?.nome) {
+              full = p.nome + (p.cognome ? (' ' + p.cognome) : '');
+            }
+            this._userName.set(full || (localStorage.getItem('email') || ''));
+          }, error: () => { this._userName.set(localStorage.getItem('email') || ''); }
+        });
         localStorage.setItem('accessToken', res.accessToken);
 
       })
@@ -75,11 +84,20 @@ export class AuthService {
         localStorage.setItem('accessToken', response.accessToken!);
         localStorage.setItem('refreshToken', response.refreshToken!);
         // Fetch profile/me to get full name
-        this.http.get<any>(this.apiUrl + 'profile/me').subscribe({
+        this.http.get<any>(this.apiUrl + 'session/me').subscribe({
           next: (p) => {
-            const full = (p?.nome || '') + (p?.cognome ? (' ' + p.cognome) : '');
-            this._userName.set(full || data.email);
-            localStorage.setItem('sj_user', JSON.stringify({ name: full }));
+            let full = '';
+            if (p?.name) {
+              // Airline
+              full = p.name;
+            } else if (p?.nome) {
+              // User
+              full = p.nome + (p.cognome ? (' ' + p.cognome) : '');
+            }
+
+            const display = full || data.email;
+            this._userName.set(display);
+            localStorage.setItem('sj_user', JSON.stringify({ name: display }));
           }, error: () => {
             // ignore
           }
@@ -96,6 +114,7 @@ export class AuthService {
     localStorage.removeItem('role');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('sj_user'); // Fix: remove persistent user data
   }
 
   signup(newUser: IProfile) {
