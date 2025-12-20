@@ -1,0 +1,67 @@
+<main class="container">
+  <div class="booking-card">
+    <h1 class="page-title">Conferma prenotazione</h1>
+    <p *ngIf="!flightId">Nessun volo selezionato.</p>
+    <div *ngIf="flight">
+      <div class="flight-summary">
+        <div><strong>Compagnia:</strong> {{ flight.airline?.name }}</div>
+        <div><strong>Rotta:</strong> {{ flight.from_airport?.name }} ({{ flight.from_airport?.code }}) → {{ flight.to_airport?.name }} ({{ flight.to_airport?.code }})</div>
+        <div><strong>Data:</strong> {{ flight.date_departure | date:'mediumDate' }}</div>
+        <div><strong>Orario:</strong> {{ flight.date_departure | date:'shortTime' }} → {{ flight.date_arrival | date:'shortTime' }}</div>
+      </div>
+
+      <div class="divider" style="margin:12px 0"></div>
+
+      <form (submit)="$event.preventDefault(); confirmBooking()">
+        <div *ngIf="passengerInputs?.length">
+          <div *ngFor="let p of passengerInputs; let i = index" class="passenger-section">
+            <h3 class="passenger-section-title">Passeggero {{ i + 1 }}</h3>
+            <div class="form-row">
+              <div class="form-group"><label>Nome</label><input [(ngModel)]="passengerInputs[i].nome" name="b_nome{{i}}"></div>
+              <div class="form-group"><label>Cognome</label><input [(ngModel)]="passengerInputs[i].cognome" name="b_cognome{{i}}"></div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!passengerInputs?.length && passengers?.length">
+          <label>Seleziona passeggero</label>
+          <select class="form-control">
+            <option *ngFor="let p of passengers" [value]="p.id">{{ p.nome }} {{ p.cognome }}</option>
+          </select>
+        </div>
+
+        <div style="margin-top:12px">
+          <div><strong>Seleziona classe</strong></div>
+          <div class="class-cards">
+            <label class="baggage-card" *ngFor="let st of seatTypes">
+              <input type="radio" name="class_sel" [value]="st._id" [checked]="seatTypes[0] === st">
+              <div class="baggage-card-content">
+                <span class="baggage-type">{{ st.seat_class }}</span>
+                <span class="baggage-price">€{{ st.price }}</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="baggage-section" style="margin-top:12px">
+          <div class="baggage-title">Bagaglio</div>
+          <div class="baggage-cards">
+            <label class="baggage-card"><input type="radio" name="bag" value="hand" checked>
+              <div class="baggage-card-content"><span class="baggage-type">Mano</span><span class="baggage-included">Incluso</span></div>
+            </label>
+            <label class="baggage-card"><input type="radio" name="bag" value="big_cabin">
+              <div class="baggage-card-content"><span class="baggage-type">Grande cabina</span><span class="baggage-price">+ €{{ flight.price_of_bag || 0 }}</span></div>
+            </label>
+            <label class="baggage-card"><input type="radio" name="bag" value="big_hold">
+              <div class="baggage-card-content"><span class="baggage-type">Stiva</span><span class="baggage-price">+ €{{ flight.price_of_baggage || 0 }}</span></div>
+            </label>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <button class="btn btn-primary" type="submit">Continua</button>
+          <a class="btn btn-outline" routerLink="/search">Annulla</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

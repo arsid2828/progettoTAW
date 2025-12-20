@@ -1,0 +1,26 @@
+<main class="container">
+  <div class="booking-card">
+    <h1 class="page-title">Seleziona il posto</h1>
+    <p *ngIf="!flightId">Nessun volo selezionato.</p>
+    <div *ngIf="flightId">
+      <div class="seat-pref-info-card">
+        <span class="seat-pref-info-title">Scegli la preferenza di posto</span>
+        <span class="seat-pref-info-options">Finestrino <strong>(+€15)</strong> · Corridoio <strong>(+€12)</strong> · In mezzo <strong>(+€8)</strong> · Casuale <strong>(0€)</strong></span>
+      </div>
+
+      <form (submit)="$event.preventDefault(); continue()">
+        <div class="seat-pref-cards" style="margin-top:12px">
+          <label class="seat-pref-card"><input type="radio" name="pref" value="window" (change)="chooseSeat('window')"> <div class="seat-pref-content"><span class="seat-pref-type">Finestrino</span><span class="seat-pref-price">+€15</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref" value="aisle" (change)="chooseSeat('aisle')"> <div class="seat-pref-content"><span class="seat-pref-type">Corridoio</span><span class="seat-pref-price">+€12</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref" value="middle" (change)="chooseSeat('middle')"> <div class="seat-pref-content"><span class="seat-pref-type">In mezzo</span><span class="seat-pref-price">+€8</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref" value="random" (change)="chooseSeat('random')"> <div class="seat-pref-content"><span class="seat-pref-type">Casuale</span><span class="seat-pref-price">0€</span></div></label>
+        </div>
+
+        <div style="margin-top:12px">
+          <button class="btn btn-primary" [disabled]="!selectedSeat">Continua al pagamento</button>
+          <a class="btn btn-outline" routerLink="/search">Annulla</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

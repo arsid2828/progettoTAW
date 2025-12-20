@@ -10,7 +10,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'access-secret-lungo');
 
     const user = await Profile.findById(decoded.id);
     if (!user) {

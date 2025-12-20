@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { FlightService } from '@app/shared/flight.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search',
@@ -32,6 +33,7 @@ export class SearchComponent {
 
 
   flightService = inject(FlightService);
+  router = inject(Router);
   onSubmit() {
     this.searched = true;
     this.results = []; // Clear previous results
@@ -58,20 +60,24 @@ export class SearchComponent {
     });
   }
 
-  bookTicket(flightId: string) {
-    const requestData = { flightId };
+  bookTicket(result: any) {
+    const passengers = Number(this.form.get('passengers')!.value) || 1;
+    // If result contains multiple legs (connection), go to multi-seat-choice
+    if (result?.legs && result.legs.length > 1) {
+      const ids = result.legs.map((l: any) => l._id).join(',');
+      this.router.navigate(['/seat-choice-multi'], { queryParams: { flightIds: ids, passengers } });
+      return;
+    }
 
-    this.flightService.bookTicket(requestData).subscribe({
-      next: (response: any) => {
-        console.log('Ticket booked successfully:', response);
-        alert('Ticket booked successfully!');
-        this.onSubmit(); // Refresh search results
-      },
-      error: (error) => {
-        console.error('Error booking ticket:', error);
-        alert('Failed to book ticket. Please try again.');
-      }
-    });
+    // Single leg: if multiple passengers, go to booking page (to select passengers & classes)
+    const legId = result?.legs && result.legs[0]?._id;
+    if (passengers > 1) {
+      this.router.navigate(['/booking'], { queryParams: { flightId: legId, passengers } });
+      return;
+    }
+
+    // Single passenger single leg: choose seat then payment
+    this.router.navigate(['/seat-choice'], { queryParams: { flightId: legId } });
   }
 
 

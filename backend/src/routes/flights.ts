@@ -164,6 +164,23 @@ router.get('', async (req, res) => {
 
 export default router;
 
+// Get single flight by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const flight = await Flight.findById(id)
+      .populate('airline')
+      .populate('from_airport')
+      .populate('to_airport');
+    if (!flight) return res.status(404).json({ message: 'Flight not found' });
+    const seatTypes = await SeatType.find({ flight: flight._id });
+    res.json({ flight, seatTypes });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // Extend the Request interface to include the user property
 declare module 'express-serve-static-core' {
   interface Request {

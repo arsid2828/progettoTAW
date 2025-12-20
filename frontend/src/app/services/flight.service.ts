@@ -98,6 +98,10 @@ export class FlightService {
         return of(plane);
     }
 
+    getFlightById(id: string) {
+        return this.http.get<any>(`${this.apiUrl}/flights/${id}`);
+    }
+
     addAirport(airport: any): Observable<any> {
         // return this.http.post(`${this.apiUrl}/airports`, airport);
         return of(airport);

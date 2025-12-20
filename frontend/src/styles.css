@@ -50,6 +50,9 @@ body,
   background-attachment: fixed;
 }
 
+/* Reserve space for fixed header */
+body { padding-top: 72px; }
+
 /* Sfondi specifici per la pagina compagnia */
 .airline-body {
   background-image: url("assets/path2.svg");

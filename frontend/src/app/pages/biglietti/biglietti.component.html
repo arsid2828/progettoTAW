@@ -1,25 +1,59 @@
-<div class="tickets-page">
-  <div class="tickets-card">
-    <h2>I miei {{tickets.length }} biglietti</h2>
-   
-    <div *ngIf="tickets.length > 0">
-      <div class="tickets" *ngFor="let t of tickets">
-        <div class="ticket-title">
-          {{ t.flight?.from_airport?.city }} ({{ t.flight?.from_airport?.code }}) 
-          → 
-          {{ t.flight?.to_airport?.city }} ({{ t.flight?.to_airport?.code }})
+<main class="container">
+  <div class="search-card">
+    <h1 class="page-title">I miei voli</h1>
+
+    <form class="flight-search-form" style="margin-bottom:1rem">
+      <div class="form-row">
+        <div class="form-group" style="min-width:220px">
+          <label for="sort">Ordina per</label>
+          <select id="sort" name="sort" (change)="sortTickets($any($event.target).value)">
+            <option value="asc">Data di partenza (dal più vicino)</option>
+            <option value="desc">Data di partenza (dal più lontano)</option>
+          </select>
         </div>
-        <div class="ticket-meta">
-          {{ t.p_nome }} {{ t.p_cognome }} · 
-          {{ t.flight?.date_departure | date:'dd/MM/yyyy HH:mm' }} · 
-          Classe: {{ t.seat_class?.seat_class }} ·
-          Prezzo: €{{ t.price_paid | number:'1.2-2' }}
+      </div>
+    </form>
+
+    <div *ngIf="tickets && tickets.length > 0; else noTickets">
+      <div class="flight-list" id="flight-list">
+        <div class="flight-card" *ngFor="let ticket of tickets" [attr.data-date]="ticket.flight?.date_departure">
+          <div class="flight-header">
+            <span class="airline">{{ ticket.flight?.airline?.name }}</span>
+            <span class="flight-route">
+              {{ ticket.flight?.from_airport?.name }} ({{ ticket.flight?.from_airport?.code }})
+              →
+              {{ ticket.flight?.to_airport?.name }} ({{ ticket.flight?.to_airport?.code }})
+            </span>
+          </div>
+
+          <div class="flight-details">
+            <span class="flight-date">{{ ticket.flight?.date_departure | date:'mediumDate' }}</span>
+            <span class="flight-time">{{ ticket.flight?.date_departure | date:'shortTime' }} → {{ ticket.flight?.date_arrival | date:'shortTime' }}</span>
+          </div>
+
+          <div class="flight-details">
+            <span>Classe: <strong>{{ ticket.seat_class?.seat_class || '—' }}</strong></span>
+            <span>Prezzo: <strong>{{ ticket.price_paid | currency:'EUR':'symbol':'1.0-0' }}</strong></span>
+          </div>
+
+          <div class="flight-details">
+            <span>Data prenotazione: <strong>{{ ticket.createdAt | date:'medium' }}</strong></span>
+          </div>
+
+          <div class="flight-details">
+            <span>Passeggero: <strong>{{ ticket.profile?.nome || ticket.p_nome }} {{ ticket.profile?.cognome || ticket.p_cognome }}</strong></span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div *ngIf="tickets.length === 0" class="no-tickets">
-      Non ci sono biglietti disponibili.
-    </div>
+    <ng-template #noTickets>
+      <div class="no-flights">
+        <p>Non hai ancora acquistato voli.</p>
+        <p><a class="btn btn-primary" routerLink="/search">Cerca un volo</a></p>
+      </div>
+    </ng-template>
+
   </div>
-</div>
+</main>
+

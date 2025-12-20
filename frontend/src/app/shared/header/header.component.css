@@ -11,6 +11,15 @@
   overflow: hidden;
 }
 
+/* Make header fixed on top */
+.main-header {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+}
+
 /* Auth pages: stack logo above and keep buttons on a separate row */
 .header-container.auth-page {
   /* keep logo centered above but avoid full-width stacked rows which enlarge header */
@@ -51,18 +60,8 @@
   gap: 0.8rem;
 }
 
-.header-center {
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.header-right {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.8rem;
-}
+/* Intentionally minimal: main layout and visuals are provided by global styles.css */
+:host { display: block; }
 
 .header-logo .logo-text {
   font-weight: 700;

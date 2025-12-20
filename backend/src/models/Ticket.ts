@@ -7,6 +7,7 @@ export type TicketDoc = {
   p_nome?: String;
   p_cognome?: String;
   p_indirizzo?: String;
+  seat_number?: string;
   p_sesso?: number;
   p_code?: String;
 };
@@ -18,8 +19,9 @@ const schema = new mongoose.Schema<TicketDoc>({
   p_nome: String,
   p_cognome: String,
   p_indirizzo: String,
+  seat_number: String,
   p_sesso: { type: Number, enum: [0,1] },
   p_code: String,
 }, { timestamps:true });
-schema.index({ passenger:1, flight:1 });
+schema.index({ profile:1, flight:1 });
 export const Ticket = mongoose.model<TicketDoc>('Ticket', schema);

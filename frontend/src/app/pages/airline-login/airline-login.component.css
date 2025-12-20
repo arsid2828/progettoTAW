@@ -1,0 +1,5 @@
+.airline-login-page { display:flex; justify-content:center; padding:40px 0 }
+.airline-login-card{ width:420px; background:var(--bg-light); border-radius:12px; padding:24px; box-shadow:var(--shadow); border:1px solid var(--border) }
+.airline-login-title{ text-align:center; color:var(--primary); margin-bottom:16px }
+.airline-login-form .form-group{ margin-bottom:12px }
+.airline-login-form input{ padding:0.7rem 0.9rem; border-radius:8px; border:1px solid var(--border); width:100% }

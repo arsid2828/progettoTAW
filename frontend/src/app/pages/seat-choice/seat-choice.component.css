@@ -1,0 +1,2 @@
+.seat-grid{ display:flex; gap:8px; flex-wrap:wrap }
+.seat-grid .btn { min-width:56px }

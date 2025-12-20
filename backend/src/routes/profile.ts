@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { Profile } from '../models/Profile';  // Importa il MODELLO (non ProfileDoc)
 import crypto from 'crypto';
+import { auth } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -33,6 +34,20 @@ router.post('/', async (req: Request, res: Response) => {
       res.status(400).json({ message: 'Errore sconosciuto nella creazione del profilo' });
     }
  
+  }
+});
+
+// Return current logged-in profile
+router.get('/me', auth, async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id;
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+    const profile = await Profile.findById(userId).select('-password');
+    if (!profile) return res.status(404).json({ message: 'Profile not found' });
+    res.json(profile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

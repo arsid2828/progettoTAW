@@ -19,7 +19,11 @@ export class AuthService {
     return this.http.post<{ accessToken: string }>(this.apiUrl + 'session/refresh', { refreshToken }).pipe(
       tap(res => {
         this._isLoggedIn.set(true);
-        this._userName.set(localStorage.getItem('email'));
+        // Try to refresh profile name
+        this.http.get<any>(this.apiUrl + 'profile/me').subscribe({ next: p => {
+          const full = (p?.nome || '') + (p?.cognome ? (' ' + p.cognome) : '');
+          this._userName.set(full || (localStorage.getItem('email') || ''));
+        }, error: () => { this._userName.set(localStorage.getItem('email') || ''); } });
         localStorage.setItem('accessToken', res.accessToken);
 
       })
@@ -55,6 +59,7 @@ export class AuthService {
     return this.http.post<ILogData>(this.apiUrl + "session/login", data).pipe(
       tap(response => {
         this._isLoggedIn.set(true);
+        // Initially set email; then fetch profile to get real name
         this._userName.set(data.email);
         // Assuming response might contain role or we set it from data if applicable, 
         // but typically login response should have it. 
@@ -69,6 +74,16 @@ export class AuthService {
         localStorage.setItem('role', role);
         localStorage.setItem('accessToken', response.accessToken!);
         localStorage.setItem('refreshToken', response.refreshToken!);
+        // Fetch profile/me to get full name
+        this.http.get<any>(this.apiUrl + 'profile/me').subscribe({
+          next: (p) => {
+            const full = (p?.nome || '') + (p?.cognome ? (' ' + p.cognome) : '');
+            this._userName.set(full || data.email);
+            localStorage.setItem('sj_user', JSON.stringify({ name: full }));
+          }, error: () => {
+            // ignore
+          }
+        });
       })
     );
   }

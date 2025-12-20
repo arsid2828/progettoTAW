@@ -1,29 +1,40 @@
-<div class="header-container" [class.auth-page]="isAuthPage()">
-  <div class="header-left">
-    <!-- Show back button on login/signup pages, otherwise show Accedi button -->
-    <ng-container *ngIf="isAuthPage(); else showAccedi">
-      <button type="button" class="btn btn-submit" (click)="goBack()">← Indietro</button>
-    </ng-container>
-    <ng-template #showAccedi>
-      <!-- Keep Accedi (app-huser) first, Biglietti right of it and only when logged-in -->
-      <app-huser *ngIf="!isAirlinePage()"></app-huser>
-      <a *ngIf="isHome() && auth.isLoggedIn()" routerLink="/biglietti" class="btn btn-submit" style="text-decoration:none; margin-left:8px;">Biglietti</a>
-      <a *ngIf="isAirlinePage()" routerLink="/" class="btn btn-submit" style="text-decoration:none;">← Home</a>
-    </ng-template>
-  </div>
+<!-- HEADER (converted from provided template) -->
+<header class="main-header">
+  <div class="header-content">
+    <div class="header-section">
+      <!-- Airline-login page: show back button -->
+      <ng-container *ngIf="isAirlineLogin()">
+        <a class="btn btn-outline btn-back" routerLink="/search">← Torna indietro</a>
+      </ng-container>
 
-  <div class="header-center">
-    <div class="header-logo"><span class="logo-text">SkyJourney</span>QQ</div>
-  </div>
+      <!-- Normal pages -->
+      <ng-container *ngIf="!isAirlineLogin()">
+        <ng-container *ngIf="auth.isLoggedIn(); else showLogin">
+          <div class="user-greeting">
+            <span class="welcome-text">Ciao, {{ auth.userName() }}!</span>
+            <!-- Show only one of the two buttons depending on current route -->
+            <ng-container *ngIf="isBigliettiPage(); else showBiglietti">
+              <a class="btn btn-primary" routerLink="/search">Cerca volo</a>
+            </ng-container>
+            <ng-template #showBiglietti>
+              <a class="btn btn-primary" routerLink="/biglietti">I miei voli</a>
+            </ng-template>
+            <a class="btn btn-outline" (click)="onLogout()">Logout</a>
+          </div>
+        </ng-container>
+        <ng-template #showLogin>
+          <a class="btn btn-primary" routerLink="/login">Accedi / Registrati</a>
+        </ng-template>
+      </ng-container>
+    </div>
 
-  <div class="header-right">
-    <!-- Area Compagnie button only visible on search/home page (not on login/signup) -->
-    <ng-container *ngIf="!isAuthPage()">
-      <a routerLink="/airline-area" class="btn btn-submit" style="text-decoration:none; display:inline-block;">Area
-        Compagnie</a>
-    </ng-container>
-  </div>
-</div>
+    <div class="header-logo"><span class="logo-text">SkyJourney</span></div>
 
-<!-- white strip below the header -->
-<div class="header-strip"></div>
+    <div class="header-section">
+      <a class="btn btn-airline" routerLink="/airline-login">Area Compagnie</a>
+    </div>
+  </div>
+</header>
+
+<!-- keep an available small separator for older layouts if needed -->
+<div class="header-strip" aria-hidden="true"></div>

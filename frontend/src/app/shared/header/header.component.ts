@@ -19,6 +19,10 @@ export class HeaderComponent {
     return { role: this.auth.userRole() };
   }
 
+  get userName() {
+    return this.auth.userName();
+  }
+
   isAuthPage(): boolean {
     // Show back button and hide Area Compagnie on login/signup pages
     const currentUrl = this.router.url;
@@ -29,9 +33,18 @@ export class HeaderComponent {
     return this.router.url.includes('/airline-area');
   }
 
+  isAirlineLogin(): boolean {
+    return this.router.url.includes('/airline-login');
+  }
+
   isHome(): boolean {
     const url = this.router.url || '';
     return url === '/' || url === '/search' || url.startsWith('/search?');
+  }
+
+  isBigliettiPage(): boolean {
+    const url = this.router.url || '';
+    return url.startsWith('/biglietti');
   }
 
   goBack(): void {
@@ -41,7 +54,7 @@ export class HeaderComponent {
 
   onLogout() {
     this.auth.logout();
-    // opzionale: ridireziona alla search
-    // location.assign('/'); // o usa il Router se preferisci
+    // navigate back to search/home after logout
+    this.router.navigate(['/search']);
   }
 }
