@@ -63,7 +63,7 @@
                         <label for="from_airport_id">Aeroporto di partenza</label>
                         <select id="from_airport_id" name="from_airport_id" [(ngModel)]="newFlight.fromAirportId"
                             required>
-                            <option *ngFor="let airport of availableFromAirports" [value]="airport.id">
+                            <option *ngFor="let airport of availableFromAirports" [value]="airport._id">
                                 {{ airport.name }} ({{ airport.code }})
                             </option>
                         </select>
@@ -71,7 +71,7 @@
                     <div class="form-group">
                         <label for="to_airport_id">Aeroporto di arrivo</label>
                         <select id="to_airport_id" name="to_airport_id" [(ngModel)]="newFlight.toAirportId" required>
-                            <option *ngFor="let airport of availableToAirports" [value]="airport.id">
+                            <option *ngFor="let airport of availableToAirports" [value]="airport._id">
                                 {{ airport.name }} ({{ airport.code }})
                             </option>
                         </select>

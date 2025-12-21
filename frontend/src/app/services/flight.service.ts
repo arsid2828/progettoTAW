@@ -9,7 +9,7 @@ export interface Route {
     sold: number;
 }
 export interface Airport {
-    id: string;
+    _id: string;
     name: string;
     city: string;
     code: string;

@@ -67,8 +67,8 @@ router.post('/', auth, async (req, res) => {
       departure: timeDeparture,
       arrival: timeArrival,
       check_in: 'Open', // Default
-      bag_price: priceBag,
-      baggage_price: priceBaggage
+      price_of_bag: priceBag,
+      price_of_baggage: priceBaggage
     });
 
     // Create SeatTypes
