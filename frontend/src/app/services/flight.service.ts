@@ -39,13 +39,7 @@ export class FlightService {
     constructor(private http: HttpClient) { }
 
     getAirlineStats(): Observable<any> {
-        // For now, keep mock or implement backend route later if needed.
-        // User focused on ADDING flights, so stats are secondary.
-        return of({
-            revenue: 0,
-            sold: 0,
-            topRoutes: []
-        });
+        return this.http.get<any>(`${this.apiUrl}/flights/stats`);
     }
 
     getPlanes(): Observable<Plane[]> {

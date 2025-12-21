@@ -11,6 +11,73 @@ const router = Router();
 // Helper per validare le date
 const isValidDate = (d: any) => d instanceof Date && !isNaN(d.getTime());
 
+// GET /api/flights/stats - Get aggregated stats for the logged-in airline
+router.get('/stats', auth, async (req, res) => {
+  try {
+    const airlineId = req.user?._id;
+    // Find all flights for this airline
+    const flights = await Flight.find({ airline: airlineId }).select('_id from_airport to_airport');
+    const flightIds = flights.map(f => f._id);
+
+    // Aggregate tickets for these flights
+    const tickets = await Ticket.find({ flight: { $in: flightIds } });
+
+    const totalSold = tickets.length;
+    const totalRevenue = tickets.reduce((acc, t) => acc + t.price_paid, 0);
+
+    // Calculate top routes
+    const routeMap: { [key: string]: { sold: number, revenue: number, from_name: string, to_name: string } } = {};
+
+    // Helper to find flight info
+    const getFlightInfo = (fid: string) => flights.find(f => f._id.toString() === fid.toString());
+
+    for (const t of tickets) {
+      const fid = t.flight.toString();
+      if (!routeMap[fid]) {
+        const f = getFlightInfo(fid) as any; // populated? no, but we need names. 
+        // Wait, we didn't populate in the find above. Let's do it or just group by ID and populate later.
+        // Simpler: group by flight ID first.
+        routeMap[fid] = { sold: 0, revenue: 0, from_name: '', to_name: '' };
+      }
+      routeMap[fid].sold++;
+      routeMap[fid].revenue += t.price_paid;
+    }
+
+    // Now populate names for the routes that have sales
+    // Actually, let's just use the /my-flights logic for per-flight stats and here just return totals + top 3 flights
+
+    // Let's refine the topRoutes logic:
+    const salesByFlight = Object.keys(routeMap).map(fid => ({
+      flightId: fid,
+      sold: routeMap[fid].sold,
+      revenue: routeMap[fid].revenue
+    }));
+
+    salesByFlight.sort((a, b) => b.sold - a.sold);
+    const top3 = salesByFlight.slice(0, 3);
+
+    const topRoutes = await Promise.all(top3.map(async (item) => {
+      const f = await Flight.findById(item.flightId).populate('from_airport').populate('to_airport');
+      return {
+        from_name: (f?.from_airport as any)?.name || 'Unknown',
+        to_name: (f?.to_airport as any)?.name || 'Unknown',
+        sold: item.sold,
+        revenue: item.revenue
+      };
+    }));
+
+    res.json({
+      revenue: totalRevenue,
+      sold: totalSold,
+      topRoutes
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 // GET /api/flights/my-flights - Get flights for the logged-in airline
 router.get('/my-flights', auth, async (req, res) => {
   try {
@@ -20,12 +87,18 @@ router.get('/my-flights', auth, async (req, res) => {
       .populate('plane')
       .sort({ date_departure: 1 });
 
-    // Populate seat types manually or virtually if needed, but for listing basic info is enough
     const results = await Promise.all(flights.map(async (f) => {
       const seats = await SeatType.find({ flight: f._id });
+      // Calculate real stats from Tickets
+      const tickets = await Ticket.find({ flight: f._id });
+      const sold = tickets.length;
+      const revenue = tickets.reduce((sum, t) => sum + t.price_paid, 0);
+
       return {
         ...f.toObject(),
-        seat_types: seats // Attach seat info for display
+        seat_types: seats,
+        sold,       // Added
+        revenue     // Added
       };
     }));
 

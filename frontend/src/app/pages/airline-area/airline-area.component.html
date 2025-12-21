@@ -207,8 +207,8 @@
                             </span>
                         </div>
                         <div class="flight-details" style="gap:.75rem;flex-wrap:wrap;">
-                            <span>Biglietti venduti: <strong>{{ getSold(f._id) }}</strong></span>
-                            <span>Incasso volo: <strong>€{{ getRevenue(f._id) | number:'1.2-2' }}</strong></span>
+                            <span>Biglietti venduti: <strong>{{ getSold(f) }}</strong></span>
+                            <span>Incasso volo: <strong>€{{ getRevenue(f) | number:'1.2-2' }}</strong></span>
                         </div>
                     </li>
                 </ul>

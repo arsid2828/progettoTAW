@@ -78,12 +78,6 @@ export class AirlineAreaComponent implements OnInit {
     loadFlights(): void {
         this.flightService.getFlights().subscribe(data => {
             this.flights = data;
-            // Mock stats for loaded flights
-            this.flights.forEach(f => {
-                this.flights.forEach(f => {
-                    this.statsMap[f._id] = { sold: 50, revenue: 2500 }; // Mock values
-                });
-            });
         });
     }
 
@@ -127,11 +121,11 @@ export class AirlineAreaComponent implements OnInit {
         });
     }
 
-    getSold(flightId: string): number {
-        return this.statsMap[flightId]?.sold || 0;
+    getSold(flight: any): number {
+        return flight.sold || 0;
     }
 
-    getRevenue(flightId: string): number {
-        return this.statsMap[flightId]?.revenue || 0;
+    getRevenue(flight: any): number {
+        return flight.revenue || 0;
     }
 }
