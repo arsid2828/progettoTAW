@@ -14,7 +14,7 @@ const REFRESH_SECRET = 'refresh-secret-ancora-piu-lungo';
 // 1. LOGIN → crea sessione e restituisce token
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-
+    console.log('Tentativo di login per email:', email);
     // 1. Cerca in Profile
     let user: any = await Profile.findOne({ email });
     let userModelType = 'Profile';
@@ -38,7 +38,7 @@ router.post('/login', async (req, res) => {
     if (user.password === hashedSHA256) {
         isValidByHash = true;
     }
-
+    console.log('isValidByHash:', isValidByHash);
     // Tentativo 2: BCrypt (Nuovo sistema Airline)
     // Nota: bcrypt.compare funziona solo se la psw nel DB è un hash bcrypt valido.
     // Se è uno SHA256, bcrypt.compare darà false o errore, quindi lo gestiamo in try/catch o fidandoci del tipo.
@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
     const token = crypto.randomBytes(48).toString('hex');
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 giorni
 
-
+    console.log(`Utente ${userModelType} autenticato con successo:`, user.email);
 
     const userId = user._id.toString();
 
@@ -73,7 +73,7 @@ router.post('/login', async (req, res) => {
     // Refresh token 30 giorni + salvato in Redis
     const refreshToken = randomUUID();
     await redis.set(`rt:${refreshToken}`, userId, 'EX', 30 * 24 * 60 * 60);
-
+    console.log('Refresh token salvato in Redis per userId:', userId);
     // Crea sessione su DB
     await Session.create({
         userId: user._id,
@@ -84,7 +84,7 @@ router.post('/login', async (req, res) => {
         ipAddress: req.ip,
         userAgent: req.get('User-Agent')
     });
-
+    console.log('Sessione creata per utente:', user.email);
     res.json({ accessToken, refreshToken });
 
 });

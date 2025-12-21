@@ -25,7 +25,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.user = { _id: user._id.toString() };
     next();
   } catch (error) {
-    console.error('Authentication errorWWaWW:', error);
     return res.status(401).json({ message: 'Unauthorized!!!!' + (error instanceof Error ? ': ' + error.message : '') });
   }
 };

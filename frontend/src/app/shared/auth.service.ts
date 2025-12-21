@@ -35,10 +35,14 @@ export class AuthService {
   // usiamo Angular signals per semplicità
   private _isLoggedIn = signal<boolean>(false);
   private _userName = signal<string | null>(null);
+  private _name = signal<string | null>(null);
+  private _surname = signal<string | null>(null);
   private _userRole = signal<string | null>(null);
 
   isLoggedIn = this._isLoggedIn.asReadonly();
   userName = this._userName.asReadonly();
+  name = this._name.asReadonly();
+  surname = this._surname.asReadonly();
   userRole = this._userRole.asReadonly();
 
   constructor() {
@@ -50,6 +54,8 @@ export class AuthService {
         const obj = JSON.parse(saved);
         this._isLoggedIn.set(!!obj?.name);
         this._userName.set(obj?.name || null);
+        this._name.set(localStorage.getItem('nome') || null);
+        this._surname.set(localStorage.getItem('cognome') || null);
         this._userRole.set(role || null);
       } catch { /* ignore */ }
     }
@@ -88,6 +94,10 @@ export class AuthService {
 
             const display = full || data.email;
             this._userName.set(display);
+            localStorage.setItem('nome', p.nome || '');
+            localStorage.setItem('cognome', p.cognome || '');
+            this._name.set(localStorage.getItem('nome') || 'user');
+            this._surname.set(localStorage.getItem('cognome') || 'user');
             localStorage.setItem('sj_user', JSON.stringify({ name: display }));
           }, error: () => {
             // ignore
@@ -101,8 +111,12 @@ export class AuthService {
     this._isLoggedIn.set(false);
     this._userName.set(null);
     this._userRole.set(null);
+    this._name.set(null);
+    this._surname.set(null);
     localStorage.removeItem('email');
     localStorage.removeItem('role');
+    localStorage.removeItem('nome');
+    localStorage.removeItem('cognome');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('sj_user'); // Fix: remove persistent user data

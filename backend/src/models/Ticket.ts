@@ -6,10 +6,8 @@ export type TicketDoc = {
   price_paid: number;
   p_nome?: String;
   p_cognome?: String;
-  p_indirizzo?: String;
   seat_number?: string;
-  p_sesso?: number;
-  p_code?: String;
+  bagage_choice?: string;
 };
 const schema = new mongoose.Schema<TicketDoc>({
   flight: { type: mongoose.Schema.Types.ObjectId, ref: 'Flight', required: true },
@@ -18,10 +16,8 @@ const schema = new mongoose.Schema<TicketDoc>({
   price_paid: { type: Number, required: true },
   p_nome: String,
   p_cognome: String,
-  p_indirizzo: String,
   seat_number: String,
-  p_sesso: { type: Number, enum: [0,1] },
-  p_code: String,
+  bagage_choice: String
 }, { timestamps:true });
 schema.index({ profile:1, flight:1 });
 export const Ticket = mongoose.model<TicketDoc>('Ticket', schema);

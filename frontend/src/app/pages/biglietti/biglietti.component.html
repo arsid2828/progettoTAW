@@ -41,7 +41,7 @@
           </div>
 
           <div class="flight-details">
-            <span>Passeggero: <strong>{{ ticket.profile?.nome || ticket.p_nome }} {{ ticket.profile?.cognome || ticket.p_cognome }}</strong></span>
+            <span>Passeggero: <strong>{{ ticket.p_nome || ticket.profile?.nome }} {{ ticket.p_cognome || ticket.profile?.cognome }}</strong></span>
           </div>
         </div>
       </div>

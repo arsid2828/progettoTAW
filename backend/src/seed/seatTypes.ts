@@ -95,6 +95,7 @@ export const seedSeatTypes = async () => {
                 flight: flight._id,
                 seat_class: "ECONOMY",
                 number_available: 36,
+                number_total: 36,
                 price: economyPrice
             });
 
@@ -103,6 +104,7 @@ export const seedSeatTypes = async () => {
                 flight: flight._id,
                 seat_class: "BUSINESS",
                 number_available: 20,
+                number_total: 20,
                 price: businessPrice
             });
 
@@ -111,6 +113,7 @@ export const seedSeatTypes = async () => {
                 flight: flight._id,
                 seat_class: "FIRST",
                 number_available: 12,
+                number_total: 12,
                 price: firstPrice
             });
 

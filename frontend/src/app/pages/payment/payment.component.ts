@@ -32,7 +32,9 @@ export class PaymentComponent {
     this.loading = true;
     // simulate payment delay then create the ticket
     setTimeout(() => {
-      const payload: any = { flightId: this.ticketId };
+      const payload: any = { flightId: this.ticketId,
+        passengers:this.route.snapshot.queryParamMap.get('passengers')
+       };
       if (this.seat) payload.seat_pref = this.seat;
       if (this.seatTypeId) payload.seatTypeId = this.seatTypeId;
       if (this.baggage) payload.baggageChoice = this.baggage;

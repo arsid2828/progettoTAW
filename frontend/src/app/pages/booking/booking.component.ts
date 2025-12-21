@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TicketService } from '@app/shared/ticket.service';
 import { FlightService } from '@app/services/flight.service';
+import { AuthService } from '@app/shared/auth.service';
 
 @Component({
   selector: 'app-booking',
@@ -16,31 +17,43 @@ export class BookingComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   ticketService = inject(TicketService);
-
+  auth = inject(AuthService);
   flightId: string | null = null;
   selectedSeat: string | null = null;
+  seatTypeId: string | null = null;
   flight: any = null;
   seatTypes: any[] = [];
   passengers: any[] = [];
-  passengerInputs: Array<{ nome: string; cognome: string }> = [];
+  passengerInputs: Array<{ nome: string; cognome: string; baggageChoice: string;}> = [
+    { nome: this.auth.name() || '', cognome: this.auth.surname() || '', baggageChoice: 'hand' }
+  ];
+
+stringify = JSON.stringify;
 
   constructor() {
     this.flightId = this.route.snapshot.queryParamMap.get('flightId');
     this.selectedSeat = this.route.snapshot.queryParamMap.get('seat');
     // try to load flight details
     if (this.flightId) {
-      const fs = inject(FlightService);
+      const fs = inject(FlightService); 
       fs.getFlightById(this.flightId).subscribe({ next: (res) => {
         this.flight = res.flight;
         this.seatTypes = res.seatTypes || [];
       }, error: () => {} });
     }
     // load passengers from localStorage if any
-    try { const s = localStorage.getItem('passengers'); if (s) this.passengers = JSON.parse(s); } catch {}
-    // if passengers param present and no saved passengers, create inputs
+    try { const s = localStorage.getItem('passengers'); if (s) this.passengerInputs = JSON.parse(s); } catch {}
+    // if passengers param present, adjust passengerInputs length to p
     const p = Number(this.route.snapshot.queryParamMap.get('passengers')) || 0;
-    if (p > 0 && this.passengers.length === 0) {
-      for (let i = 0; i < p; i++) this.passengerInputs.push({ nome: '', cognome: '' });
+
+    if (p > 0) {
+      if (this.passengerInputs.length > p) {
+        this.passengerInputs = this.passengerInputs.slice(0, p);
+      } else {
+        for (let i = this.passengerInputs.length; i < p; i++) {
+          this.passengerInputs.push({ nome: '', cognome: '', baggageChoice: 'hand' });
+        }
+      }
     }
   }
 
@@ -49,6 +62,6 @@ export class BookingComponent {
     // save passenger inputs if present
     try { if (this.passengerInputs.length) localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch {}
     // Navigate to payment page; ticket will be created after successful payment
-    this.router.navigate(['/payment'], { queryParams: { ticketFlightId: this.flightId, seat: this.selectedSeat } });
+    this.router.navigate(['/payment'], { queryParams: {ticketFlightId: this.flightId, seatTypeId: this.seatTypeId,passengers:JSON.stringify(this.passengerInputs) } });
   }
 }
