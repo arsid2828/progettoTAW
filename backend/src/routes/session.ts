@@ -85,7 +85,11 @@ router.post('/login', async (req, res) => {
         userAgent: req.get('User-Agent')
     });
     console.log('Sessione creata per utente:', user.email);
-    res.json({ accessToken, refreshToken });
+    res.json({
+        accessToken,
+        refreshToken,
+        role: user.role || (userModelType === 'Airline' ? 'airline' : 'user')
+    });
 
 });
 // REFRESH
@@ -105,7 +109,7 @@ router.get('/me', async (req, res) => {
     if (!accessToken) return res.status(401).json({ message: 'Token mancante' });
 
     const session = await Session.findOne({ accessToken, isActive: true })
-        .populate('userId', 'nome cognome email name');
+        .populate('userId', 'nome cognome email name role');
 
     if (!session) return res.status(401).json({ message: 'Sessione non valida' });
 

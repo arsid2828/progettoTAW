@@ -21,6 +21,7 @@ export const routes: Routes = [
   //{ path: 'airline-area', loadComponent: () => import('./pages/airline-area/airline-area.component').then(m => m.AirlineAreaComponent), title: 'Area Compagnia' },
   { path: 'add-plane', loadComponent: () => import('./pages/add-plane/add-plane.component').then(m => m.AddPlaneComponent), title: 'Aggiungi Aereo' },
   { path: 'add-airport', loadComponent: () => import('./pages/add-airport/add-airport.component').then(m => m.AddAirportComponent), title: 'Aggiungi Aeroporto' },
+  { path: 'admin', loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent), title: 'Admin Dashboard' },
   { path: '', pathMatch: 'full', redirectTo: 'search' },
   { path: '**', redirectTo: 'search' }
 ];

@@ -7,6 +7,7 @@ import airportsRoute from './routes/airports';
 import planesRoute from './routes/planes';
 import profileRouter from './routes/profile';
 import sessionRouter from './routes/session';
+import airlinesRouter from './routes/airlines'; // New import
 import { seedAirports } from './seed/airports';
 import { seedAll } from './seed/seed';
 
@@ -56,6 +57,7 @@ app.use('/api/session', sessionRouter);
 app.use('/api/session/', sessionRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/profile/', profileRouter);
+app.use('/api/airlines', airlinesRouter); // New route
 
 const PORT = process.env.PORT || 3000;
 //app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

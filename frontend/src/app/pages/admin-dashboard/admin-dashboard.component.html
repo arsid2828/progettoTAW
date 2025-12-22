@@ -1,0 +1,41 @@
+<div class="admin-container">
+    <h1>Pannello Amministratore</h1>
+
+    <section class="admin-section">
+        <h2>Gestione Utenti ({{users.length}})</h2>
+        <div class="list-container">
+            <div *ngFor="let user of users" class="list-item">
+                <div class="info">
+                    <strong>{{ user.nome }} {{ user.cognome }}</strong>
+                    <span>{{ user.email }}</span>
+                </div>
+                <button class="btn-delete" (click)="deleteUser(user._id)">❌</button>
+            </div>
+            <div *ngIf="users.length === 0" class="empty">Nessun utente trovato</div>
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <h2>Gestione Compagnie Aeree ({{airlines.length}})</h2>
+
+        <!-- Form creazione airline -->
+        <div class="airline-form">
+            <h3>Aggiungi Nuova Compagnia</h3>
+            <form [formGroup]="airlineForm" (ngSubmit)="createAirline()">
+                <input formControlName="name" placeholder="Nome Compagnia" />
+                <input formControlName="email" placeholder="Email (Login)" />
+                <input formControlName="password" type="password" placeholder="Password" />
+                <button type="submit" [disabled]="airlineForm.invalid" class="btn-add">Crea Airline</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <div *ngFor="let airline of airlines" class="list-item">
+                <div class="info">
+                    <strong>{{ airline.name }}</strong>
+                    <span>{{ airline.email }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

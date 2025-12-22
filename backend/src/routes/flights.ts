@@ -365,8 +365,9 @@ router.get('/:id', async (req, res) => {
 });
 
 // Extend the Request interface to include the user property
-declare module 'express-serve-static-core' {
+// Removed: using declaration in auth.ts
+/*declare module 'express-serve-static-core' {
   interface Request {
     user?: { _id: string };
   }
-}
+}*/

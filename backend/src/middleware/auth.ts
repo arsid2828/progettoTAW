@@ -3,6 +3,12 @@ import jwt from 'jsonwebtoken';
 import { Profile } from '../models/Profile';
 import { Airline } from '../models/Airline';
 
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: { _id: string; role?: string };
+  }
+}
+
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
@@ -22,7 +28,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    req.user = { _id: user._id.toString() };
+    req.user = { _id: user._id.toString(), role: user.role };
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Unauthorized!!!!' + (error instanceof Error ? ': ' + error.message : '') });

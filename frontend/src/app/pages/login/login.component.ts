@@ -27,6 +27,11 @@ export class LoginComponent {
       next: (risposta) => {
         console.log('Utente loggato!', risposta);
 
+        if (this.authService.userRole() === 'admin') {
+          this.router.navigate(['/admin']);
+          return;
+        }
+
         const returnUrl = this.route.snapshot.queryParams['returnUrl'];
         if (returnUrl) {
           this.router.navigateByUrl(returnUrl);

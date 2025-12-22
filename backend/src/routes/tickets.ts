@@ -69,10 +69,10 @@ router.post('/', auth, async (req, res) => {
             const passengerSeatTypeId = passenger && (passenger.seatTypeId || passenger.seat_type || passenger.seat_class);
             let seatType = null;
             if (passengerSeatTypeId) {
-                try { seatType = await SeatType.findById(passengerSeatTypeId); } catch {}
+                try { seatType = await SeatType.findById(passengerSeatTypeId); } catch { }
             }
             if (!seatType && seatTypeId) {
-                try { seatType = await SeatType.findById(seatTypeId); } catch {}
+                try { seatType = await SeatType.findById(seatTypeId); } catch { }
             }
             if (!seatType) {
                 seatType = await SeatType.findOne({ flight: flightId, seat_class: 'ECONOMY' });
@@ -135,8 +135,3 @@ router.post('/', auth, async (req, res) => {
 
 export default router;
 
-declare module 'express-serve-static-core' {
-    interface Request {
-        user?: { _id: string };
-    }
-}
