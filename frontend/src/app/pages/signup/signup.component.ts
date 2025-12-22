@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../shared/auth.service';
 import { IProfile } from '@app/shared/i-profile';
@@ -30,6 +30,8 @@ export class SignupComponent {
   password2: string = '';
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
+  route: ActivatedRoute = inject(ActivatedRoute);
+
   isValidPassword(): boolean {
     return this.password === this.password2 && this.password.length > 4;
   }
@@ -59,7 +61,13 @@ export class SignupComponent {
     this.authService.signup(newUser).subscribe({
       next: (risposta) => {
         console.log('Utente creato!', risposta);
-        this.router.navigate(['/login']);
+
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+        if (returnUrl) {
+          this.router.navigate(['/login'], { queryParams: { returnUrl } });
+        } else {
+          this.router.navigate(['/login']);
+        }
       },
       error: (err) => console.error('Errore', err)
     });

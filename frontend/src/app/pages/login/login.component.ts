@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../shared/auth.service';
 import { ILogData } from '@app/shared/i-log-data';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +15,8 @@ export class LoginComponent {
   password: string = '';
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
+  route: ActivatedRoute = inject(ActivatedRoute);
+
   onSubmit() {
 
     let loginData: ILogData = {
@@ -24,7 +26,13 @@ export class LoginComponent {
     this.authService.login(loginData).subscribe({
       next: (risposta) => {
         console.log('Utente loggato!', risposta);
-        this.router.navigate(['/search']);
+
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+        if (returnUrl) {
+          this.router.navigateByUrl(returnUrl);
+        } else {
+          this.router.navigate(['/search']);
+        }
       },
       error: (err) => console.error('Errore', err)
     });

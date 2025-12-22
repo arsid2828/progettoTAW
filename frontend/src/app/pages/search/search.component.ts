@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { FlightService } from '@app/shared/flight.service';
+import { AuthService } from '@app/shared/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -34,6 +35,8 @@ export class SearchComponent {
 
   flightService = inject(FlightService);
   router = inject(Router);
+  authService = inject(AuthService);
+
   onSubmit() {
     this.searched = true;
     this.results = []; // Clear previous results
@@ -62,16 +65,31 @@ export class SearchComponent {
 
   bookTicket(result: any) {
     const passengers = Number(this.form.get('passengers')!.value) || 1;
-    // If result contains multiple legs (connection), go to booking-multi first
+    let targetPath = '/booking';
+    let queryParams: any = {};
+
+    // Determine target and params
     if (result?.legs && result.legs.length > 1) {
+      targetPath = '/booking-multi';
       const ids = result.legs.map((l: any) => l._id).join(',');
-      this.router.navigate(['/booking-multi'], { queryParams: { flightIds: ids, passengers } });
+      queryParams = { flightIds: ids, passengers };
+    } else {
+      const legId = result?.legs && result.legs[0]?._id;
+      queryParams = { flightId: legId, passengers };
+    }
+
+    if (!this.authService.isLoggedIn()) {
+      // Create the return URL tree
+      const urlTree = this.router.createUrlTree([targetPath], { queryParams });
+      // Serialize it to a string
+      const returnUrl = this.router.serializeUrl(urlTree);
+
+      this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
 
-    // Single leg: always go to booking first (booking will forward to seat-choice)
-    const legId = result?.legs && result.legs[0]?._id;
-    this.router.navigate(['/booking'], { queryParams: { flightId: legId, passengers } });
+    // Normal navigation
+    this.router.navigate([targetPath], { queryParams });
   }
 
 
