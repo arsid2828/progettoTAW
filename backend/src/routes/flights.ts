@@ -248,51 +248,74 @@ router.get('', async (req, res) => {
         legs: [f]
       };
     }));
-    /*
-        // --- STRATEGIA B: VOLI CON 1 SCALO (Algoritmo Semplificato) ---
-        // 1. Trova tutti i voli che partono dall'origine in quel giorno verso OVUNQUE
-        const firstLegs = await Flight.find({
-          from_airport: originAirport._id,
-          date_departure: { $gte: startOfDay, $lte: endOfDay },
-          to_airport: { $ne: destAirport._id } // Escludiamo quelli che vanno già a destinazione (già presi sopra)
+    // --- STRATEGIA B: VOLI CON 1 SCALO ---
+    // 1. Trova potenziali prime tratte: da Origin a (Ovunque tranne Destination)
+    //    Partenza >= startOfDay
+    const firstLegs = await Flight.find({
+      from_airport: { $in: originAirports.map(a => a._id) },
+      date_departure: { $gte: startOfDay },
+      to_airport: { $nin: destAirports.map(a => a._id) } // Non diretti
+    }).populate('airline')
+      .populate('from_airport')
+      .populate('to_airport')
+      .populate('plane');
+
+    // 2. Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
+    const MAX_LAYOVER_HOURS = 24;
+    const MIN_LAYOVER_HOURS = 1;
+
+    for (const leg1 of firstLegs) {
+      if (!leg1.date_arrival) continue;
+
+      const minDeparture2 = new Date(leg1.date_arrival);
+      minDeparture2.setHours(minDeparture2.getHours() + MIN_LAYOVER_HOURS);
+
+      const maxDeparture2 = new Date(leg1.date_arrival);
+      maxDeparture2.setHours(maxDeparture2.getHours() + MAX_LAYOVER_HOURS);
+
+      // Cerca seconda tratta: Hub -> Destinazione
+      const connectingFlights = await Flight.find({
+        from_airport: leg1.to_airport._id, // Hub
+        to_airport: { $in: destAirports.map(a => a._id) },
+        date_departure: { $gte: minDeparture2, $lte: maxDeparture2 }
+      }).populate('airline')
+        .populate('from_airport')
+        .populate('to_airport')
+        .populate('plane');
+
+      for (const leg2 of connectingFlights) {
+        // Calcolo prezzi (somma dei min prices found)
+        // Nota: Questo è approssimativo per scopi dimostrativi
+        const seats1 = await SeatType.find({ flight: leg1._id });
+        const seats2 = await SeatType.find({ flight: leg2._id });
+
+        if (seats1.length === 0 || seats2.length === 0) continue;
+
+        const getMinPrice = (sts: any[]) => {
+          const eco = sts.find(s => s.seat_class?.toLowerCase() === 'economy');
+          return eco ? eco.price : Math.min(...sts.map(s => s.price));
+        };
+
+        const price1 = getMinPrice(seats1);
+        const price2 = getMinPrice(seats2);
+
+        // Disponibilità deve esserci su entrambi
+        const totalSeats = Math.min(
+          seats1.reduce((acc, s) => acc + s.number_available, 0),
+          seats2.reduce((acc, s) => acc + s.number_available, 0)
+        );
+
+        const totalDuration = (leg2.date_arrival.getTime() - leg1.date_departure.getTime()) / 36e5;
+
+        results.push({
+          type: '1_STOP',
+          total_price: price1 + price2,
+          available_seats: totalSeats,
+          duration_hours: totalDuration,
+          legs: [leg1, leg2]
         });
-    
-        // 2. Per ogni primo volo, cerca se esiste un secondo volo verso la destinazione finale
-        for (const leg1 of firstLegs) {
-          // Il secondo volo deve partire DOPO l'arrivo del primo (minimo 1 ora di scalo, max 24 ore)
-          const minDeparture = new Date(leg1.date_arrival);
-          minDeparture.setHours(minDeparture.getHours() + 1); // +1 ora scalo
-    
-          const maxDeparture = new Date(leg1.date_arrival);
-          maxDeparture.setHours(maxDeparture.getHours() + 24); // max 24h attesa
-    
-          // Cerca volo: Da (Hub intermedio) -> A (Destinazione Finale)
-          const connectingFlights = await Flight.find({
-            from_airport: leg1.to_airport, // Parte dove è arrivato il primo
-            to_airport: destAirport._id,
-            date_departure: { $gte: minDeparture, $lte: maxDeparture }
-          })
-            .populate('airline')
-            .populate('from_airport')
-            .populate('to_airport');
-    
-          // Se troviamo coincidenze, aggiungiamole ai risultati
-          for (const leg2 of connectingFlights) {
-            // Calcolo durata totale (Partenza volo 1 -> Arrivo volo 2)
-            const totalDuration = (leg2.date_arrival.getTime() - leg1.date_departure.getTime()) / 36e5;
-    
-            // Dobbiamo popolare anche il primo volo per averlo completo nel JSON
-            await leg1.populate(['airline', 'from_airport', 'to_airport']);
-    
-            results.push({
-              type: '1_STOP',
-              total_price: 180, // Prezzo fittizio somma
-              duration_hours: totalDuration,
-              legs: [leg1, leg2] // Array di due voli
-            });
-          }
-        }
-    */
+      }
+    }
     // 4. Ordinamento
     const sort = req.query.sort as string || 'price';
 
