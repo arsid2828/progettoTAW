@@ -12,7 +12,7 @@
         <ng-container *ngIf="auth.isLoggedIn(); else showLogin">
           <div class="user-greeting">
             <span class="welcome-text">Ciao, {{ auth.name() }} {{ auth.surname() }}! </span>
-            <ng-container *ngIf="!isAirlinePage()">
+            <ng-container *ngIf="!isAirlinePage() && !isAdmin()">
               <!-- Show only one of the two buttons depending on current route -->
               <ng-container *ngIf="isBigliettiPage(); else showBiglietti">
                 <a class="btn btn-primary" routerLink="/search">Cerca volo</a>

@@ -31,7 +31,8 @@ router.post('/', auth, async (req: any, res: any) => {
             name,
             email,
             password: hashedPassword,
-            role: 'airline'
+            role: 'airline',
+            mustChangePassword: true
         });
 
         res.status(201).json({ message: 'Airline created', airline: newAirline });

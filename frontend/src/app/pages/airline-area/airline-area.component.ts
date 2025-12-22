@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FlightService, Route, Airport, Plane, Flight } from '../../services/flight.service';
 
+import { AuthService } from '../../shared/auth.service';
+import { inject } from '@angular/core';
+
 // Interfaces (Should preferably be in shared/models)
 interface SeatType {
     type: string;
@@ -19,7 +22,9 @@ interface SeatType {
     styleUrls: ['./airline-area.component.css']
 })
 export class AirlineAreaComponent implements OnInit {
-    airlineName: string = 'Compagnia A'; // Should come from AuthService
+    auth = inject(AuthService);
+    get airlineName() { return this.auth.name() || this.auth.userName() || 'Compagnia'; }
+
     totalRevenue: number = 0;
     totalSold: number = 0;
     topRoutes: Route[] = [];

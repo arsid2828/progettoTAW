@@ -22,6 +22,7 @@ export const routes: Routes = [
   { path: 'add-plane', loadComponent: () => import('./pages/add-plane/add-plane.component').then(m => m.AddPlaneComponent), title: 'Aggiungi Aereo' },
   { path: 'add-airport', loadComponent: () => import('./pages/add-airport/add-airport.component').then(m => m.AddAirportComponent), title: 'Aggiungi Aeroporto' },
   { path: 'admin', loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent), title: 'Admin Dashboard' },
+  { path: 'change-password', loadComponent: () => import('./pages/change-password/change-password.component').then(m => m.ChangePasswordComponent), title: 'Cambia Password' },
   { path: '', pathMatch: 'full', redirectTo: 'search' },
   { path: '**', redirectTo: 'search' }
 ];

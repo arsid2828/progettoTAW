@@ -94,10 +94,15 @@ export class AuthService {
 
             const display = full || data.email;
             this._userName.set(display);
-            localStorage.setItem('nome', p.nome || '');
+
+            // Fix: Handle Airline 'name' vs User 'nome'
+            const realName = p.name || p.nome || '';
+            localStorage.setItem('nome', realName);
             localStorage.setItem('cognome', p.cognome || '');
-            this._name.set(localStorage.getItem('nome') || 'user');
-            this._surname.set(localStorage.getItem('cognome') || 'user');
+
+            this._name.set(realName || 'User');
+            this._surname.set(localStorage.getItem('cognome') || '');
+
             localStorage.setItem('sj_user', JSON.stringify({ name: display }));
           }, error: () => {
             // ignore

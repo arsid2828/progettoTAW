@@ -37,6 +37,10 @@ export class HeaderComponent {
     return this.router.url.includes('/airline-login');
   }
 
+  isAdmin(): boolean {
+    return this.auth.userRole() === 'admin';
+  }
+
   isHome(): boolean {
     const url = this.router.url || '';
     return url === '/' || url === '/search' || url.startsWith('/search?');

@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { redis } from '../redis';
+import { auth } from '../middleware/auth';
 
 const router = express.Router();
 const ACCESS_SECRET = 'access-secret-lungo';
@@ -88,7 +89,8 @@ router.post('/login', async (req, res) => {
     res.json({
         accessToken,
         refreshToken,
-        role: user.role || (userModelType === 'Airline' ? 'airline' : 'user')
+        role: user.role || (userModelType === 'Airline' ? 'airline' : 'user'),
+        mustChangePassword: user.mustChangePassword
     });
 
 });
@@ -138,6 +140,31 @@ router.post('/logout', async (req, res) => {
         tokenEliminato: !!deleted,
         numeroChiaviCancellate: deleted   // sarà 0 o 1
     });
+});
+
+// CHANGE PASSWORD
+router.post('/change-password', auth, async (req: any, res: any) => {
+    try {
+        const { newPassword } = req.body;
+        if (!newPassword) return res.status(400).json({ message: 'New password required' });
+
+        const userId = req.user._id;
+
+        let user: any = await Airline.findById(userId);
+        if (!user) user = await Profile.findById(userId);
+
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        user.mustChangePassword = false;
+        await user.save();
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error updating password' });
+    }
 });
 
 export default router;

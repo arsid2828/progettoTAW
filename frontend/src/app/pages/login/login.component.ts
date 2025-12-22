@@ -26,6 +26,12 @@ export class LoginComponent {
     this.authService.login(loginData).subscribe({
       next: (risposta) => {
         console.log('Utente loggato!', risposta);
+        console.log('CHECK CAMBIO PASS:', (risposta as any).mustChangePassword);
+
+        if ((risposta as any).mustChangePassword) {
+          this.router.navigate(['/change-password']);
+          return;
+        }
 
         if (this.authService.userRole() === 'admin') {
           this.router.navigate(['/admin']);

@@ -4,11 +4,13 @@ export type AirlineDoc = {
   email: string;
   password: string; // hashed
   role?: string;
+  mustChangePassword?: boolean;
 };
 const schema = new mongoose.Schema<AirlineDoc>({
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, default: 'airline' }
+  role: { type: String, default: 'airline' },
+  mustChangePassword: { type: Boolean, default: false }
 }, { timestamps: true });
 export const Airline = mongoose.model<AirlineDoc>('Airline', schema);
