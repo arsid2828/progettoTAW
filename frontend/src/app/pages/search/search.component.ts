@@ -62,22 +62,16 @@ export class SearchComponent {
 
   bookTicket(result: any) {
     const passengers = Number(this.form.get('passengers')!.value) || 1;
-    // If result contains multiple legs (connection), go to multi-seat-choice
+    // If result contains multiple legs (connection), go to booking-multi first
     if (result?.legs && result.legs.length > 1) {
       const ids = result.legs.map((l: any) => l._id).join(',');
-      this.router.navigate(['/seat-choice-multi'], { queryParams: { flightIds: ids, passengers } });
+      this.router.navigate(['/booking-multi'], { queryParams: { flightIds: ids, passengers } });
       return;
     }
 
-    // Single leg: if multiple passengers, go to booking page (to select passengers & classes)
+    // Single leg: always go to booking first (booking will forward to seat-choice)
     const legId = result?.legs && result.legs[0]?._id;
-    if (passengers > 1) {
-      this.router.navigate(['/booking'], { queryParams: { flightId: legId, passengers } });
-      return;
-    }
-
-    // Single passenger single leg: choose seat then payment
-    this.router.navigate(['/seat-choice'], { queryParams: { flightId: legId } });
+    this.router.navigate(['/booking'], { queryParams: { flightId: legId, passengers } });
   }
 
 

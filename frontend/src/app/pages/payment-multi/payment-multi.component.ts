@@ -33,10 +33,13 @@ export class PaymentMultiComponent {
     // simulate payment then create all tickets (one per passenger per flight)
     setTimeout(() => {
       const calls: any[] = [];
+      const seatTypeIdParam = this.route.snapshot.queryParamMap.get('seatTypeId');
       if (passengers.length) {
         for (const passenger of passengers) {
           for (const fid of flightIds) {
             const payload: any = { flightId: fid, seat_pref: seatSelections[fid] || 'random', p_nome: passenger.nome, p_cognome: passenger.cognome };
+            if (passenger && passenger.seatTypeId) payload.seatTypeId = passenger.seatTypeId;
+            else if (seatTypeIdParam) payload.seatTypeId = seatTypeIdParam;
             calls.push(this.ticketService.createTicket(payload));
           }
         }
@@ -44,6 +47,7 @@ export class PaymentMultiComponent {
         // single ticket per flight
         for (const fid of flightIds) {
           const payload: any = { flightId: fid, seat_pref: seatSelections[fid] || 'random' };
+          if (seatTypeIdParam) payload.seatTypeId = seatTypeIdParam;
           calls.push(this.ticketService.createTicket(payload));
         }
       }

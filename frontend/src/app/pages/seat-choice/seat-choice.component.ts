@@ -18,10 +18,12 @@ export class SeatChoiceComponent {
   chooseSeat(seat: string) { this.selectedSeat = seat; }
 
   continue() {
-    // pass selected seat to booking as query param (optional)
+    // pass selected seat to payment as query param
     const passengers = this.route.snapshot.queryParamMap.get('passengers');
-    const qp: any = { flightId: this.flightId, seat: this.selectedSeat };
+    const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId');
+    const qp: any = { ticketFlightId: this.flightId, seat: JSON.stringify(this.selectedSeat) };
     if (passengers) qp.passengers = passengers;
-    this.router.navigate(['/booking'], { queryParams: qp });
+    if (seatTypeId) qp.seatTypeId = seatTypeId;
+    this.router.navigate(['/payment'], { queryParams: qp });
   }
 }

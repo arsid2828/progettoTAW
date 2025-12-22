@@ -65,10 +65,14 @@ router.post('/', auth, async (req, res) => {
         for (const passenger of passengersArray) {
             console.log('ELABORAZIONE PASSEGGERO:', passenger);
             const { nome, cognome, seat_number, baggageChoice, seat_pref } = passenger;
-            // Determine seat type (class)
+            // Determine seat type (class) - prefer per-passenger selection
+            const passengerSeatTypeId = passenger && (passenger.seatTypeId || passenger.seat_type || passenger.seat_class);
             let seatType = null;
-            if (seatTypeId) {
-                seatType = await SeatType.findById(seatTypeId);
+            if (passengerSeatTypeId) {
+                try { seatType = await SeatType.findById(passengerSeatTypeId); } catch {}
+            }
+            if (!seatType && seatTypeId) {
+                try { seatType = await SeatType.findById(seatTypeId); } catch {}
             }
             if (!seatType) {
                 seatType = await SeatType.findOne({ flight: flightId, seat_class: 'ECONOMY' });

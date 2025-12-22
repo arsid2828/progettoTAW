@@ -24,10 +24,12 @@ export class SeatChoiceMultiComponent {
 
   continue(){
     // save selections and forward passengers param if present
-    try { localStorage.setItem('seatSelections', JSON.stringify(this.selections)); } catch {}
-    const passengers = this.route.snapshot.queryParamMap.get('passengers');
-    const qp: any = { flightIds: this.flightIds.join(',') };
-    if (passengers) qp.passengers = passengers;
-    this.router.navigate(['/booking-multi'], { queryParams: qp });
+      try { localStorage.setItem('seatSelections', JSON.stringify(this.selections)); } catch {}
+      const flightIds = this.flightIds.join(',');
+      const passengers = this.route.snapshot.queryParamMap.get('passengers') || '1';
+      const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId');
+      const qp: any = { flightIds, passengers };
+      if (seatTypeId) qp.seatTypeId = seatTypeId;
+      this.router.navigate(['/payment-multi'], { queryParams: qp });
   }
 }

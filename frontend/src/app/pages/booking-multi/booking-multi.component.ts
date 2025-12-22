@@ -22,6 +22,7 @@ export class BookingMultiComponent {
   flightIds: string[] = [];
   flights: any[] = [];
   passengersQty = 1;
+  seatTypeId: string | null = null;
   passengerInputs: Array<{ nome: string; cognome: string }> = [];
   loading = false;
   error: string | null = null;
@@ -46,6 +47,8 @@ export class BookingMultiComponent {
     if (!this.flightIds.length) return;
     // save passengers to localStorage for next steps
     try { localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch {}
-    this.router.navigate(['/payment-multi'], { queryParams: { flightIds: this.flightIds.join(','), passengers: this.passengersQty } });
+      const qp: any = { flightIds: this.flightIds.join(','), passengers: this.passengersQty };
+      if (this.seatTypeId) qp.seatTypeId = this.seatTypeId;
+      this.router.navigate(['/seat-choice-multi'], { queryParams: qp });
   }
 }

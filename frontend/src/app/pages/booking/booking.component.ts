@@ -61,7 +61,14 @@ stringify = JSON.stringify;
     if (!this.flightId) return;
     // save passenger inputs if present
     try { if (this.passengerInputs.length) localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch {}
-    // Navigate to payment page; ticket will be created after successful payment
-    this.router.navigate(['/payment'], { queryParams: {ticketFlightId: this.flightId, seatTypeId: this.seatTypeId,passengers:JSON.stringify(this.passengerInputs) } });
+    // proceed to seat-choice (booking -> seat choice -> payment)
+    const navExtras: any = { queryParams: { flightId: this.flightId } };
+    if (this.passengerInputs.length > 0) {
+      navExtras.queryParams.passengers = this.passengerInputs.length;
+    }
+    if (this.seatTypeId) {
+      navExtras.queryParams.seatTypeId = this.seatTypeId;
+    }
+    this.router.navigate(['/seat-choice'], navExtras);
   }
 }
