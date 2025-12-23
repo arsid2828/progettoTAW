@@ -9,7 +9,7 @@
 
       <!-- Normal pages -->
       <ng-container *ngIf="!isAirlineLogin()">
-        <ng-container *ngIf="auth.isLoggedIn(); else showLogin">
+        <ng-container *ngIf="auth.isLoggedIn(); else showLoginOrSearch">
           <div class="user-greeting">
             <span class="welcome-text">Ciao, {{ auth.name() }} {{ auth.surname() }}! </span>
             <ng-container *ngIf="!isAirlinePage() && !isAdmin()">
@@ -24,8 +24,15 @@
             <a class="btn btn-outline" (click)="onLogout()">Logout</a>
           </div>
         </ng-container>
-        <ng-template #showLogin>
-          <a class="btn btn-primary" routerLink="/login">Accedi / Registrati</a>
+
+        <ng-template #showLoginOrSearch>
+          <!-- If on login/signup page, show Search button. Otherwise show Login/Register -->
+          <ng-container *ngIf="isAuthPage(); else showDefaultLogin">
+            <a class="btn btn-primary" routerLink="/search">Cerca un volo</a>
+          </ng-container>
+          <ng-template #showDefaultLogin>
+            <a class="btn btn-primary" routerLink="/login">Accedi / Registrati</a>
+          </ng-template>
         </ng-template>
       </ng-container>
     </div>
