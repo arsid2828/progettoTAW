@@ -49,7 +49,8 @@ export class SearchComponent {
       to: this.form.value.to,
       date: this.form.value.departDate,
       sort: this.form.value.sort,
-      passengers: this.form.value.passengers
+      passengers: this.form.value.passengers,
+      directOnly: this.form.value.oneWay // The switch is bound to 'oneWay' form control
     };
 
     this.flightService.getFlights(queryParams).subscribe({

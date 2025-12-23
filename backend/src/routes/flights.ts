@@ -249,71 +249,76 @@ router.get('', async (req, res) => {
       };
     }));
     // --- STRATEGIA B: VOLI CON 1 SCALO ---
-    // 1. Trova potenziali prime tratte: da Origin a (Ovunque tranne Destination)
-    //    Partenza >= startOfDay
-    const firstLegs = await Flight.find({
-      from_airport: { $in: originAirports.map(a => a._id) },
-      date_departure: { $gte: startOfDay },
-      to_airport: { $nin: destAirports.map(a => a._id) } // Non diretti
-    }).populate('airline')
-      .populate('from_airport')
-      .populate('to_airport')
-      .populate('plane');
+    // Eseguiamo solo se non richiesto "directOnly"
+    const directOnly = req.query.directOnly === 'true';
 
-    // 2. Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
-    const MAX_LAYOVER_HOURS = 24;
-    const MIN_LAYOVER_HOURS = 1;
-
-    for (const leg1 of firstLegs) {
-      if (!leg1.date_arrival) continue;
-
-      const minDeparture2 = new Date(leg1.date_arrival);
-      minDeparture2.setHours(minDeparture2.getHours() + MIN_LAYOVER_HOURS);
-
-      const maxDeparture2 = new Date(leg1.date_arrival);
-      maxDeparture2.setHours(maxDeparture2.getHours() + MAX_LAYOVER_HOURS);
-
-      // Cerca seconda tratta: Hub -> Destinazione
-      const connectingFlights = await Flight.find({
-        from_airport: leg1.to_airport._id, // Hub
-        to_airport: { $in: destAirports.map(a => a._id) },
-        date_departure: { $gte: minDeparture2, $lte: maxDeparture2 }
+    if (!directOnly) {
+      // 1. Trova potenziali prime tratte: da Origin a (Ovunque tranne Destination)
+      //    Partenza >= startOfDay
+      const firstLegs = await Flight.find({
+        from_airport: { $in: originAirports.map(a => a._id) },
+        date_departure: { $gte: startOfDay },
+        to_airport: { $nin: destAirports.map(a => a._id) } // Non diretti
       }).populate('airline')
         .populate('from_airport')
         .populate('to_airport')
         .populate('plane');
 
-      for (const leg2 of connectingFlights) {
-        // Calcolo prezzi (somma dei min prices found)
-        // Nota: Questo è approssimativo per scopi dimostrativi
-        const seats1 = await SeatType.find({ flight: leg1._id });
-        const seats2 = await SeatType.find({ flight: leg2._id });
+      // 2. Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
+      const MAX_LAYOVER_HOURS = 24;
+      const MIN_LAYOVER_HOURS = 2; // Updated to 2 hours as requested
 
-        if (seats1.length === 0 || seats2.length === 0) continue;
+      for (const leg1 of firstLegs) {
+        if (!leg1.date_arrival) continue;
 
-        const getMinPrice = (sts: any[]) => {
-          const eco = sts.find(s => s.seat_class?.toLowerCase() === 'economy');
-          return eco ? eco.price : Math.min(...sts.map(s => s.price));
-        };
+        const minDeparture2 = new Date(leg1.date_arrival);
+        minDeparture2.setHours(minDeparture2.getHours() + MIN_LAYOVER_HOURS);
 
-        const price1 = getMinPrice(seats1);
-        const price2 = getMinPrice(seats2);
+        const maxDeparture2 = new Date(leg1.date_arrival);
+        maxDeparture2.setHours(maxDeparture2.getHours() + MAX_LAYOVER_HOURS);
 
-        // Disponibilità deve esserci su entrambi
-        const totalSeats = Math.min(
-          seats1.reduce((acc, s) => acc + s.number_available, 0),
-          seats2.reduce((acc, s) => acc + s.number_available, 0)
-        );
+        // Cerca seconda tratta: Hub -> Destinazione
+        const connectingFlights = await Flight.find({
+          from_airport: leg1.to_airport._id, // Hub
+          to_airport: { $in: destAirports.map(a => a._id) },
+          date_departure: { $gte: minDeparture2, $lte: maxDeparture2 }
+        }).populate('airline')
+          .populate('from_airport')
+          .populate('to_airport')
+          .populate('plane');
 
-        const totalDuration = (leg2.date_arrival.getTime() - leg1.date_departure.getTime()) / 36e5;
+        for (const leg2 of connectingFlights) {
+          // Calcolo prezzi (somma dei min prices found)
+          // Nota: Questo è approssimativo per scopi dimostrativi
+          const seats1 = await SeatType.find({ flight: leg1._id });
+          const seats2 = await SeatType.find({ flight: leg2._id });
 
-        results.push({
-          type: '1_STOP',
-          total_price: price1 + price2,
-          available_seats: totalSeats,
-          duration_hours: totalDuration,
-          legs: [leg1, leg2]
-        });
+          if (seats1.length === 0 || seats2.length === 0) continue;
+
+          const getMinPrice = (sts: any[]) => {
+            const eco = sts.find(s => s.seat_class?.toLowerCase() === 'economy');
+            return eco ? eco.price : Math.min(...sts.map(s => s.price));
+          };
+
+          const price1 = getMinPrice(seats1);
+          const price2 = getMinPrice(seats2);
+
+          // Disponibilità deve esserci su entrambi
+          const totalSeats = Math.min(
+            seats1.reduce((acc, s) => acc + s.number_available, 0),
+            seats2.reduce((acc, s) => acc + s.number_available, 0)
+          );
+
+          const totalDuration = (leg2.date_arrival.getTime() - leg1.date_departure.getTime()) / 36e5;
+
+          results.push({
+            type: '1_STOP',
+            total_price: price1 + price2,
+            available_seats: totalSeats,
+            duration_hours: totalDuration,
+            legs: [leg1, leg2]
+          });
+        }
       }
     }
     // 4. Ordinamento
