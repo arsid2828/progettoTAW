@@ -1,3 +1,5 @@
+// Script principale di seeding
+// Orchestra l'esecuzione di tutti i seed
 import { seedAirlines } from "./airlines";
 import { seedAirports } from "./airports";
 import { seedFlights } from "./flights";

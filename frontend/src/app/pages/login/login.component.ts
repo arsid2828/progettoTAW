@@ -1,3 +1,5 @@
+// Componente per il login utente
+// Gestisce l'autenticazione tramite email e password
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';

@@ -1,3 +1,5 @@
+// File principale dell'applicazione backend
+// Gestisce la configurazione del server, la connessione al database e la definizione delle rotte
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -7,7 +9,7 @@ import airportsRoute from './routes/airports';
 import planesRoute from './routes/planes';
 import profileRouter from './routes/profile';
 import sessionRouter from './routes/session';
-import airlinesRouter from './routes/airlines'; // New import
+import airlinesRouter from './routes/airlines'; // Nuova importazione
 import { seedAirports } from './seed/airports';
 import { seedAll } from './seed/seed';
 
@@ -15,7 +17,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB
+// Configurazione MongoDB
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/airdb';
 
 /* metto tutto in una funzione async per poter usare await
@@ -27,12 +29,12 @@ mongoose.connect(MONGO_URI).then(() => {
 });*/
 const startServer = async () => {
   try {
-    // A. Connessione al DB
+    // A. Connessione al database
     await mongoose.connect(MONGO_URI);
-    // B. Esegui il Seed (SOLO dopo che il DB è connesso)
+    // B. Esecuzione del seed (solo dopo connessione DB)
 
     await seedAll();
-    // C. Avvia il server (SOLO dopo che i dati sono pronti)
+    // C. Avvio del server (solo dopo preparazione dati)
     app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
 
   } catch (err) {
@@ -41,15 +43,15 @@ const startServer = async () => {
   }
 };
 
-// <--- 3. Lancia la funzione
+// 3. Esecuzione funzione avvio
 startServer();
-// rotte
+// Definizione rotte
 app.use('/api/flights', flightsRoute);
 app.use('/api/tickets', ticketsRoute);
 app.use('/api/airports', airportsRoute);
-app.use('/api/planes', planesRoute); // Registered
+app.use('/api/planes', planesRoute); // Registrato
 
-// health
+// Controllo stato
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 
 
@@ -57,7 +59,7 @@ app.use('/api/session', sessionRouter);
 app.use('/api/session/', sessionRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/profile/', profileRouter);
-app.use('/api/airlines', airlinesRouter); // New route
+app.use('/api/airlines', airlinesRouter); // Nuova rotta
 
 const PORT = process.env.PORT || 3000;
 //app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));

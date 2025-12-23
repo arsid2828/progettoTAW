@@ -1,3 +1,5 @@
+// Seed aeroporti
+// Popola il DB con aeroporti internazionali
 import { Airport, AirportDoc } from "../models/Airport";
 
 
@@ -10,7 +12,7 @@ export const sampleAirports: AirportDoc[] = [
   { name: 'Frankfurt Airport', city: 'Francoforte', code: 'FRA' },
   { name: 'Adolfo Suárez Madrid–Barajas', city: 'Madrid', code: 'MAD' },
   { name: 'Schiphol', city: 'Amsterdam', code: 'AMS' },
-  
+
   // Nord America
   { name: 'John F. Kennedy', city: 'New York', code: 'JFK' },
   { name: 'Los Angeles International', city: 'Los Angeles', code: 'LAX' },
@@ -18,7 +20,7 @@ export const sampleAirports: AirportDoc[] = [
   { name: 'Hartsfield–Jackson', city: 'Atlanta', code: 'ATL' },
   { name: 'Toronto Pearson', city: 'Toronto', code: 'YYZ' },
   { name: 'San Francisco International', city: 'San Francisco', code: 'SFO' },
-  
+
   // Asia
   { name: 'Haneda', city: 'Tokyo', code: 'HND' },
   { name: 'Beijing Capital', city: 'Pechino', code: 'PEK' },
@@ -26,12 +28,12 @@ export const sampleAirports: AirportDoc[] = [
   { name: 'Hong Kong International', city: 'Hong Kong', code: 'HKG' },
   { name: 'Singapore Changi', city: 'Singapore', code: 'SIN' },
   { name: 'Incheon International', city: 'Seoul', code: 'ICN' },
-  
+
   // Sud America
   { name: 'Guarulhos', city: 'San Paolo', code: 'GRU' },
   { name: 'El Dorado', city: 'Bogotà', code: 'BOG' },
   { name: 'Jorge Chávez', city: 'Lima', code: 'LIM' },
-  
+
   // Oceania
   { name: 'Kingsford Smith', city: 'Sydney', code: 'SYD' },
   { name: 'Melbourne Airport', city: 'Melbourne', code: 'MEL' },
@@ -51,12 +53,12 @@ export const seedAirports = async () => {
     if (count === 0) {
       // 2. Se è vuoto, inserisci i dati
       await Airport.insertMany(sampleAirports);
-      console.log('✅ Dati iniziali degli aeroporti caricati con successo!');
+      console.log('Dati iniziali degli aeroporti caricati con successo!');
     } else {
       // 3. Se ci sono già dati, non fare nulla
-      console.log('ℹ️  Database già popolato. Skipping seed.');
+      console.log('Database già popolato. Skipping seed.');
     }
   } catch (error) {
-    console.error('❌ Errore durante il seeding degli aeroporti:', error);
+    console.error('Errore durante il seeding degli aeroporti:', error);
   }
 };

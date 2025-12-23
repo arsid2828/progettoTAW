@@ -1,3 +1,5 @@
+// Seed voli
+// Genera voli casuali per riempire il database
 import mongoose from "mongoose";
 import { Flight, FlightDoc } from "../models/Flight";
 import { Airport } from "../models/Airport";
@@ -23,7 +25,7 @@ export const seedFlights = async () => {
     console.log("✈️  Inizio seeding voli (Pool Aerei Globale)...");
 
 
-    // 1CONTROLLO PREVENTIVO
+    // 1. CONTROLLO PREVENTIVO
     // Se ci sono già voli, ci fermiamo subito.
     const existingFlightsCount = await Flight.countDocuments();
     if (existingFlightsCount > 0) {
@@ -138,7 +140,7 @@ export const seedFlights = async () => {
         if (leg1) flightsToInsert.push(leg1);
 
         // Tratta B -> C
-        const leg2Start = addHours(leg1!.date_arrival!, 2.5); // 2.5 ore di layover
+        const leg2Start = addHours(leg1!.date_arrival!, 2.5); // 2.5 ore di scalo
         const leg2 = await createFlightData(hub, dest, airline, leg2Start);
         if (leg2) flightsToInsert.push(leg2);
     }
@@ -162,5 +164,5 @@ export const seedFlights = async () => {
     //await Flight.deleteMany({}); // Reset
     await Flight.insertMany(flightsToInsert);
 
-    console.log(`✅ Seed completato! Inseriti ${flightsToInsert.length} voli dopo Marzo 2026.`);
+    console.log(`Seed completato! Inseriti ${flightsToInsert.length} voli dopo Marzo 2026.`);
 };

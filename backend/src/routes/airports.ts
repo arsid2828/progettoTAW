@@ -1,9 +1,11 @@
+// Gestione aeroporti
+// API per listare e creare aeroporti
 import express, { Request, Response } from 'express';
 import { Airport } from '../models/Airport';
 
 const router = express.Router();
 
-// GET /api/airports - List all airports
+// GET /api/airports - Lista tutti gli aeroporti
 router.get('/', async (req: Request, res: Response) => {
     try {
         const airports = await Airport.find().sort({ name: 1 });
@@ -14,7 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
-// POST /api/airports - Add new airport
+// POST /api/airports - Aggiunge nuovo aeroporto
 router.post('/', async (req: Request, res: Response) => {
     try {
         const { name, city, code } = req.body;

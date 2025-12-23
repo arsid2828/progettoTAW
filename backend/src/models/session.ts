@@ -1,4 +1,5 @@
-// models/Session.ts
+// Modello per le sessioni utente
+// Gestisce i token di accesso e refresh
 import mongoose from 'mongoose';
 
 const sessionSchema = new mongoose.Schema({
@@ -12,7 +13,7 @@ const sessionSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['Profile', 'Airline'],
-    default: 'Profile' // Opzionale, per backward compatibility
+    default: 'Profile' // Opzionale, per retrocompatibilità
   },
   accessToken: {
     type: String,

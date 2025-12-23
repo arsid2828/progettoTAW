@@ -1,10 +1,12 @@
+// Modello dei profili utente
+// Gestisce i dati personali e le credenziali degli utenti
 import mongoose from 'mongoose';
 export type ProfileDoc = {
   email: string;
-  password: string; // hashed
+  password: string; // hashata
   nome: string;
   cognome: string;
-  sesso: number; // 0=M,1=F (come nel BD)
+  sesso: number; // 0=M, 1=F (come nel database)
   telefono?: string;
   nazionalita?: string;
   data_nascita: Date;

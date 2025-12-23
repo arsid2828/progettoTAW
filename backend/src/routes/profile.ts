@@ -1,3 +1,5 @@
+// Gestione profilo utente
+// API per gestire profili utente, registrazione e operazioni admin
 import express, { Request, Response } from 'express';
 import { Profile } from '../models/Profile';  // Importa il MODELLO (non ProfileDoc)
 import crypto from 'crypto';
@@ -17,17 +19,18 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     newProfile.password = hashPassword(newProfile.password);
+    newProfile.password = hashPassword(newProfile.password);
     // Salva nel database
     const savedProfile = await newProfile.save();
     newProfile.password = "<segreto>";
 
-    // Rispondi con il profilo creato (status 201 = Created)
+    // Rispondi con il profilo creato (status 201 = Creato)
     res.status(201).json(savedProfile);
   } catch (error) {
     // Gestisci errori (es. validazione fallita o duplicati)
     console.error(error);
 
-    // Narrow the error type
+    // Restringi il tipo di errore
     if (error instanceof Error) {
       res.status(400).json({ message: 'Errore nella creazione del profilo', error: error.message });
     } else {
@@ -37,14 +40,14 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Admin: Get all profiles
+// Admin: Ottieni tutti i profili
 router.get('/', auth, async (req: Request, res: Response) => {
   if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
   const profiles = await Profile.find({ role: { $ne: 'admin' } }).select('-password');
   res.json(profiles);
 });
 
-// Admin: Delete profile
+// Admin: Elimina profilo
 router.delete('/:id', auth, async (req: Request, res: Response) => {
   if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
   try {
@@ -55,7 +58,7 @@ router.delete('/:id', auth, async (req: Request, res: Response) => {
   }
 });
 
-// Return current logged-in profile
+// Ritorna profilo loggato corrente
 router.get('/me', auth, async (req: Request, res: Response) => {
   try {
     const userId = req.user?._id;

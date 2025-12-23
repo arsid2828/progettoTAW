@@ -1,3 +1,5 @@
+// Gestione biglietti
+// Gestisce API per visualizzare e acquistare biglietti
 import express, { Request } from 'express';
 import { Airport } from '../models/Airport';
 import { auth } from '../middleware/auth';
@@ -8,7 +10,7 @@ import { Profile } from '../models/Profile';
 
 const router = express.Router();
 
-// Add your ticket routes here
+// Aggiungi qui le rotte biglietti
 router.get('/', auth, async (req, res) => {
     try {
         const userId = req.user?._id;
@@ -34,7 +36,7 @@ router.get('/', auth, async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-// Add your ticket routes here
+// Aggiungi qui le rotte biglietti
 router.post('/', auth, async (req, res) => {
     try {
         console.log('BODY RICEVUTO NELLA ROUTE TICKETS:', req.body);
@@ -44,13 +46,13 @@ router.post('/', auth, async (req, res) => {
             return res.status(401).json({ message: 'Unauthorized: User not found' });
         }
 
-        // Find the flight
+        // Trova il volo
         const flight = await Flight.findById(flightId);
         if (!flight) {
             return res.status(404).json({ message: 'Flight not found' });
         }
 
-        // Parse passengers
+        // Parsing passeggeri
         let passengersArray = [];
         console.log('sPassengers:', passengers);
         if (passengers) {
@@ -65,7 +67,7 @@ router.post('/', auth, async (req, res) => {
         for (const passenger of passengersArray) {
             console.log('ELABORAZIONE PASSEGGERO:', passenger);
             const { nome, cognome, seat_number, baggageChoice, seat_pref } = passenger;
-            // Determine seat type (class) - prefer per-passenger selection
+            // Determina tipo posto (classe) - preferenza per passeggero
             const passengerSeatTypeId = passenger && (passenger.seatTypeId || passenger.seat_type || passenger.seat_class);
             let seatType = null;
             if (passengerSeatTypeId) {
@@ -81,20 +83,20 @@ router.post('/', auth, async (req, res) => {
                 return res.status(400).json({ message: 'No seats available for selected class' });
             }
 
-            // Fetch profile details
+            // Recupera dettagli profilo
             const profile = await Profile.findById(userId);
             if (!profile) {
                 return res.status(404).json({ message: 'Profile not found' });
             }
 
-            // Base price from seat type
+            // Prezzo base dal tipo di posto
             let finalPrice = seatType.price || 0;
 
             // Seat preference surcharge
             const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
             if (seat_pref && seatPrefSurcharge[String(seat_pref)]) finalPrice += seatPrefSurcharge[String(seat_pref)];
 
-            // Baggage surcharge
+            // Supplemento bagaglio
             if (baggageChoice === 'big_cabin') finalPrice += flight.price_of_bag || 0;
             if (baggageChoice === 'big_hold') finalPrice += flight.price_of_baggage || 0;
 
@@ -108,7 +110,7 @@ router.post('/', auth, async (req, res) => {
                 p_cognome: cognome,
                 bagage_choice: baggageChoice,
                 seat_number: seat_number || undefined
-            });  // Create ticket with profile details (allow overriding passenger name)
+            });  // Crea biglietto con dettagli profilo (permette di sovrascrivere il nome passeggero)
             const ticket = await Ticket.create({
                 flight: flightId,
                 profile: userId,
@@ -119,7 +121,7 @@ router.post('/', auth, async (req, res) => {
                 bagage_choice: baggageChoice,
                 seat_number: seat_number || undefined
             });
-            // Update seat availability
+            // Aggiorna disponibilità posti
             seatType.number_available -= 1;
             await seatType.save();
             console.log('DOPO ', ticket);

@@ -1,3 +1,5 @@
+// Componente per la prenotazione biglietti
+// Gestisce la raccolta dati passeggeri e selezione posto
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,26 +26,28 @@ export class BookingComponent {
   flight: any = null;
   seatTypes: any[] = [];
   passengers: any[] = [];
-  passengerInputs: Array<{ nome: string; cognome: string; baggageChoice: string;}> = [
+  passengerInputs: Array<{ nome: string; cognome: string; baggageChoice: string; }> = [
     { nome: this.auth.name() || '', cognome: this.auth.surname() || '', baggageChoice: 'hand' }
   ];
 
-stringify = JSON.stringify;
+  stringify = JSON.stringify;
 
   constructor() {
     this.flightId = this.route.snapshot.queryParamMap.get('flightId');
     this.selectedSeat = this.route.snapshot.queryParamMap.get('seat');
-    // try to load flight details
+    // prova a caricare i dettagli del volo
     if (this.flightId) {
-      const fs = inject(FlightService); 
-      fs.getFlightById(this.flightId).subscribe({ next: (res) => {
-        this.flight = res.flight;
-        this.seatTypes = res.seatTypes || [];
-      }, error: () => {} });
+      const fs = inject(FlightService);
+      fs.getFlightById(this.flightId).subscribe({
+        next: (res) => {
+          this.flight = res.flight;
+          this.seatTypes = res.seatTypes || [];
+        }, error: () => { }
+      });
     }
-    // load passengers from localStorage if any
-    try { const s = localStorage.getItem('passengers'); if (s) this.passengerInputs = JSON.parse(s); } catch {}
-    // if passengers param present, adjust passengerInputs length to p
+    // carica passeggeri da localStorage
+    try { const s = localStorage.getItem('passengers'); if (s) this.passengerInputs = JSON.parse(s); } catch { }
+    // se parametro passeggeri presente, adatta array
     const p = Number(this.route.snapshot.queryParamMap.get('passengers')) || 0;
 
     if (p > 0) {
@@ -59,9 +63,9 @@ stringify = JSON.stringify;
 
   confirmBooking() {
     if (!this.flightId) return;
-    // save passenger inputs if present
-    try { if (this.passengerInputs.length) localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch {}
-    // proceed to seat-choice (booking -> seat choice -> payment)
+    // salva dati passeggeri se presenti
+    try { if (this.passengerInputs.length) localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch { }
+    // procedi alla scelta posto
     const navExtras: any = { queryParams: { flightId: this.flightId } };
     if (this.passengerInputs.length > 0) {
       navExtras.queryParams.passengers = this.passengerInputs.length;

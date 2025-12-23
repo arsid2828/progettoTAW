@@ -1,6 +1,8 @@
+// Modello per i tipi di posto
+// Definisce le classi di posto, disponibilità e prezzi per volo
 import mongoose from 'mongoose';
 export type SeatTypeDoc = {
-  flight: mongoose.Types.ObjectId; // ref Flight
+  flight: mongoose.Types.ObjectId; // riferimento Flight
   seat_class: string; // "ECONOMY"/"BUSINESS"/"FIRST" ecc.
   number_available: number;
   number_total: number;

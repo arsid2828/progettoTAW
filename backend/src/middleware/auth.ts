@@ -1,3 +1,5 @@
+// Middleware di autenticazione e gestione JWT
+// Estende i tipi di Express per includere l'utente nella richiesta
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Profile } from '../models/Profile';

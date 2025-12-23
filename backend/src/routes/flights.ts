@@ -1,3 +1,5 @@
+// Gestione delle rotte per i voli (statistiche, creazione, ricerca)
+// Gestisce API per voli, statistiche airline e ricerca voli multipli (diretti/scalo)
 import { Router } from 'express';
 import { auth } from '../middleware/auth';
 import { Airport } from '../models/Airport';
@@ -11,42 +13,42 @@ const router = Router();
 // Helper per validare le date
 const isValidDate = (d: any) => d instanceof Date && !isNaN(d.getTime());
 
-// GET /api/flights/stats - Get aggregated stats for the logged-in airline
+// GET /api/flights/stats - Ottiene statistiche aggregate per la compagnia aerea loggata
 router.get('/stats', auth, async (req, res) => {
   try {
     const airlineId = req.user?._id;
-    // Find all flights for this airline
+    // Trova tutti i voli per questa compagnia aerea
     const flights = await Flight.find({ airline: airlineId }).select('_id from_airport to_airport');
     const flightIds = flights.map(f => f._id);
 
-    // Aggregate tickets for these flights
+    // Aggrega i biglietti per questi voli
     const tickets = await Ticket.find({ flight: { $in: flightIds } });
 
     const totalSold = tickets.length;
     const totalRevenue = tickets.reduce((acc, t) => acc + t.price_paid, 0);
 
-    // Calculate top routes
+    // Calcola le rotte principali
     const routeMap: { [key: string]: { sold: number, revenue: number, from_name: string, to_name: string } } = {};
 
-    // Helper to find flight info
+    // Helper per trovare info volo
     const getFlightInfo = (fid: string) => flights.find(f => f._id.toString() === fid.toString());
 
     for (const t of tickets) {
       const fid = t.flight.toString();
       if (!routeMap[fid]) {
-        const f = getFlightInfo(fid) as any; // populated? no, but we need names. 
-        // Wait, we didn't populate in the find above. Let's do it or just group by ID and populate later.
-        // Simpler: group by flight ID first.
+        const f = getFlightInfo(fid) as any; // Popolato? No, ma servono i nomi. 
+        // Non popolato sopra. Si raggruppa per ID.
+        // Più semplice: raggruppa per ID volo prima.
         routeMap[fid] = { sold: 0, revenue: 0, from_name: '', to_name: '' };
       }
       routeMap[fid].sold++;
       routeMap[fid].revenue += t.price_paid;
     }
 
-    // Now populate names for the routes that have sales
-    // Actually, let's just use the /my-flights logic for per-flight stats and here just return totals + top 3 flights
+    // Ora popola i nomi per le rotte con vendite
+    // Usiamo la logica /my-flights e qui ritorniamo totali + top 3
 
-    // Let's refine the topRoutes logic:
+    // Raffiniamo la logica topRoutes:
     const salesByFlight = Object.keys(routeMap).map(fid => ({
       flightId: fid,
       sold: routeMap[fid].sold,
@@ -78,7 +80,7 @@ router.get('/stats', auth, async (req, res) => {
   }
 });
 
-// GET /api/flights/my-flights - Get flights for the logged-in airline
+// GET /api/flights/my-flights - Ottiene i voli per la compagnia aerea loggata
 router.get('/my-flights', auth, async (req, res) => {
   try {
     const flights = await Flight.find({ airline: req.user?._id })
@@ -89,7 +91,7 @@ router.get('/my-flights', auth, async (req, res) => {
 
     const results = await Promise.all(flights.map(async (f) => {
       const seats = await SeatType.find({ flight: f._id });
-      // Calculate real stats from Tickets
+      // Calcola statistiche reali dai biglietti
       const tickets = await Ticket.find({ flight: f._id });
       const sold = tickets.length;
       const revenue = tickets.reduce((sum, t) => sum + t.price_paid, 0);
@@ -97,8 +99,8 @@ router.get('/my-flights', auth, async (req, res) => {
       return {
         ...f.toObject(),
         seat_types: seats,
-        sold,       // Added
-        revenue     // Added
+        sold,       // Aggiunto
+        revenue     // Aggiunto
       };
     }));
 
@@ -109,7 +111,7 @@ router.get('/my-flights', auth, async (req, res) => {
   }
 });
 
-// POST /api/flights - Create new flight
+// POST /api/flights - Crea nuovo volo
 router.post('/', auth, async (req, res) => {
   try {
     const {
@@ -121,7 +123,7 @@ router.post('/', auth, async (req, res) => {
       priceBag, priceBaggage
     } = req.body;
 
-    // Combine date and time
+    // Combina data e ora
     const startDateTime = new Date(`${dateDeparture}T${timeDeparture}`);
     const endDateTime = new Date(`${dateArrival}T${timeArrival}`);
 
@@ -129,9 +131,9 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ message: 'Date o orari non validi' });
     }
 
-    // Create Flight
+    // Crea Volo
     const newFlight = await Flight.create({
-      airline: req.user?._id, // Assumes auth middleware populates user (airline)
+      airline: req.user?._id, // Presume che il middleware auth popoli user (airline)
       from_airport: fromAirportId,
       to_airport: toAirportId,
       plane: planeId,
@@ -144,7 +146,7 @@ router.post('/', auth, async (req, res) => {
       price_of_baggage: priceBaggage
     });
 
-    // Create SeatTypes
+    // Crea SeatTypes
     const seatTypesData = [
       { type: 'Economy', price: priceEconomy, seats: seatsEconomy },
       { type: 'Business', price: priceBusiness, seats: seatsBusiness },
@@ -158,9 +160,9 @@ router.post('/', auth, async (req, res) => {
           seat_class: st.type,
           price: st.price,
           number_available: st.seats,
-          number_total: st.seats, // Assuming total = available initially
+          number_total: st.seats, // Totale = disponibili inizialmente
           baggage: false, // Default
-          type: st.type.toLowerCase() // 'economy', 'business', etc.
+          type: st.type.toLowerCase() // 'economy', 'business', ecc.
         });
       }
       return Promise.resolve();
@@ -175,7 +177,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-//<TODO> eliminare auth dalla riga sotto setve solo per verificare se i token funzionano
+// <TODO> eliminare auth dalla riga sotto, serve solo per test
 router.get('', async (req, res) => {
   try {
     // 1. Estrazione Query Params
@@ -215,7 +217,7 @@ router.get('', async (req, res) => {
 
     // --- STRATEGIA A: VOLI DIRETTI ---
     const query: any = {
-      from_airport: { $in: originAirports.map(a => a._id) }, // Check ANY matching airport
+      from_airport: { $in: originAirports.map(a => a._id) }, // Controlla QUALSIASI aeroporto corrispondente
       date_departure: { $gte: startOfDay }
     };
 
@@ -266,7 +268,7 @@ router.get('', async (req, res) => {
 
       // 2. Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
       const MAX_LAYOVER_HOURS = 24;
-      const MIN_LAYOVER_HOURS = 2; // Updated to 2 hours as requested
+      const MIN_LAYOVER_HOURS = 2; // Aggiornato a 2 ore come richiesto
 
       for (const leg1 of firstLegs) {
         if (!leg1.date_arrival) continue;
@@ -352,7 +354,7 @@ router.get('', async (req, res) => {
 
 export default router;
 
-// Get single flight by ID
+// Ottieni singolo volo per ID
 router.get('/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -369,8 +371,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Extend the Request interface to include the user property
-// Removed: using declaration in auth.ts
+// Estensione interfaccia Request...
+// Rimosso: uso dichiarazione in auth.ts
 /*declare module 'express-serve-static-core' {
   interface Request {
     user?: { _id: string };

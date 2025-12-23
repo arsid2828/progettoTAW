@@ -1,3 +1,5 @@
+// Seed aerei
+// Popola il DB con aerei di esempio
 import { Plane, PlaneDoc } from '../models/Plane';
 
 const samplePlanes: PlaneDoc[] = [
@@ -38,13 +40,13 @@ export const seedPlanes = async () => {
     const count = await Plane.countDocuments();
 
     if (count === 0) {
-      console.log('🛩️  Avvio seeding Aerei (con targhe)...');
+      console.log('Avvio seeding Aerei (con targhe)...');
       await Plane.insertMany(samplePlanes);
-      console.log(`✅ ${samplePlanes.length} aerei caricati con successo!`);
+      console.log(`${samplePlanes.length} aerei caricati con successo!`);
     } else {
-      console.log('ℹ️  Aerei già presenti. Skipping.');
+      console.log('Aerei già presenti. Salto.');
     }
   } catch (error) {
-    console.error('❌ Errore seed Planes:', error);
+    console.error('Errore seed Planes:', error);
   }
 };

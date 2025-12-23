@@ -1,3 +1,5 @@
+// Componente per la ricerca voli
+// Gestisce il form di ricerca e visualizzazione risultati
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -43,14 +45,14 @@ export class SearchComponent {
 
     console.log('Ricerca voli:', this.form.value);
 
-    // Map form values to query params expected by backend
+    // Mappa valori form ai parametri di query backend
     const queryParams = {
       from: this.form.value.from,
       to: this.form.value.to,
       date: this.form.value.departDate,
       sort: this.form.value.sort,
       passengers: this.form.value.passengers,
-      directOnly: this.form.value.oneWay // The switch is bound to 'oneWay' form control
+      directOnly: this.form.value.oneWay // Switch legato al controllo 'oneWay'
     };
 
     this.flightService.getFlights(queryParams).subscribe({
@@ -69,7 +71,7 @@ export class SearchComponent {
     let targetPath = '/booking';
     let queryParams: any = {};
 
-    // Determine target and params
+    // Determina target e parametri
     if (result?.legs && result.legs.length > 1) {
       targetPath = '/booking-multi';
       const ids = result.legs.map((l: any) => l._id).join(',');
@@ -80,22 +82,22 @@ export class SearchComponent {
     }
 
     if (!this.authService.isLoggedIn()) {
-      // Create the return URL tree
+      // Crea l'albero URL di ritorno
       const urlTree = this.router.createUrlTree([targetPath], { queryParams });
-      // Serialize it to a string
+      // Serializzalo a stringa
       const returnUrl = this.router.serializeUrl(urlTree);
 
       this.router.navigate(['/login'], { queryParams: { returnUrl } });
       return;
     }
 
-    // Normal navigation
+    // Navigazione normale
     this.router.navigate([targetPath], { queryParams });
   }
 
 
 
-  // Helper to get airline name safely
+  // Helper per ottenere nome compagnia in sicurezza
   getAirlineName(leg: any): string {
     return leg.airline ? (leg.airline.name || 'SkyJourney') : 'Airline';
   }

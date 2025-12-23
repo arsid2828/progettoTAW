@@ -1,8 +1,10 @@
+// Service per gestione voli
+// Interagisce con API backend per operazioni su voli, aeroporti e aerei
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
-// Define interfaces if not already defined in a model file
+// Definizione interfacce se non presenti in modelli
 export interface Route {
     from_name: string;
     to_name: string;
@@ -15,7 +17,7 @@ export interface Airport {
     code: string;
 }
 export interface Plane {
-    _id: string; // MongoDB ID
+    _id: string; // ID MongoDB
     brand: string;
     model: string;
     registration: string;
@@ -34,7 +36,7 @@ export interface Flight {
 })
 export class FlightService {
 
-    private apiUrl = 'http://localhost:3000/api'; // Adjust base URL as needed
+    private apiUrl = 'http://localhost:3000/api'; // Adatta URL base se necessario
 
     constructor(private http: HttpClient) { }
 

@@ -1,3 +1,5 @@
+// Service per gestione autenticazione e sessione
+// Gestisce token JWT, login, signup, logout e refresh
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpRequest } from '@angular/common/http';
 import { IProfile } from './i-profile';
@@ -6,7 +8,7 @@ import { tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // services/auth.service.ts
+  // Aggiunge il token alla richiesta
   addToken(req: HttpRequest<any>) {
     const token = localStorage.getItem('accessToken');
     return token ? req.clone({
@@ -65,22 +67,23 @@ export class AuthService {
     return this.http.post<ILogData>(this.apiUrl + "session/login", data).pipe(
       tap(response => {
         this._isLoggedIn.set(true);
-        // Initially set email; then fetch profile to get real name
+
+        // Imposta email inizialmente; poi recupera profilo per nome reale
         this._userName.set(data.email);
-        // Assuming response might contain role or we set it from data if applicable, 
-        // but typically login response should have it. 
-        // For now, let's assume we save what we can or if the user is an airline, 
-        // the backend login should probably return the role.
-        // If ILogData doesn't have role, we might need to fetch profile or check token.
-        // Let's assume for this specific task we might need to trust ILogData or response.
-        // If response has role:
+        // Assumiamo che la risposta contenga il ruolo o lo impostiamo dai dati se applicabile, 
+        // ma tipicamente il login dovrebbe restituirlo. 
+        // Per ora, assumiamo di salvare ciò che possiamo o se l'utente è un'airline, 
+        // il login backend dovrebbe probabilmente ritornare il ruolo.
+        // Se ILogData non ha ruolo, potremmo dover recuperare profilo o controllare token.
+        // Assumiamo per questo task specifico di fidarci di ILogData o risposta.
+        // Se la risposta ha ruolo:
         const role = (response as any).role || 'user'; // Fallback
         this._userRole.set(role);
         localStorage.setItem('email', data.email);
         localStorage.setItem('role', role);
         localStorage.setItem('accessToken', response.accessToken!);
         localStorage.setItem('refreshToken', response.refreshToken!);
-        // Fetch profile/me to get full name
+        // Recupera profile/me per ottenere il nome completo
         this.http.get<any>(this.apiUrl + 'session/me').subscribe({
           next: (p) => {
             let full = '';
@@ -95,7 +98,7 @@ export class AuthService {
             const display = full || data.email;
             this._userName.set(display);
 
-            // Fix: Handle Airline 'name' vs User 'nome'
+            // Fix: Gestione nome Airline vs nome Utente
             const realName = p.name || p.nome || '';
             localStorage.setItem('nome', realName);
             localStorage.setItem('cognome', p.cognome || '');
@@ -124,7 +127,7 @@ export class AuthService {
     localStorage.removeItem('cognome');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('sj_user'); // Fix: remove persistent user data
+    localStorage.removeItem('sj_user'); // Fix: rimuovi dati utente persistenti
   }
 
   signup(newUser: IProfile) {

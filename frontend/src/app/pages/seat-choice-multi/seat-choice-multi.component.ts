@@ -1,3 +1,5 @@
+// Scelta posto voli multipli
+// Permette selezione posto per ogni tratta del viaggio
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,23 +15,23 @@ export class SeatChoiceMultiComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   flightIds: string[] = [];
-  selections: Record<string,string> = {};
+  selections: Record<string, string> = {};
 
-  constructor(){
+  constructor() {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
-    if(ids) this.flightIds = ids.split(',');
+    if (ids) this.flightIds = ids.split(',');
   }
 
-  choose(flightId: string, seat: string){ this.selections[flightId] = seat; }
+  choose(flightId: string, seat: string) { this.selections[flightId] = seat; }
 
-  continue(){
+  continue() {
     // save selections and forward passengers param if present
-      try { localStorage.setItem('seatSelections', JSON.stringify(this.selections)); } catch {}
-      const flightIds = this.flightIds.join(',');
-      const passengers = this.route.snapshot.queryParamMap.get('passengers') || '1';
-      const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId');
-      const qp: any = { flightIds, passengers };
-      if (seatTypeId) qp.seatTypeId = seatTypeId;
-      this.router.navigate(['/payment-multi'], { queryParams: qp });
+    try { localStorage.setItem('seatSelections', JSON.stringify(this.selections)); } catch { }
+    const flightIds = this.flightIds.join(',');
+    const passengers = this.route.snapshot.queryParamMap.get('passengers') || '1';
+    const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId');
+    const qp: any = { flightIds, passengers };
+    if (seatTypeId) qp.seatTypeId = seatTypeId;
+    this.router.navigate(['/payment-multi'], { queryParams: qp });
   }
 }

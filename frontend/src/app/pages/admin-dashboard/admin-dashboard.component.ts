@@ -1,3 +1,5 @@
+// Dashboard amministratore
+// Permette la gestione di utenti e compagnie aeree
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';

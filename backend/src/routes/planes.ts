@@ -1,9 +1,11 @@
+// Gestione aerei
+// API per listare e creare aerei
 import express, { Request, Response } from 'express';
 import { Plane } from '../models/Plane';
 
 const router = express.Router();
 
-// GET /api/planes - List all planes
+// GET /api/planes - Lista tutti gli aerei
 router.get('/', async (req: Request, res: Response) => {
     try {
         const planes = await Plane.find();
@@ -14,7 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
-// POST /api/planes - Add new plane
+// POST /api/planes - Aggiunge nuovo aereo
 router.post('/', async (req: Request, res: Response) => {
     try {
         const { brand, model, registration } = req.body;

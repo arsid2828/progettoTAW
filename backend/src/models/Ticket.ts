@@ -1,8 +1,10 @@
+// Modello per la gestione dei biglietti aerei
+// Collega utente, volo e classe di posto
 import mongoose from 'mongoose';
 export type TicketDoc = {
-  flight: mongoose.Types.ObjectId;   // ref Flight
-  profile: mongoose.Types.ObjectId;// ref Profile
-  seat_class: mongoose.Types.ObjectId; // ref SeatClass
+  flight: mongoose.Types.ObjectId;   // riferimento Flight
+  profile: mongoose.Types.ObjectId;// riferimento Profile
+  seat_class: mongoose.Types.ObjectId; // riferimento SeatClass
   price_paid: number;
   p_nome?: String;
   p_cognome?: String;
@@ -18,6 +20,6 @@ const schema = new mongoose.Schema<TicketDoc>({
   p_cognome: String,
   seat_number: String,
   bagage_choice: String
-}, { timestamps:true });
-schema.index({ profile:1, flight:1 });
+}, { timestamps: true });
+schema.index({ profile: 1, flight: 1 });
 export const Ticket = mongoose.model<TicketDoc>('Ticket', schema);

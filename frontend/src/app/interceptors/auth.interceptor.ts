@@ -1,3 +1,5 @@
+// Interceptor per autenticazione
+// Aggiunge token Bearer e gestisce errori 401
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -24,7 +26,7 @@ export const authInterceptor = (
         return authService.refresh().pipe(
           switchMap(() => next(authService.addToken(req))),
           catchError(() => {
-            // Instead of logging out, emit an event or handle session expiration gracefully
+            // Invece di logout, gestisci scadenza sessione
             console.warn('Session expired. Please log in again.');
             return throwError(() => error);
           })

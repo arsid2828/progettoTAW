@@ -1,3 +1,5 @@
+// Login per compagnie aeree
+// Gestisce l'accesso all'area riservata delle compagnie
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,7 +33,7 @@ export class AirlineLoginComponent {
           this.router.navigate(['/change-password']);
           return;
         }
-        // navigate to airline area after successful login
+        // naviga all'area airline dopo login con successo
         this.router.navigate(['/airline-area']);
       },
       error: (err) => {

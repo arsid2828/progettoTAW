@@ -1,3 +1,5 @@
+// Seed tipi di posto
+// Popola il DB con i tipi di posto per i voli
 import mongoose from 'mongoose';
 import { Flight } from '../models/Flight';
 import { SeatType, SeatTypeDoc } from '../models/SeatType';
@@ -11,53 +13,53 @@ export const seedSeatTypes = async () => {
 
     const count = await SeatType.countDocuments();
 
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
-    console.log(`💺 Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
+    console.log(` Trovati ${count} SeatType nel DB.`);
 
     if (count === 0) {
-        console.log("💺 Inizio seeding SeatTypes...");
+        console.log(" Inizio seeding SeatTypes...");
 
         // 1. Recuperiamo tutti i voli
         const flights = await Flight.find().select('_id'); // Ci servono solo gli ID
 
         if (flights.length === 0) {
-            console.error("❌ Nessun volo trovato. Esegui prima il seed dei voli!");
+            console.error("Nessun volo trovato. Esegui prima il seed dei voli!");
             return;
         }
 
@@ -69,7 +71,7 @@ export const seedSeatTypes = async () => {
         const seatsToInsert: Partial<SeatTypeDoc>[] = [];
         let flightsProcessedCount = 0;
 
-        console.log(`   ↳ Analisi di ${flights.length} voli...`);
+        console.log(` Analisi di ${flights.length} voli...`);
 
         // 3. Cicliamo i voli e generiamo i posti solo per quelli "vuoti"
         for (const flight of flights) {
@@ -123,9 +125,9 @@ export const seedSeatTypes = async () => {
         // 4. Inserimento massivo (Molto più veloce di inserire uno alla volta)
         if (seatsToInsert.length > 0) {
             await SeatType.insertMany(seatsToInsert);
-            console.log(`✅ Seed completato! Aggiunti ${seatsToInsert.length} tipi di posto per ${flightsProcessedCount} voli.`);
+            console.log(`Seed completato! Aggiunti ${seatsToInsert.length} tipi di posto per ${flightsProcessedCount} voli.`);
         } else {
-            console.log("✅ Tutti i voli hanno già i loro SeatType. Nessuna operazione necessaria.");
+            console.log("Tutti i voli hanno già i loro SeatType. Nessuna operazione necessaria.");
         }
     }
 };

@@ -1,3 +1,5 @@
+// Componente cambio password
+// Obbligatorio per le airline al primo accesso
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -27,14 +29,14 @@ export class ChangePasswordComponent {
 
         this.http.post(`${this.apiUrl}/session/change-password`, this.form.value).subscribe({
             next: () => {
-                // Check role before clearing for redirection
+                // Controlla ruolo prima di pulire per reindirizzamento
                 const role = localStorage.getItem('role');
 
-                // Logout via token removal
+                // Logout tramite rimozione token
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
                 localStorage.removeItem('role');
-                // Clean other keys if needed, or rely on clean login
+                // Pulisci altre chiavi se necessario, o affidati a un login pulito
 
                 if (role === 'airline') {
                     this.router.navigate(['/airline-login']);

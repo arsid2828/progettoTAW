@@ -1,3 +1,5 @@
+// Modello degli aerei
+// Gestisce i dettagli tecnici dei velivoli
 import mongoose from 'mongoose';
 
 export type PlaneDoc = {
@@ -7,8 +9,8 @@ export type PlaneDoc = {
 };
 
 const schema = new mongoose.Schema<PlaneDoc>({
-  brand:        { type: String, required: true },
-  model:        { type: String, required: true },
+  brand: { type: String, required: true },
+  model: { type: String, required: true },
   registration: { type: String, required: true, unique: true } // La targa non può essere duplicata
 }, { timestamps: true });
 

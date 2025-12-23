@@ -1,3 +1,5 @@
+// Prenotazione voli multipli
+// Gestisce la raccolta dati per prenotazioni multi-tratta
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,18 +39,20 @@ export class BookingMultiComponent {
     // load flight details
     if (this.flightIds.length) {
       const calls = this.flightIds.map(id => this.flightService.getFlightById(id));
-      forkJoin(calls).subscribe({ next: (res:any[]) => {
-        this.flights = res.map(r => r.flight || r);
-      }, error: (err) => { console.error('Error loading flights', err); } });
+      forkJoin(calls).subscribe({
+        next: (res: any[]) => {
+          this.flights = res.map(r => r.flight || r);
+        }, error: (err) => { console.error('Error loading flights', err); }
+      });
     }
   }
 
   confirmMulti() {
     if (!this.flightIds.length) return;
     // save passengers to localStorage for next steps
-    try { localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch {}
-      const qp: any = { flightIds: this.flightIds.join(','), passengers: this.passengersQty };
-      if (this.seatTypeId) qp.seatTypeId = this.seatTypeId;
-      this.router.navigate(['/seat-choice-multi'], { queryParams: qp });
+    try { localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch { }
+    const qp: any = { flightIds: this.flightIds.join(','), passengers: this.passengersQty };
+    if (this.seatTypeId) qp.seatTypeId = this.seatTypeId;
+    this.router.navigate(['/seat-choice-multi'], { queryParams: qp });
   }
 }

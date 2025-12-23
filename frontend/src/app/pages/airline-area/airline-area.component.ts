@@ -1,4 +1,5 @@
-
+// Area riservata compagnia aerea
+// Dashboard per visualizzare statistiche, aerei e gestire voli
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +9,7 @@ import { FlightService, Route, Airport, Plane, Flight } from '../../services/fli
 import { AuthService } from '../../shared/auth.service';
 import { inject } from '@angular/core';
 
-// Interfaces (Should preferably be in shared/models)
+// Interfacce (Preferibilmente in shared/models)
 interface SeatType {
     type: string;
     price: number;
@@ -31,7 +32,7 @@ export class AirlineAreaComponent implements OnInit {
 
     today: string = new Date().toISOString().split('T')[0];
 
-    // Form Data
+    // Dati del Form
     newFlight = {
         fromCity: '',
         toCity: '',
@@ -88,8 +89,8 @@ export class AirlineAreaComponent implements OnInit {
 
     loadAirports(): void {
         this.flightService.getAirports().subscribe(data => {
-            // Filter if city is typed, otherwise show all OR show all and let select handle it
-            // Simple approach: show all available in DB for selection
+            // Filtra se è stata digitata una città, altrimenti mostra tutto
+            // Approccio semplice: mostra tutti quelli disponibili nel DB per la selezione
             if (this.newFlight.fromCity) {
                 this.availableFromAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()));
             } else {
@@ -106,7 +107,7 @@ export class AirlineAreaComponent implements OnInit {
 
     onAddFlight(): void {
         console.log('Validating flight form...', this.newFlight);
-        // Check if required fields are present (basic check)
+        // Controlla se i campi obbligatori sono presenti (check basilare)
         if (!this.newFlight.fromAirportId || !this.newFlight.toAirportId || !this.newFlight.planeId) {
             console.error('Missing required fields');
             alert('Compila tutti i campi obbligatori (Aeroporti, Aereo, Date)');
@@ -117,7 +118,7 @@ export class AirlineAreaComponent implements OnInit {
         this.flightService.addFlight(this.newFlight).subscribe({
             next: (res) => {
                 console.log('Flight added!', res);
-                // Reset form or show success message
+                // Reset form o mostra messaggio successo
                 this.loadFlights();
             },
             error: (err) => {

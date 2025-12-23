@@ -1,3 +1,5 @@
+// Elaborazione pagamento
+// Componente di attesa durante il processamento del pagamento
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,8 +21,8 @@ export class PaymentProcessingComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
 
-  constructor(){
-    // simulate processing then redirect to tickets
-    setTimeout(()=> this.router.navigate(['/biglietti']), 1200);
+  constructor() {
+    // simula elaborazione poi reindirizza ai biglietti
+    setTimeout(() => this.router.navigate(['/biglietti']), 1200);
   }
 }

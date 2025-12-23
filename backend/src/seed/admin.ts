@@ -1,3 +1,5 @@
+// Seed utente amministratore
+// Crea l'utente admin se non esiste
 import crypto from 'crypto';
 import { Profile } from '../models/Profile';
 
@@ -23,16 +25,16 @@ export const seedAdmin = async () => {
             });
             console.log('✅ Admin user created: admin@skyjourney.com / admin123');
         } else {
-            // Ensure role is admin if it exists (in case it was created before schema update)
+            // Assicura che il ruolo sia admin se esiste (nel caso sia stato creato prima dell'aggiornamento schema)
             if (exists.role !== 'admin') {
                 exists.role = 'admin';
                 await exists.save();
-                console.log('✅ Admin role updated for existing user');
+                console.log(' Admin role updated for existing user');
             } else {
-                console.log('ℹ️  Admin user already exists.');
+                console.log('ℹ  Admin user already exists.');
             }
         }
     } catch (error) {
-        console.error('❌ Error seeding admin:', error);
+        console.error(' Errore seed admin:', error);
     }
 };

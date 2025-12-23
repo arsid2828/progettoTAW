@@ -1,3 +1,5 @@
+// Scelta posto volo
+// Permette selezione posto e salvataggio preferenza
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +20,7 @@ export class SeatChoiceComponent {
   chooseSeat(seat: string) { this.selectedSeat = seat; }
 
   continue() {
-    // pass selected seat to payment as query param
+    // passa posto selezionato al pagamento come query param
     const passengers = this.route.snapshot.queryParamMap.get('passengers');
     const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId');
     const qp: any = { ticketFlightId: this.flightId, seat: JSON.stringify(this.selectedSeat) };

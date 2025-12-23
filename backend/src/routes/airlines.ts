@@ -1,3 +1,5 @@
+// Gestione compagnie aeree
+// API admin per gestire le compagnie aeree
 import express from 'express';
 import bcrypt from 'bcrypt';
 import { Airline } from '../models/Airline';
@@ -5,7 +7,7 @@ import { auth } from '../middleware/auth';
 
 const router = express.Router();
 
-// Get all airlines
+// Ottieni tutte le compagnie
 router.get('/', auth, async (req: any, res: any) => {
     if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
     try {
@@ -16,7 +18,7 @@ router.get('/', auth, async (req: any, res: any) => {
     }
 });
 
-// Create airline
+// Crea compagnia
 router.post('/', auth, async (req: any, res: any) => {
     if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
     try {

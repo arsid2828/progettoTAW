@@ -1,3 +1,4 @@
+// Definizione delle rotte dell'applicazione
 import { Routes } from '@angular/router';
 import { SearchComponent } from './pages/search/search.component';
 import { SignupComponent } from './pages/signup/signup.component';

@@ -1,3 +1,5 @@
+// Componente biglietti utente
+// Visualizza lo storico dei biglietti acquistati
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
@@ -27,7 +29,7 @@ export class BigliettiComponent implements OnInit {
       },
       error: (error) => {
         console.error('Errore nel recupero dei biglietti:', error);
-        // If unauthorized, send user to login
+        // Se non autorizzato, manda al login
         if (error?.status === 401) {
           this.router.navigate(['/login']);
         }

@@ -1,3 +1,5 @@
+// Gestione sessioni e autenticazione
+// Gestisce login, logout, refresh token e cambio password
 import express from 'express';
 import crypto from 'crypto';
 import { Profile } from '../models/Profile';
@@ -12,7 +14,7 @@ import { auth } from '../middleware/auth';
 const router = express.Router();
 const ACCESS_SECRET = 'access-secret-lungo';
 const REFRESH_SECRET = 'refresh-secret-ancora-piu-lungo';
-// 1. LOGIN → crea sessione e restituisce token
+// 1. LOGIN crea sessione e restituisce token
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     console.log('Tentativo di login per email:', email);
@@ -105,7 +107,7 @@ router.post('/refresh', async (req, res) => {
     const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '1m' }); //15m TODO
     res.json({ accessToken });
 });
-// 2. ME → restituisce dati utente loggato
+// 2. ME restituisce dati utente loggato
 router.get('/me', async (req, res) => {
     const accessToken = req.headers.authorization?.split(' ')[1];
     if (!accessToken) return res.status(401).json({ message: 'Token mancante' });
@@ -118,7 +120,7 @@ router.get('/me', async (req, res) => {
     res.json(session.userId);
 });
 
-// 3. LOGOUT → invalida il token
+// 3. LOGOUT invalida il token
 /*router.post('/logout', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
@@ -142,7 +144,7 @@ router.post('/logout', async (req, res) => {
     });
 });
 
-// CHANGE PASSWORD
+// 4. CAMBIO PASSWORD
 router.post('/change-password', auth, async (req: any, res: any) => {
     try {
         const { newPassword } = req.body;

@@ -1,8 +1,10 @@
+// Modello per le compagnie aeree
+// Gestisce credenziali e dati delle compagnie
 import mongoose from 'mongoose';
 export type AirlineDoc = {
   name: string;
   email: string;
-  password: string; // hashed
+  password: string; // hashata
   role?: string;
   mustChangePassword?: boolean;
 };

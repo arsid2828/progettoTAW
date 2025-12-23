@@ -1,3 +1,5 @@
+// Componente pagamento
+// Gestisce il riepilogo e la simulazione di pagamento
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -23,98 +25,109 @@ export class PaymentComponent {
   seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
   baggage = this.route.snapshot.queryParamMap.get('baggage') || null;
 
-  // load passenger override if stored in localStorage (single-passenger booking)
+  // carica override passeggero se presente in localStorage (prenotazione singolo passeggero)
   passenger: any = null;
   flight: any = null;
   items: any[] = [];
   total = 0;
   constructor() {
-    try { const p = localStorage.getItem('passengers'); if (p) { const arr = JSON.parse(p); if (Array.isArray(arr) && arr.length === 1) this.passenger = arr[0]; } } catch {}
+    try { const p = localStorage.getItem('passengers'); if (p) { const arr = JSON.parse(p); if (Array.isArray(arr) && arr.length === 1) this.passenger = arr[0]; } } catch { }
     // load flight details and prepare items
     if (this.ticketId) {
-      this.flightService.getFlightById(this.ticketId).subscribe({ next: (res: any) => {
-        this.flight = res.flight || res;
-        const seatTypes = res.seatTypes || this.flight?.seat_types || [];
-        // determine passengers list
-        let passengersList: any[] = [];
-        try {
-          const p = localStorage.getItem('passengers');
-          if (p) passengersList = JSON.parse(p);
-        } catch {}
-        if (!passengersList || passengersList.length === 0) {
-          if (this.passenger) passengersList = [this.passenger];
-        }
+      this.flightService.getFlightById(this.ticketId).subscribe({
+        next: (res: any) => {
+          this.flight = res.flight || res;
+          const seatTypes = res.seatTypes || this.flight?.seat_types || [];
+          // determine passengers list
+          let passengersList: any[] = [];
+          try {
+            const p = localStorage.getItem('passengers');
+            if (p) passengersList = JSON.parse(p);
+          } catch { }
+          if (!passengersList || passengersList.length === 0) {
+            if (this.passenger) passengersList = [this.passenger];
+          }
 
-        // If route provided passengers as number, build placeholders
-        const passengersParam = this.route.snapshot.queryParamMap.get('passengers');
-        const pNum = Number(passengersParam) || 0;
-        if (pNum > 0 && passengersList.length === 0) {
-          for (let i = 0; i < pNum; i++) passengersList.push({ nome: '', cognome: '', baggageChoice: 'hand' });
-        }
 
-        // parse seat query param: it may be JSON-stringified
-        const rawSeatParam = this.route.snapshot.queryParamMap.get('seat') || this.seat || null;
-        let seat_pref: any = null;
-        if (rawSeatParam) {
-          try { seat_pref = JSON.parse(rawSeatParam); } catch { seat_pref = rawSeatParam; }
-        }
-        const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
 
-        const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
+          // Se query param 'passengers' fornito come numero, crea placeholder
 
-        this.items = passengersList.map((pass: any) => {
-          const baggageChoice = pass.baggageChoice || this.baggage || 'hand';
-          let seatType = null;
-          if (seatTypeId) seatType = seatTypes.find((s: any) => String(s._id) === String(seatTypeId));
-          if (!seatType) seatType = seatTypes[0] || { type: 'ECONOMY', price: 0 };
-          const seat_fee = seat_pref && seatPrefSurcharge[String(seat_pref)] ? seatPrefSurcharge[String(seat_pref)] : 0;
-          let price = (seatType.price || 0) + seat_fee;
-          if (baggageChoice === 'big_cabin') price += this.flight?.price_of_bag || 0;
-          if (baggageChoice === 'big_hold') price += this.flight?.price_of_baggage || 0;
-          // determine label to show for seat: prefer explicit seat_number, otherwise show preference (es. 'window')
-          const prefLabels = ['window', 'aisle', 'middle', 'random'];
-          const seatLabel = pass.seat_number || (seat_pref && prefLabels.includes(String(seat_pref)) ? String(seat_pref) : null);
-          return {
-            passenger: pass,
-            seat_type: seatType,
-            seat_label: seatLabel,
-            bag_label: baggageChoice,
-            seat_fee,
-            price
-          };
-        });
+          const passengersParam = this.route.snapshot.queryParamMap.get('passengers');
+          const pNum = Number(passengersParam) || 0;
+          if (pNum > 0 && passengersList.length === 0) {
+            for (let i = 0; i < pNum; i++) passengersList.push({ nome: '', cognome: '', baggageChoice: 'hand' });
+          }
 
-        this.total = this.items.reduce((s: number, it: any) => s + (it.price || 0), 0);
 
-        // persist passengers including chosen class (seatTypeId)
-        try {
-          const toSave = this.items.map((x: any) => ({
-            nome: x.passenger?.nome || '',
-            cognome: x.passenger?.cognome || '',
-            baggageChoice: x.bag_label || 'hand',
-            seat_number: x.seat_label || undefined,
-            seatTypeId: x.seat_type && x.seat_type._id ? String(x.seat_type._id) : (this.seatTypeId || undefined)
-          }));
-          localStorage.setItem('passengers', JSON.stringify(toSave));
-        } catch {}
-      }, error: () => {} });
+
+          // parse query param 'seat': potrebbe essere JSON stringified
+
+          const rawSeatParam = this.route.snapshot.queryParamMap.get('seat') || this.seat || null;
+          let seat_pref: any = null;
+          if (rawSeatParam) {
+            try { seat_pref = JSON.parse(rawSeatParam); } catch { seat_pref = rawSeatParam; }
+          }
+          const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
+
+          const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
+
+          this.items = passengersList.map((pass: any) => {
+            const baggageChoice = pass.baggageChoice || this.baggage || 'hand';
+            let seatType = null;
+            if (seatTypeId) seatType = seatTypes.find((s: any) => String(s._id) === String(seatTypeId));
+            if (!seatType) seatType = seatTypes[0] || { type: 'ECONOMY', price: 0 };
+            const seat_fee = seat_pref && seatPrefSurcharge[String(seat_pref)] ? seatPrefSurcharge[String(seat_pref)] : 0;
+            let price = (seatType.price || 0) + seat_fee;
+            if (baggageChoice === 'big_cabin') price += this.flight?.price_of_bag || 0;
+            if (baggageChoice === 'big_hold') price += this.flight?.price_of_baggage || 0;
+
+            // determina etichetta posto: preferisci seat_number esplicito, altrimenti preferenza (es. 'window')
+            const prefLabels = ['window', 'aisle', 'middle', 'random'];
+            const seatLabel = pass.seat_number || (seat_pref && prefLabels.includes(String(seat_pref)) ? String(seat_pref) : null);
+            return {
+              passenger: pass,
+              seat_type: seatType,
+              seat_label: seatLabel,
+              bag_label: baggageChoice,
+              seat_fee,
+              price
+            };
+          });
+
+          this.total = this.items.reduce((s: number, it: any) => s + (it.price || 0), 0);
+
+
+
+          // persisti passeggeri includendo classe scelta (seatTypeId)
+          try {
+            const toSave = this.items.map((x: any) => ({
+              nome: x.passenger?.nome || '',
+              cognome: x.passenger?.cognome || '',
+              baggageChoice: x.bag_label || 'hand',
+              seat_number: x.seat_label || undefined,
+              seatTypeId: x.seat_type && x.seat_type._id ? String(x.seat_type._id) : (this.seatTypeId || undefined)
+            }));
+            localStorage.setItem('passengers', JSON.stringify(toSave));
+          } catch { }
+        }, error: () => { }
+      });
     }
   }
 
   pay() {
     if (!this.ticketId) return;
     this.loading = true;
-    // simulate payment delay then create the ticket
+    // simula delay pagamento poi crea biglietto
     setTimeout(() => {
-      // build passengers payload from items
-          const passengersPayload = this.items.map(it => ({
-            nome: it.passenger?.nome || '',
-            cognome: it.passenger?.cognome || '',
-            baggageChoice: it.bag_label,
-            seat_pref: this.seat || undefined,
-            seat_number: it.seat_label || undefined,
-            seatTypeId: it.seat_type && it.seat_type._id ? String(it.seat_type._id) : (this.seatTypeId || undefined)
-          }));
+      // costruisci payload passeggeri da items
+      const passengersPayload = this.items.map(it => ({
+        nome: it.passenger?.nome || '',
+        cognome: it.passenger?.cognome || '',
+        baggageChoice: it.bag_label,
+        seat_pref: this.seat || undefined,
+        seat_number: it.seat_label || undefined,
+        seatTypeId: it.seat_type && it.seat_type._id ? String(it.seat_type._id) : (this.seatTypeId || undefined)
+      }));
 
       const payload: any = { flightId: this.ticketId, passengers: JSON.stringify(passengersPayload) };
       const seat_pref = this.route.snapshot.queryParamMap.get('seat');
@@ -122,13 +135,15 @@ export class PaymentComponent {
       const seatTypeIdParam = this.route.snapshot.queryParamMap.get('seatTypeId');
       if (seatTypeIdParam) payload.seatTypeId = seatTypeIdParam;
 
-      this.ticketService.createTicket(payload).subscribe({ next: () => {
-        this.loading = false;
-        this.router.navigate(['/biglietti']);
-      }, error: (err) => {
-        this.loading = false;
-        this.error = err?.error?.message || 'Errore durante la creazione del biglietto';
-      } });
+      this.ticketService.createTicket(payload).subscribe({
+        next: () => {
+          this.loading = false;
+          this.router.navigate(['/biglietti']);
+        }, error: (err) => {
+          this.loading = false;
+          this.error = err?.error?.message || 'Errore durante la creazione del biglietto';
+        }
+      });
     }, 900);
   }
 }

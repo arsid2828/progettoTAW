@@ -1,3 +1,5 @@
+// Componente pagamento multiplo
+// Gestisce il pagamento per le prenotazioni multi-tratta
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -26,9 +28,9 @@ export class PaymentMultiComponent {
     this.loading = true;
     // gather passengers and seat selections from localStorage
     let passengers: any[] = [];
-    let seatSelections: Record<string,string> = {};
-    try { const p = localStorage.getItem('passengers'); if (p) passengers = JSON.parse(p); } catch {}
-    try { const s = localStorage.getItem('seatSelections'); if (s) seatSelections = JSON.parse(s); } catch {}
+    let seatSelections: Record<string, string> = {};
+    try { const p = localStorage.getItem('passengers'); if (p) passengers = JSON.parse(p); } catch { }
+    try { const s = localStorage.getItem('seatSelections'); if (s) seatSelections = JSON.parse(s); } catch { }
 
     // simulate payment then create all tickets (one per passenger per flight)
     setTimeout(() => {

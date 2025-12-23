@@ -1,3 +1,5 @@
+// Componente registrazione utenti
+// Form di registrazione per nuovi utenti (passeggeri)
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -46,7 +48,7 @@ export class SignupComponent {
     if (!this.isValidPassword()) { alert('Le password non corrispondono'); return; }
     if (this.data_nascita && this.data_nascita >= new Date()) { alert('La data di nascita deve essere nel passato'); return; }
     if (!this.data_nascita) { alert('La data di nascita è obbligatoria'); return; }
-    //<TODO>if("tutti i campi"!="tutti i campi") 
+    // <TODO> Controllo campi obbligatori
     let newUser: IProfile = {
       email: this.email,
       password: this.password,

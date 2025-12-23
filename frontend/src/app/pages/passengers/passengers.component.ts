@@ -1,3 +1,4 @@
+// Componente lista passeggeri (placeholder o uso futuro)
 import { Component } from '@angular/core';
 
 @Component({
