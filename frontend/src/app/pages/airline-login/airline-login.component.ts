@@ -25,8 +25,12 @@ export class AirlineLoginComponent {
     this.loading = true;
     this.error = null;
     this.auth.login({ email: this.email, password: this.password } as any).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading = false;
+        if (res.mustChangePassword) {
+          this.router.navigate(['/change-password']);
+          return;
+        }
         // navigate to airline area after successful login
         this.router.navigate(['/airline-area']);
       },

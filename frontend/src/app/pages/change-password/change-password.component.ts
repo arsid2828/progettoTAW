@@ -27,12 +27,20 @@ export class ChangePasswordComponent {
 
         this.http.post(`${this.apiUrl}/session/change-password`, this.form.value).subscribe({
             next: () => {
-                alert('Password aggiornata con successo. Effettua nuovamente il login.');
-                // Logout via token removal? 
-                // Ideally backend should invalidate session too but simplest is client side cleanup.
+                // Check role before clearing for redirection
+                const role = localStorage.getItem('role');
+
+                // Logout via token removal
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
-                this.router.navigate(['/login']);
+                localStorage.removeItem('role');
+                // Clean other keys if needed, or rely on clean login
+
+                if (role === 'airline') {
+                    this.router.navigate(['/airline-login']);
+                } else {
+                    this.router.navigate(['/login']);
+                }
             },
             error: (err) => alert('Errore aggiornamento password')
         });
