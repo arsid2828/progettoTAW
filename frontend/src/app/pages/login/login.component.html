@@ -23,12 +23,8 @@
       <a class="btn btn-outline" [routerLink]="['/signup']" [queryParams]="route.snapshot.queryParams">Registrati</a>
     </div>
 
-    <!--<ng-container *ngIf="messages">
-      <ul class="flash-messages">
-        <ng-container *ngFor="let msg of messages"> 
-          <li class="flash-message">{{ msg }}</li>
-        </ng-container>
-      </ul>
-    </ng-container>-->
+    <div *ngIf="errorMessage" class="error-message" style="color: red; text-align: center; margin-top: 10px;">
+      {{ errorMessage }}
+    </div>
   </div>
 </div>

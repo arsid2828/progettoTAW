@@ -118,6 +118,7 @@ SE NON FUNZIONA IL BUILD che aggiunge gli aereoporti al mongodb
 docker compose build --no-cache
 docker compose up
 
+SPESSO SE RIMANGONO I DATI DEI SEED VECCHI SERVE FARE docker compose down -v
 
 FARE 
 npm install bcrypt

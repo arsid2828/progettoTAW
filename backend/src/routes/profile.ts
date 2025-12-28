@@ -19,7 +19,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     newProfile.password = hashPassword(newProfile.password);
-    newProfile.password = hashPassword(newProfile.password);
+
     // Salva nel database
     const savedProfile = await newProfile.save();
     newProfile.password = "<segreto>";

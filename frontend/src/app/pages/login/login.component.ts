@@ -18,6 +18,7 @@ export class LoginComponent {
   authService: AuthService = inject(AuthService);
   router: Router = inject(Router);
   route: ActivatedRoute = inject(ActivatedRoute);
+  errorMessage: string = '';
 
   onSubmit() {
 
@@ -47,7 +48,10 @@ export class LoginComponent {
           this.router.navigate(['/search']);
         }
       },
-      error: (err) => console.error('Errore', err)
+      error: (err) => {
+        console.error('Errore', err);
+        this.errorMessage = 'Credenziali non valide o utente non trovato.';
+      }
     });
   }
 }
