@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
     const userId = user._id.toString();
 
     // Access token 15 min
-    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '1m' }); //15m TODO
+    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
 
     // Refresh token 30 giorni + salvato in Redis
     const refreshToken = randomUUID();
@@ -105,7 +105,7 @@ router.post('/refresh', async (req, res) => {
     const userId = await redis.get(`rt:${refreshToken}`);
     if (!userId) return res.status(401).json({ msg: 'Invalid refresh' });
 
-    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '1m' }); //15m TODO
+    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
     res.json({ accessToken });
 });
 // 2. ME restituisce dati utente loggato
@@ -148,6 +148,7 @@ router.post('/logout', async (req, res) => {
 // 4. CAMBIO PASSWORD
 router.post('/change-password', auth, async (req: any, res: any) => {
     try {
+        console.log('Richiesta cambio password ricevuta dal body:', req.body);
         const { newPassword } = req.body;
         if (!newPassword) return res.status(400).json({ message: 'New password required' });
 

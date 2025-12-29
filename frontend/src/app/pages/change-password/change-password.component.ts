@@ -25,10 +25,15 @@ export class ChangePasswordComponent {
     apiUrl = 'http://localhost:3000/api';
 
     onSubmit() {
-        if (this.form.invalid) return;
+        console.log('onSubmit triggered. Form valid?', this.form.valid, 'Value:', this.form.value);
+        if (this.form.invalid) {
+            console.log('Form invalid, aborting');
+            return;
+        }
 
         this.http.post(`${this.apiUrl}/session/change-password`, this.form.value).subscribe({
-            next: () => {
+            next: (res) => {
+                console.log('Password changed successfully', res);
                 // Controlla ruolo prima di pulire per reindirizzamento
                 const role = localStorage.getItem('role');
 
@@ -44,7 +49,10 @@ export class ChangePasswordComponent {
                     this.router.navigate(['/login']);
                 }
             },
-            error: (err) => alert('Errore aggiornamento password')
+            error: (err) => {
+                console.error('Errore aggiornamento password:', err);
+                alert('Errore aggiornamento password: ' + (err.error?.message || err.message));
+            }
         });
     }
 }
