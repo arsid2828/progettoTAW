@@ -64,8 +64,10 @@
     <ng-container *ngIf="res.legs && res.legs.length > 0">
       <div class="card-header">
         <div class="route-info">
-          <span class="city">{{ res.legs[0].from_airport.city }} ({{ res.legs[0].from_airport.code }})</span>
-          <span class="arrow">→</span>
+          <ng-container *ngFor="let leg of res.legs; let last = last">
+            <span class="city">{{ leg.from_airport.city }} ({{ leg.from_airport.code }})</span>
+            <span class="arrow">→</span>
+          </ng-container>
           <span class="city">{{ res.legs[res.legs.length-1].to_airport.city }} ({{
             res.legs[res.legs.length-1].to_airport.code }})</span>
         </div>

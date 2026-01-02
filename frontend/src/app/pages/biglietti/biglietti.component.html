@@ -27,7 +27,7 @@
           </div>
 
           <div class="flight-details">
-            <span class="flight-date">{{ ticket.flight?.date_departure | date:'mediumDate' }}</span>
+            <span class="flight-date">{{ ticket.flight?.date_departure | date:'dd MMMM yyyy' }}</span>
             <span class="flight-time">{{ ticket.flight?.date_departure | date:'shortTime' }} → {{ ticket.flight?.date_arrival | date:'shortTime' }}</span>
           </div>
 

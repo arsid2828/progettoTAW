@@ -7,7 +7,7 @@
         <div><strong>Compagnia:</strong> {{ flight.airline?.name }}</div>
         <div><strong>Rotta:</strong> {{ flight.from_airport?.name }} ({{ flight.from_airport?.code }}) → {{
           flight.to_airport?.name }} ({{ flight.to_airport?.code }})</div>
-        <div><strong>Data:</strong> {{ flight.date_departure | date:'mediumDate' }}</div>
+        <div><strong>Data:</strong> {{ flight.date_departure | date:'dd MMMM yyyy' }}</div>
         <div><strong>Orario:</strong> {{ flight.date_departure | date:'shortTime' }} → {{ flight.date_arrival |
           date:'shortTime' }}</div>
       </div>
@@ -54,7 +54,7 @@
         </div>
 
         <div style="margin-top:12px">
-          <div><strong>Seleziona classe</strong></div>
+          <div><strong>Seleziona classe{{seatTypeId}}</strong></div>
           <div class="class-cards">
             <label class="baggage-card" *ngFor="let st of seatTypes">
               <input type="radio" name="class_sel" [value]="st._id" [checked]="seatTypes[0] === st" [(ngModel)]="seatTypeId">

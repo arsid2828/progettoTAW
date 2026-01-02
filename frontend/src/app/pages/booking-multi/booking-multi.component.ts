@@ -29,6 +29,7 @@ export class BookingMultiComponent {
   loading = false;
   error: string | null = null;
 
+  stringify = JSON.stringify;
   constructor() {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
     if (ids) this.flightIds = ids.split(',');
@@ -42,6 +43,21 @@ export class BookingMultiComponent {
       forkJoin(calls).subscribe({
         next: (res: any[]) => {
           this.flights = res.map(r => r.flight || r);
+          this.flights = this.flights.map(f => ({ ...f, bagage_choices: [] }));
+          this.flights.forEach((flight, idx) => {
+            const id = (flight && (flight._id || flight.id)) as string | undefined;
+            if (!id) return;
+            this.flightService.getFlightById(id).subscribe({
+              next: (resp: any) => {
+                // integra i dettagli ricevuti nel singolo elemento di this.flights
+                this.flights[idx] = {
+                  ...this.flights[idx],
+                  seatTypes: resp.seatTypes || this.flights[idx].seatTypes || []
+                };
+              },
+              error: (err) => { console.error('Error loading flight details', err); }
+            });
+          });
         }, error: (err) => { console.error('Error loading flights', err); }
       });
     }

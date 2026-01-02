@@ -70,9 +70,14 @@ export class BookingComponent {
     if (this.passengerInputs.length > 0) {
       navExtras.queryParams.passengers = this.passengerInputs.length;
     }
-    if (this.seatTypeId) {
-      navExtras.queryParams.seatTypeId = this.seatTypeId;
+    if (this.passengerInputs.length > 1) {
+
+      this.router.navigate(['/payment'], { queryParams: { ticketFlightId: this.flightId, seatTypeId: this.seatTypeId } });
+    } else {
+      if (this.seatTypeId) {
+        navExtras.queryParams.seatTypeId = this.seatTypeId;
+      }
+      this.router.navigate(['/seat-choice'], navExtras);
     }
-    this.router.navigate(['/seat-choice'], navExtras);
   }
 }

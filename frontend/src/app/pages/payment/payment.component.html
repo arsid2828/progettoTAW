@@ -8,8 +8,8 @@
       <div class="summary-item"><span class="summary-label">Rotta:</span>
         <span class="summary-value">{{ flight.from_airport?.name || '' }} ({{ flight.from_airport?.code || '' }}) → {{ flight.to_airport?.name || '' }} ({{ flight.to_airport?.code || '' }})</span>
       </div>
-      <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{ flight.date_departure | date:'shortDate' }}</span></div>
-      <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{ flight.departure }} → {{ flight.arrival }}</span></div>
+      <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{ flight.date_departure | date:'dd MMMM yyyy' }}</span></div>
+      <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{  flight.date_departure | date:'HH:mm' }} → {{ flight.date_arrival | date:'HH:mm dd/MM/yyyy' }}</span></div>
     </div>
 
     <div class="divider"></div>
