@@ -14,7 +14,7 @@
       <div class="divider"></div>
       <p *ngIf="!flightIds.length">Nessun volo selezionato.</p>
       <div *ngIf="flightIds.length">
-        <pre>{{stringify(flights, null, 2)}}</pre>
+      <!--<pre>{{stringify(flights, null, 2)}}</pre> -->
         <div *ngIf="flights.length">
           <div *ngFor="let f of flights,  let fi = index">
 
