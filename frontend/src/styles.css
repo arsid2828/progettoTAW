@@ -610,3 +610,14 @@ input:checked + .slider:before { transform: translateX(26px); }
   color: var(--text);
   font-size: 1rem;
 }
+
+.seats-badge {
+    margin-top: 1rem;
+    display: inline-block;
+    background: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    color:  #374151;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+}

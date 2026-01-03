@@ -3,30 +3,38 @@
     <h1 class="booking-title">Pagamento</h1>
 
     <!-- Flight summary -->
-    <div class="flight-summary" *ngIf="flight">
-      <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{ flight.airline?.name || flight.airline }}</span></div>
-      <div class="summary-item"><span class="summary-label">Rotta:</span>
-        <span class="summary-value">{{ flight.from_airport?.name || '' }} ({{ flight.from_airport?.code || '' }}) → {{ flight.to_airport?.name || '' }} ({{ flight.to_airport?.code || '' }})</span>
+
+    <ng-container *ngFor="let flight of flights">
+      <div class="flight-summary" *ngIf="flight">
+        <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{
+            flight.airline?.name || flight.airline }}</span></div>
+        <div class="summary-item"><span class="summary-label">Rotta:</span>
+          <span class="summary-value">{{ flight.from_airport?.name || '' }} ({{ flight.from_airport?.code || '' }}) → {{
+            flight.to_airport?.name || '' }} ({{ flight.to_airport?.code || '' }})</span>
+        </div>
+        <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{
+            flight.date_departure | date:'dd MMMM yyyy' }}</span></div>
+        <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{
+            flight.date_departure | date:'HH:mm' }} → {{ flight.date_arrival | date:'HH:mm dd/MM/yyyy' }}</span></div>
       </div>
-      <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{ flight.date_departure | date:'dd MMMM yyyy' }}</span></div>
-      <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{  flight.date_departure | date:'HH:mm' }} → {{ flight.date_arrival | date:'HH:mm dd/MM/yyyy' }}</span></div>
-    </div>
-
-    <div class="divider"></div>
-
-    <h2 class="section-title">Riepilogo passeggeri</h2>
-    <div class="flight-list">
-      <div class="flight-item" *ngFor="let it of items">
-        <div class="flight-details" style="justify-content:space-between;flex-wrap:wrap;">
-          <span><strong>{{ it.passenger?.nome }} {{ it.passenger?.cognome }}</strong></span>
-          <span>Classe: <strong>{{ it.seat_type?.type || it.seat_type?.seat_class || 'ECONOMY' }}</strong></span>
-          <span>Bagaglio: <strong>{{ it.bag_label }}</strong></span>
-          <span>Posto: <strong>{{ it.seat_label || 'Casuale / assegnato più tardi' }}</strong></span>
-          <span *ngIf="it.seat_fee && it.seat_fee > 0">Sovrapprezzo posto: <strong>€{{ it.seat_fee.toFixed(2) }}</strong></span>
-          <span>Prezzo: <strong>€{{ it.price.toFixed(2) }}</strong></span>
+      <h2 class="section-title">Riepilogo passeggeri</h2>
+      <div class="flight-list">
+        <div class="flight-item" *ngFor="let it of getPassengersByFlight(flight._id)">
+          <div class="flight-details" style="justify-content:space-between;flex-wrap:wrap;">
+            <span><strong>{{ it.passenger?.nome }} {{ it.passenger?.cognome }}</strong></span>
+            <span>Classe: <strong>{{ it.seat_type?.type || it.seat_type?.seat_class || 'ECONOMY' }}</strong></span>
+            <span>Bagaglio: <strong>{{ it.bag_label }}</strong></span>
+            <span>Posto: <strong>{{ it.seat_label || 'Casuale / assegnato più tardi' }}</strong></span>
+            <span *ngIf="it.seat_fee && it.seat_fee > 0">Sovrapprezzo posto: <strong>€{{ it.seat_fee.toFixed(2)
+                }}</strong></span>
+            <span>Prezzo: <strong>€{{ it.price.toFixed(2) }}</strong></span>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
+    <div class="divider"></div>
+    <!--
+    -->
 
     <div class="divider"></div>
     <div class="summary-item" style="justify-content:flex-end;">
@@ -45,7 +53,8 @@
       <div class="form-row">
         <div class="form-group">
           <label for="cc_number">Numero carta</label>
-          <input id="cc_number" name="cc_number" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" required />
+          <input id="cc_number" name="cc_number" inputmode="numeric" autocomplete="cc-number"
+            placeholder="1234 5678 9012 3456" required />
         </div>
         <div class="form-group">
           <label for="cc_cvv">CVV</label>
@@ -73,7 +82,9 @@
         <button class="btn btn-submit" type="submit" [disabled]="loading">Paga €{{ total.toFixed(2) }}</button>
         <a class="btn btn-outline" routerLink="/biglietti">Annulla</a>
       </div>
-      <div *ngIf="error" class="flash-messages"><div class="flash-message">{{ error }}</div></div>
+      <div *ngIf="error" class="flash-messages">
+        <div class="flash-message">{{ error }}</div>
+      </div>
     </form>
   </div>
 </main>

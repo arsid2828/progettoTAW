@@ -10,27 +10,22 @@
       "prefix": "app",
       "architect": {
         "build": {
-          
-
-"configurations": {
-  "production": {
-    "optimization": true,
-    "sourceMap": false
-  },
-  "development": {
-    "optimization": false,
-    "sourceMap": {
-      "scripts": true,
-      "styles": true,
-      "vendor": true,
-      "hidden": false
-    }
-  }
-},
-"defaultConfiguration": "development",
-
-
-
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "sourceMap": false
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": {
+                "scripts": true,
+                "styles": true,
+                "vendor": true,
+                "hidden": false
+              }
+            }
+          },
+          "defaultConfiguration": "development",
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/air-web",
@@ -53,19 +48,16 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "air-web:build"
-          }
-
-,"configurations": {
-  "development": {
-    "buildTarget": "air-web:build:development"
-  },
-  "production": {
-    "buildTarget": "air-web:build:production"
-  }
-},
-"defaultConfiguration": "development"
-
-
+          },
+          "configurations": {
+            "development": {
+              "buildTarget": "air-web:build:development"
+            },
+            "production": {
+              "buildTarget": "air-web:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }

@@ -177,7 +177,6 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// <TODO> eliminare auth dalla riga sotto, serve solo per test
 router.get('', async (req, res) => {
   try {
     // 1. Estrazione Query Params
@@ -353,11 +352,11 @@ router.get('', async (req, res) => {
 
 
 export default router;
-
+/*
 // Ottieni singolo volo per ID
 router.get('/:id', async (req, res) => {
-  try {
     const id = req.params.id;
+  try {
     const flight = await Flight.findById(id)
       .populate('airline')
       .populate('from_airport')
@@ -365,6 +364,65 @@ router.get('/:id', async (req, res) => {
     if (!flight) return res.status(404).json({ message: 'Flight not found' });
     const seatTypes = await SeatType.find({ flight: flight._id });
     res.json({ flight, seatTypes });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error'+id });
+  }
+});*/
+
+
+// Ottieni uno o più voli per ID (supporta ID singolo o multipli separati da virgola)
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Dividi l'ID in un array se contiene virgole, altrimenti array con singolo elemento
+    const ids = id.split(',').filter(Boolean); // filter rimuove eventuali stringhe vuote
+
+    // Se c'è un solo ID, mantieni il comportamento originale (findById + seatTypes singolo)
+    if (ids.length === 1) {
+      const flight = await Flight.findById(ids[0])
+        .populate('airline')
+        .populate('from_airport')
+        .populate('to_airport');
+
+      if (!flight) {
+        return res.status(404).json({ message: 'Flight not found' });
+      }
+
+      const seatTypes = await SeatType.find({ flight: flight._id });
+
+      return res.json({ flight, seatTypes });
+    }
+
+    // Caso multiplo: più ID separati da virgola
+    const flights = await Flight.find({ _id: { $in: ids } })
+      .populate('airline')
+      .populate('from_airport')
+      .populate('to_airport');
+
+    // Se nessuno dei voli esiste
+    if (flights.length === 0) {
+      return res.status(404).json({ message: 'No flights found' });
+    }
+
+    // Recupera i seatTypes per tutti i voli trovati
+    const flightIds = flights.map(f => f._id);
+    const seatTypes = await SeatType.find({ flight: { $in: flightIds } });
+
+    // Opzionale: raggruppa i seatTypes per volo (più comodo per il frontend)
+    const seatTypesByFlight = flightIds.reduce((acc, flightId) => {
+      acc[String(flightId)] = seatTypes.filter(st => st.flight.toString() === flightId.toString());
+      return acc;
+    }, {} as Record<string, typeof seatTypes>);/**/
+
+    // Rispondi con array di voli + seatTypes (raggruppati o piatti, scegli tu)
+    res.json({
+      flights,
+      seatTypesByFlight//,        // versione raggruppata (consigliata)
+      // seatTypes,             // alternativa: array piatto di tutti i seatTypes
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Internal server error' });

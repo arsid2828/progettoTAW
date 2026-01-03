@@ -57,10 +57,13 @@
           <div><strong>Seleziona classe{{seatTypeId}}</strong></div>
           <div class="class-cards">
             <label class="baggage-card" *ngFor="let st of seatTypes">
-              <input type="radio" name="class_sel" [value]="st._id" [checked]="seatTypes[0] === st" [(ngModel)]="seatTypeId">
+              <input *ngIf="st.number_available >= passengerInputs.length" type="radio" name="class_sel" [value]="st._id" [checked]="seatTypes[0] === st" [(ngModel)]="seatTypeId">
               <div class="baggage-card-content">
                 <span class="baggage-type">{{ st.seat_class }}</span>
                 <span class="baggage-price">€{{ st.price }}</span>
+                <div>
+                <span class="seats-badge">Posti: {{ st.number_available }}</span>
+                </div>
               </div>
             </label>
           </div>

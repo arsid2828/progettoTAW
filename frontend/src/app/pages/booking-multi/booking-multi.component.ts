@@ -69,6 +69,24 @@ export class BookingMultiComponent {
     try { localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch { }
     const qp: any = { flightIds: this.flightIds.join(','), passengers: this.passengersQty };
     if (this.seatTypeId) qp.seatTypeId = this.seatTypeId;
-    this.router.navigate(['/seat-choice-multi'], { queryParams: qp });
+    if (this.passengerInputs.length > 1) {
+      let seatTypeSelections: any = {};
+      this.flights.forEach((flight, idx) => {
+        seatTypeSelections[flight._id || flight.id] = flight.seatTypeId || null;
+      });
+     try { localStorage.setItem('seatTypeSelections', JSON.stringify(seatTypeSelections)); } catch { } 
+
+     
+      let baggageSelections: any = {};
+      this.flights.forEach((flight, idx) => {
+        baggageSelections[flight._id || flight.id] = flight.bagage_choices || null;
+      });
+     try { localStorage.setItem('baggageSelections', JSON.stringify(baggageSelections)); } catch { } 
+
+
+      this.router.navigate(['/payment'], { queryParams: qp });
+    } else {
+      this.router.navigate(['/seat-choice-multi'], { queryParams: qp });
+    }
   }
 }
