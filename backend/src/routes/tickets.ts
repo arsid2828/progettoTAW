@@ -19,16 +19,20 @@ router.get('/', auth, async (req, res) => {
         }
 
         // Recupera tutti i biglietti dell'utente
+        console.log('GET /tickets request for user:', userId);
         const tickets = await Ticket.find({ profile: userId })
             .populate({
                 path: 'flight',
                 populate: [
                     { path: 'from_airport' },
-                    { path: 'to_airport' }
+                    { path: 'to_airport' },
+                    { path: 'airline' }
                 ]
             })
             .populate('seat_class')
             .populate('profile');
+
+        console.log(`Found ${tickets.length} tickets for user ${userId}`);
 
         res.status(200).json(tickets);
     } catch (error) {
@@ -83,11 +87,14 @@ router.post('/', auth, async (req, res) => {
                 return res.status(400).json({ message: 'No seats available for selected class' });
             }
 
-            // Recupera dettagli profilo
-            const profile = await Profile.findById(userId);
-            if (!profile) {
-                return res.status(404).json({ message: 'Profile not found' });
-            }
+            // Recupera dettagli profilo (Opzionale per validazione, ma il middleware auth garantisce già che l'utente esiste)
+            // Se l'utente è un Admin o Airline, potrebbe non avere un documento "Profile"
+            // Quindi rimuoviamo il blocco bloccante per "Profile not found" a meno che non sia strettamente necessario per logica business
+
+            // const profile = await Profile.findById(userId);
+            // if (!profile) {
+            //    // return res.status(404).json({ message: 'Profile not found' });
+            // }
 
             // Prezzo base dal tipo di posto
             let finalPrice = seatType.price || 0;
@@ -124,9 +131,8 @@ router.post('/', auth, async (req, res) => {
             // Aggiorna disponibilità posti
             seatType.number_available -= 1;
             await seatType.save();
-            console.log('DOPO ', ticket);
+            console.log('Ticket creato con successo:', ticket._id, 'per volo:', flightId);
             tickets.push(ticket);
-
         }
         res.status(201).json({ message: 'Ticket booked successfully', tickets });
     } catch (error) {

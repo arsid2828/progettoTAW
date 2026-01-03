@@ -2,21 +2,25 @@
 // Gestisce il riepilogo e la simulazione di pagamento
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { TicketService } from '@app/shared/ticket.service';
 import { FlightService } from '@app/services/flight.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })
 export class PaymentComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
-  ticketId = this.route.snapshot.queryParamMap.get('ticketId') || this.route.snapshot.queryParamMap.get('flightIds');
+  // Support multiple parameter names for compatibility: ticketId, ticketFlightId, flightIds
+  ticketId = this.route.snapshot.queryParamMap.get('ticketId')
+    || this.route.snapshot.queryParamMap.get('ticketFlightId')
+    || this.route.snapshot.queryParamMap.get('flightIds');
   ticketService = inject(TicketService);
   flightService = inject(FlightService);
   loading = false;
@@ -31,21 +35,43 @@ export class PaymentComponent {
   items: any[] = [];
   total = 0;
   seatTypesByFlight: any = {};
-  constructor() {
+  passengerStub: any = null; // Stubs just in case
+
+  constructor() { }
+
+  ngOnInit() {
     try { const p = localStorage.getItem('passengers'); if (p) { const arr = JSON.parse(p); if (Array.isArray(arr) && arr.length === 1) this.passenger = arr[0]; } } catch { }
+
     // load flight details and prepare items
     if (this.ticketId) {
+      this.loading = true;
+      console.log('Fetching details for ticketId:', this.ticketId);
+
       this.flightService.getFlightById(this.ticketId).subscribe({
         next: (res: any) => {
-          this.flights = res.flight ? [res.flight] : res.flights || [];
+          this.loading = false;
+          console.log('Flight details response:', res);
 
-          if (res.seatTypes) {
-            this.seatTypesByFlight[String(this.ticketId)] = res.seatTypes;
-          } else if (res.seatTypesByFlight) {
-            this.seatTypesByFlight = res.seatTypesByFlight;
+          // Robustly handle single vs multi response
+          if (res.flight) {
+            this.flights = [res.flight];
+            // Map seat types using the ACTUAL flight ID from response
+            if (res.seatTypes) {
+              this.seatTypesByFlight[String(res.flight._id)] = res.seatTypes;
+            }
+          } else if (res.flights) {
+            this.flights = res.flights;
+            this.seatTypesByFlight = res.seatTypesByFlight || {};
+            // Ensure keys are strings just in case
+            const newMap: any = {};
+            for (const k in this.seatTypesByFlight) newMap[String(k)] = this.seatTypesByFlight[k];
+            this.seatTypesByFlight = newMap;
+          } else {
+            this.flights = [];
           }
-          //const seatTypes = res.seatTypes? {this.ticketId: res.seatTypes} || this.flights[0]?.seat_types || [];
-          // determine passengers list
+          console.log('Processed flights:', this.flights);
+          console.log('Processed seatTypesByFlight:', this.seatTypesByFlight);
+
           let passengersList: any[] = [];
           try {
             const p = localStorage.getItem('passengers');
@@ -55,57 +81,75 @@ export class PaymentComponent {
             if (this.passenger) passengersList = [this.passenger];
           }
 
-
-
-          // Se query param 'passengers' fornito come numero, crea placeholder
-
           const passengersParam = this.route.snapshot.queryParamMap.get('passengers');
           const pNum = Number(passengersParam) || 0;
           if (pNum > 0 && passengersList.length === 0) {
             for (let i = 0; i < pNum; i++) passengersList.push({ nome: '', cognome: '', baggageChoice: 'hand' });
           }
 
-
-
-          // parse query param 'seat': potrebbe essere JSON stringified
-
           const rawSeatParam = this.route.snapshot.queryParamMap.get('seat') || this.seat || null;
           let seat_pref: any = null;
           if (rawSeatParam) {
             try { seat_pref = JSON.parse(rawSeatParam); } catch { seat_pref = rawSeatParam; }
           }
-          const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
+          // const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null; // This is already a class property
 
           const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
 
           this.items = passengersList.map((pass: any) => {
             const baggageChoice = pass.baggageChoice || this.baggage || 'hand';
-            let seatType = null;
-            /*if (seatTypeId) seatType = seatTypes.find((s: any) => String(s._id) === String(seatTypeId));
-            if (!seatType) seatType = seatTypes[0] || { type: 'ECONOMY', price: 0 };
-            const seat_fee = seat_pref && seatPrefSurcharge[String(seat_pref)] ? seatPrefSurcharge[String(seat_pref)] : 0;
-            let price = (seatType.price || 0) + seat_fee;
-            if (baggageChoice === 'big_cabin') price += this.flight?.price_of_bag || 0;
-            if (baggageChoice === 'big_hold') price += this.flight?.price_of_baggage || 0;*/
+            // const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || pass.seatTypeId || null; // This is already a class property
 
-            // determina etichetta posto: preferisci seat_number esplicito, altrimenti preferenza (es. 'window')
+            // Seat Logic Calculation
+            let seatTypeObj = null;
+            let typePrice = 0;
+            // Use the first flight's ID for default logic in single-flight view
+            const fid = this.flights.length > 0 ? String(this.flights[0]._id) : String(this.ticketId);
+
+            if (this.seatTypesByFlight[fid]) {
+              const types = this.seatTypesByFlight[fid];
+              // Try specific ID
+              if (this.seatTypeId) seatTypeObj = types.find((t: any) => t._id === this.seatTypeId);
+              // Try Economy default
+              if (!seatTypeObj) seatTypeObj = types.find((t: any) => t.type === 'Economy' || t.seat_class === 'Economy');
+              // Try First Available
+              if (!seatTypeObj && types.length) seatTypeObj = types[0];
+
+              if (seatTypeObj) typePrice = seatTypeObj.price || 0;
+            }
+
+            // const rawSeatParam = this.route.snapshot.queryParamMap.get('seat') || this.seat || null; // Already defined above
+            // let seat_pref: any = null; // Already defined above
+            // if (rawSeatParam) {
+            //   try { seat_pref = JSON.parse(rawSeatParam); } catch { seat_pref = rawSeatParam; }
+            // }
+            if (pass.seat_pref) seat_pref = pass.seat_pref;
+
+            // const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 }; // Already defined above
+            const seat_fee = seat_pref && seatPrefSurcharge[String(seat_pref)] ? seatPrefSurcharge[String(seat_pref)] : 0;
+            let price = typePrice + seat_fee;
+
+            if (baggageChoice === 'big_cabin') price += (this.flights[0]?.price_of_bag || 0);
+            if (baggageChoice === 'big_hold') price += (this.flights[0]?.price_of_baggage || 0);
+
+            // Override price if user specifically selected a seat type in UI that might have overridden passenger default
+            // (Only for single passenger view where this logic is often used)
+
+            // Labels
             const prefLabels = ['window', 'aisle', 'middle', 'random'];
             const seatLabel = pass.seat_number || (seat_pref && prefLabels.includes(String(seat_pref)) ? String(seat_pref) : null);
             return {
-              passenger: pass/*,
-              seat_type: seatType,
+              passenger: pass,
+              seat_type: seatTypeObj,
               seat_label: seatLabel,
               bag_label: baggageChoice,
               seat_fee,
-              price*/
+              price
             };
           });
 
           this.total = this.items.reduce((s: number, it: any) => s + (it.price || 0), 0);
 
-
-
-          // persisti passeggeri includendo classe scelta (seatTypeId)
           try {
             const toSave = this.items.map((x: any) => ({
               nome: x.passenger?.nome || '',
@@ -116,62 +160,86 @@ export class PaymentComponent {
             }));
             localStorage.setItem('passengers', JSON.stringify(toSave));
           } catch { }
-        }, error: () => { }
+        }, error: (err) => {
+          console.error(err);
+          this.loading = false;
+          this.error = "Impossibile caricare i dettagli del volo. Riprova.";
+        }
       });
     }
   }
+
   getPassengersByFlight(flightId: string) {
+    if (!flightId || !this.flights) return [];
+
     let passengersList: any[] = [];
     try {
       const p = localStorage.getItem('passengers');
       if (p) passengersList = JSON.parse(p);
     } catch { }
+
     if (!passengersList || passengersList.length === 0) {
       if (this.passenger) passengersList = [this.passenger];
+      if (passengersList.length === 0) passengersList = [{ nome: '', cognome: '', baggageChoice: 'hand' }];
     }
-    let flight=this.flights[flightId];
+
+    // Since we call this from template often, optimize lookup
+    const flight = this.flights.find((f: any) => String(f._id) === String(flightId));
+    if (!flight) return [];
+
     let items = passengersList.map((pass: any, index: number) => {
       const baggageChoice = pass.baggageChoice || this.baggage || 'hand';
-      let seatType = null;
-      const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
-      let seatprice=0;
-      if (seatTypeId !== null) {
-        let seatTypes = this.seatTypesByFlight[flightId];//  seatTypes.find((s: any) => String(s._id) === String(seatTypeId));
-        seatprice=seatTypes.find((s: any) => String(s._id) === String(flight.seatTypeId)).price;
-      }
+      const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || pass.seatTypeId || null;
 
+      let seatprice = 0;
+      let seatTypeObj = null;
+
+      // Resolve Seat Price (Priority: ID -> Economy -> First Available)
+      if (this.seatTypesByFlight[flightId]) {
+        const types = this.seatTypesByFlight[flightId];
+        // 1. Try exact ID
+        seatTypeObj = types.find((s: any) => String(s._id) === String(seatTypeId));
+        // 2. Try 'Economy'
+        if (!seatTypeObj) seatTypeObj = types.find((s: any) => (s.type === 'Economy' || s.seat_class === 'Economy'));
+        // 3. Fallback
+        if (!seatTypeObj && types.length > 0) seatTypeObj = types[0];
+
+        if (seatTypeObj) seatprice = seatTypeObj.price || 0;
+      }
 
       const rawSeatParam = this.route.snapshot.queryParamMap.get('seat') || this.seat || null;
       let seat_pref: any = null;
       if (rawSeatParam) {
         try { seat_pref = JSON.parse(rawSeatParam); } catch { seat_pref = rawSeatParam; }
       }
+      if (pass.seat_pref) seat_pref = pass.seat_pref;
+
       const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
       const seat_fee = seat_pref && seatPrefSurcharge[String(seat_pref)] ? seatPrefSurcharge[String(seat_pref)] : 0;
-      let price = (seatprice || 0) + seat_fee;
-      if (baggageChoice === 'big_cabin') price += this.flights[flightId]?.price_of_bag || 0;
-      if (baggageChoice === 'big_hold') price += this.flights[flightId]?.price_of_baggage || 0;
 
-      // determina etichetta posto: preferisci seat_number esplicito, altrimenti preferenza (es. 'window')
+      let price = (seatprice || 0) + seat_fee;
+      if (baggageChoice === 'big_cabin') price += flight.price_of_bag || 0;
+      if (baggageChoice === 'big_hold') price += flight.price_of_baggage || 0;
+
       const prefLabels = ['window', 'aisle', 'middle', 'random'];
       const seatLabel = pass.seat_number || (seat_pref && prefLabels.includes(String(seat_pref)) ? String(seat_pref) : null);
+
       return {
         passenger: pass,
-              seat_type: seatType,
-              seat_label: seatLabel,
-              bag_label: baggageChoice,
-              seat_fee,
-              price/**/
+        seat_type: seatTypeObj,
+        seat_label: seatLabel,
+        bag_label: baggageChoice,
+        seat_fee,
+        price
       };
     });
     return items;
   }
+
   pay() {
     if (!this.ticketId) return;
     this.loading = true;
-    // simula delay pagamento poi crea biglietto
     setTimeout(() => {
-      // costruisci payload passeggeri da items
       const passengersPayload = this.items.map(it => ({
         nome: it.passenger?.nome || '',
         cognome: it.passenger?.cognome || '',

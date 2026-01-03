@@ -14,35 +14,66 @@
       </div>
     </form>
 
-    <div *ngIf="tickets && tickets.length > 0; else noTickets">
+    <div *ngIf="trips && trips.length > 0; else noTickets">
       <div class="flight-list" id="flight-list">
-        <div class="flight-card" *ngFor="let ticket of tickets" [attr.data-date]="ticket.flight?.date_departure">
-          <div class="flight-header">
-            <span class="airline">{{ ticket.flight?.airline?.name }}</span>
+        <!-- Iterate over TRIPS instead of tickets -->
+        <div class="flight-card" *ngFor="let trip of trips" [attr.data-date]="trip.startDate">
+
+          <!-- Trip Header: A -> C -->
+          <div class="flight-header trip-header">
+            <span class="airline">{{ trip.segments[0].flight?.airline?.name }}</span>
             <span class="flight-route">
-              {{ ticket.flight?.from_airport?.name }} ({{ ticket.flight?.from_airport?.code }})
+              {{ trip.segments[0].flight?.from_airport?.name }} ({{ trip.segments[0].flight?.from_airport?.code }})
               →
-              {{ ticket.flight?.to_airport?.name }} ({{ ticket.flight?.to_airport?.code }})
+              <!-- Final destination of the trip -->
+              {{ trip.segments[trip.segments.length - 1].flight?.to_airport?.name }} ({{
+              trip.segments[trip.segments.length - 1].flight?.to_airport?.code }})
+            </span>
+
+            <!-- Stopovers badge -->
+            <span *ngIf="trip.segments.length > 1" class="stops-badge">
+              {{ trip.segments.length - 1 }} Scal{{ trip.segments.length - 1 === 1 ? 'o' : 'i' }}
             </span>
           </div>
 
+          <!-- Trip Meta -->
           <div class="flight-details">
-            <span class="flight-date">{{ ticket.flight?.date_departure | date:'dd MMMM yyyy' }}</span>
-            <span class="flight-time">{{ ticket.flight?.date_departure | date:'shortTime' }} → {{ ticket.flight?.date_arrival | date:'shortTime' }}</span>
+            <span class="flight-date">{{ trip.startDate | date:'dd MMMM yyyy' }}</span>
+            <span class="flight-time">
+              {{ trip.startDate | date:'HH:mm' }}
+              →
+              {{ trip.endDate | date:'HH:mm dd/MM' }}
+            </span>
+          </div>
+          <div class="flight-details">
+            <span>Totale: <strong>{{ trip.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</strong></span>
+            <span>Passeggero: <strong>{{ trip.passengerName }}</strong></span>
           </div>
 
-          <div class="flight-details">
-            <span>Classe: <strong>{{ ticket.seat_class?.seat_class || '—' }}</strong></span>
-            <span>Prezzo: <strong>{{ ticket.price_paid | currency:'EUR':'symbol':'1.0-0' }}</strong></span>
+          <!-- Segments Detail (toggleable or always visible? Let's make visible with divider) -->
+          <div class="trip-segments">
+            <div class="segment-row" *ngFor="let seg of trip.segments; let i = index">
+              <hr *ngIf="i > 0" class="segment-divider">
+              <div class="segment-info">
+                <span class="seg-route">
+                  <strong>{{ seg.flight?.from_airport?.code }}</strong>
+                  ({{ seg.flight?.departure }})
+                  →
+                  <strong>{{ seg.flight?.to_airport?.code }}</strong>
+                  ({{ seg.flight?.arrival }})
+                </span>
+                <span class="seg-meta">
+                  {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }} • Bagaglio: {{
+                  seg.bagage_choice || 'Standard' }}
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div class="flight-details">
-            <span>Data prenotazione: <strong>{{ ticket.createdAt | date:'medium' }}</strong></span>
+          <div class="flight-details" style="margin-top:10px; font-size:0.8rem; color:#666;">
+            <span>Data prenotazione: {{ trip.segments[0].createdAt | date:'medium' }}</span>
           </div>
 
-          <div class="flight-details">
-            <span>Passeggero: <strong>{{ ticket.p_nome || ticket.profile?.nome }} {{ ticket.p_cognome || ticket.profile?.cognome }}</strong></span>
-          </div>
         </div>
       </div>
     </div>
@@ -56,4 +87,3 @@
 
   </div>
 </main>
-

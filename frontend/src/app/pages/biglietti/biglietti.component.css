@@ -1,7 +1,162 @@
-.tickets-page{display:flex;justify-content:center;padding:40px 0}
-.tickets-card{width:640px;background:#fff;border-radius:8px;padding:24px;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
-.tickets-card h2{text-align:center;color:#1d6ff0;margin-bottom:18px}
-.ticket{border:1px solid #eee;padding:12px;border-radius:6px;margin-bottom:12px}
-.ticket-title{font-weight:700;color:#1a56b8}
-.ticket-meta{font-size:13px;color:#444;margin-top:6px}
-.no-tickets{text-align:center;padding:18px;color:#666}
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 1rem;
+}
+
+.page-title {
+    text-align: center;
+    color: #1a73e8;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.flight-search-form {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.form-group select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.flight-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.flight-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    border: 1px solid #eee;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.flight-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.flight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.trip-header {
+    margin-bottom: 0.5rem;
+    /* Tighter spacing for groups */
+}
+
+.airline {
+    font-weight: 700;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.flight-route {
+    font-size: 1.1rem;
+    color: #555;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stops-badge {
+    background: #e8f0fe;
+    color: #1967d2;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.flight-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    color: #444;
+}
+
+.flight-details span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.flight-date {
+    color: #666;
+}
+
+.flight-time {
+    font-weight: 600;
+    color: #222;
+}
+
+/* Trip Segments Section */
+.trip-segments {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+
+.segment-row {
+    padding: 8px 0;
+}
+
+.segment-divider {
+    border: 0;
+    border-top: 1px dashed #ddd;
+    margin: 8px 0;
+}
+
+.segment-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.seg-route strong {
+    color: #333;
+}
+
+.seg-meta {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.no-flights {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    color: #666;
+}
+
+.btn-primary {
+    background: #1a73e8;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: 1rem;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: #1557b0;
+}

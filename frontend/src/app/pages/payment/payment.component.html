@@ -4,6 +4,13 @@
 
     <!-- Flight summary -->
 
+    <div *ngIf="loading" class="loading-spinner">Caricamento dettagli volo...</div>
+
+    <div *ngIf="!loading && (!flights || flights.length === 0)" class="error-message">
+      <p>Nessun volo trovato per i dettagli specificati.</p>
+      <a routerLink="/" class="btn btn-outline">Torna alla ricerca</a>
+    </div>
+
     <ng-container *ngFor="let flight of flights">
       <div class="flight-summary" *ngIf="flight">
         <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{
@@ -19,6 +26,7 @@
       </div>
       <h2 class="section-title">Riepilogo passeggeri</h2>
       <div class="flight-list">
+        <!-- Error if getPassengersByFlight fails? -->
         <div class="flight-item" *ngFor="let it of getPassengersByFlight(flight._id)">
           <div class="flight-details" style="justify-content:space-between;flex-wrap:wrap;">
             <span><strong>{{ it.passenger?.nome }} {{ it.passenger?.cognome }}</strong></span>
