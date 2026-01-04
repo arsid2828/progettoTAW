@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
 import { AuthService } from '../auth.service';
 import { HuserComponent } from '../huser/huser.component';
 
@@ -14,6 +15,7 @@ import { HuserComponent } from '../huser/huser.component';
 export class HeaderComponent {
   auth = inject(AuthService);
   router = inject(Router);
+  location = inject(Location);
 
   get user() {
     return { role: this.auth.userRole() };
@@ -51,9 +53,9 @@ export class HeaderComponent {
     return url.startsWith('/biglietti');
   }
 
-  goBack(): void {
-    // Navigate back to search page
-    this.router.navigate(['/search']);
+  goBack(event?: Event): void {
+    if (event) event.preventDefault();
+    this.location.back();
   }
 
   onLogout() {

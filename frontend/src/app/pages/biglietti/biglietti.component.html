@@ -16,63 +16,88 @@
 
     <div *ngIf="trips && trips.length > 0; else noTickets">
       <div class="flight-list" id="flight-list">
-        <!-- Iterate over TRIPS instead of tickets -->
-        <div class="flight-card" *ngFor="let trip of trips" [attr.data-date]="trip.startDate">
+        <div class="flight-card" *ngFor="let trip of trips" [attr.data-date]="trip.startDate" (click)="openModal(trip)" style="cursor:pointer">
 
-          <!-- Trip Header: A -> C -->
-          <div class="flight-header trip-header">
-            <span class="airline">{{ trip.segments[0].flight?.airline?.name }}</span>
-            <span class="flight-route">
-              {{ trip.segments[0].flight?.from_airport?.name }} ({{ trip.segments[0].flight?.from_airport?.code }})
-              →
-              <!-- Final destination of the trip -->
-              {{ trip.segments[trip.segments.length - 1].flight?.to_airport?.name }} ({{
-              trip.segments[trip.segments.length - 1].flight?.to_airport?.code }})
-            </span>
+          <!-- Card Top: times / route / summary -->
+          <div class="flight-card-top">
+            <div class="time-block departure">
+              <div class="time">{{ trip.startDate | date:'HH:mm' }}</div>
+              <div class="date">{{ trip.startDate | date:'dd MMM yyyy' }}</div>
+              <div class="airport">{{ trip.segments[0].flight?.from_airport?.code }}</div>
+            </div>
 
-            <!-- Stopovers badge -->
-            <span *ngIf="trip.segments.length > 1" class="stops-badge">
-              {{ trip.segments.length - 1 }} Scal{{ trip.segments.length - 1 === 1 ? 'o' : 'i' }}
-            </span>
+            <div class="route-block">
+              <div class="route-line">
+                <div class="from">{{ trip.segments[0].flight?.from_airport?.name }} ({{ trip.segments[0].flight?.from_airport?.code }})</div>
+                <div class="arrow">→</div>
+                <div class="to">{{ trip.segments[trip.segments.length - 1].flight?.to_airport?.name }} ({{ trip.segments[trip.segments.length - 1].flight?.to_airport?.code }})</div>
+              </div>
+              <div class="stops-and-passenger">
+                <span *ngIf="trip.segments.length > 1" class="stops-badge">{{ trip.segments.length - 1 }} Scal{{ trip.segments.length - 1 === 1 ? 'o' : 'i' }}</span>
+                <span class="passenger">Passeggero: <strong>{{ trip.passengerName }}</strong></span>
+              </div>
+            </div>
+
+            <div class="time-block arrival">
+              <div class="time">{{ trip.endDate | date:'HH:mm' }}</div>
+              <div class="date">{{ trip.endDate | date:'dd MMM yyyy' }}</div>
+              <div class="airport">{{ trip.segments[trip.segments.length - 1].flight?.to_airport?.code }}</div>
+            </div>
           </div>
 
-          <!-- Trip Meta -->
-          <div class="flight-details">
-            <span class="flight-date">{{ trip.startDate | date:'dd MMMM yyyy' }}</span>
-            <span class="flight-time">
-              {{ trip.startDate | date:'HH:mm' }}
-              →
-              {{ trip.endDate | date:'HH:mm dd/MM' }}
-            </span>
-          </div>
-          <div class="flight-details">
-            <span>Totale: <strong>{{ trip.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</strong></span>
-            <span>Passeggero: <strong>{{ trip.passengerName }}</strong></span>
+          <!-- Summary row: airline and price -->
+          <div class="flight-summary">
+            <div class="airline"><strong>{{ trip.segments[0].flight?.airline?.name }}</strong></div>
+            <div class="price">Totale: <span class="amount">{{ trip.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</span></div>
           </div>
 
-          <!-- Segments Detail (toggleable or always visible? Let's make visible with divider) -->
+          <!-- Segments Detail -->
           <div class="trip-segments">
             <div class="segment-row" *ngFor="let seg of trip.segments; let i = index">
               <hr *ngIf="i > 0" class="segment-divider">
               <div class="segment-info">
-                <span class="seg-route">
-                  <strong>{{ seg.flight?.from_airport?.code }}</strong>
-                  ({{ seg.flight?.departure }})
-                  →
-                  <strong>{{ seg.flight?.to_airport?.code }}</strong>
-                  ({{ seg.flight?.arrival }})
-                </span>
-                <span class="seg-meta">
-                  {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }} • Bagaglio: {{
-                  seg.bagage_choice || 'Standard' }}
-                </span>
+                <div class="seg-times">
+                  <div class="seg-time">{{ seg.flight?.departure | date:'dd MMM yyyy, HH:mm' }}</div>
+                  <div class="seg-airports"><strong>{{ seg.flight?.from_airport?.code }}</strong> → <strong>{{ seg.flight?.to_airport?.code }}</strong></div>
+                  <div class="seg-arrival">{{ seg.flight?.arrival | date:'dd MMM yyyy, HH:mm' }}</div>
+                </div>
+                <div class="seg-meta">
+                  <div>{{ seg.seat_class?.seat_class || 'Economy' }}</div>
+                  <div>Posto: <strong>{{ seg.seat_number || 'ND' }}</strong></div>
+                  <div>Bagaglio: <strong>{{ seg.bagage_choice || 'Standard' }}</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal overlay -->
+            <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()" #modalContainer>
+              <div class="modal-ticket" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="closeModal()">×</button>
+                <div class="modal-content">
+                  <div class="modal-left">
+                    <h3 class="modal-route">{{ selectedTrip?.segments[0]?.flight?.from_airport?.code }} → {{ selectedTrip?.segments[selectedTrip.segments.length-1]?.flight?.to_airport?.code }}</h3>
+                    <div class="modal-times">Partenza: {{ selectedTrip?.startDate | date:'dd MMM yyyy, HH:mm' }} — Arrivo: {{ selectedTrip?.endDate | date:'dd MMM yyyy, HH:mm' }}</div>
+                    <div class="modal-airline">{{ selectedTrip?.segments[0]?.flight?.airline?.name }}</div>
+                    <div class="modal-pass">Passeggero: <strong>{{ selectedTrip?.passengerName }}</strong></div>
+                    <div class="modal-price">Totale: <strong>{{ selectedTrip?.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</strong></div>
+                  </div>
+                  <div class="modal-right">
+                    <img [src]="qrData" alt="QR" class="modal-qr" />
+                    <div class="qr-note">QR non funzionante — prototipo</div>
+                  </div>
+                </div>
+
+                <div class="modal-segments">
+                  <div *ngFor="let seg of selectedTrip?.segments" class="modal-seg">
+                    <div class="seg-info">{{ seg.flight?.from_airport?.code }} → {{ seg.flight?.to_airport?.code }}</div>
+                    <div class="seg-meta">{{ seg.flight?.date_departure | date:'dd MMM, HH:mm' }} • {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="flight-details" style="margin-top:10px; font-size:0.8rem; color:#666;">
-            <span>Data prenotazione: {{ trip.segments[0].createdAt | date:'medium' }}</span>
-          </div>
+          <div class="booking-date">Data prenotazione: {{ trip.segments[0].createdAt | date:'medium' }}</div>
 
         </div>
       </div>

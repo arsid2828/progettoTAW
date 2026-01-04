@@ -3,6 +3,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-seat-choice-multi',
@@ -16,6 +17,7 @@ export class SeatChoiceMultiComponent {
   router = inject(Router);
   flightIds: string[] = [];
   selections: Record<string, string> = {};
+  location = inject(Location);
 
   constructor() {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
@@ -33,5 +35,10 @@ export class SeatChoiceMultiComponent {
     const qp: any = { flightIds, passengers };
     if (seatTypeId) qp.seatTypeId = seatTypeId;
     this.router.navigate(['/payment-multi'], { queryParams: qp });
+  }
+
+  goBack(event?: Event) {
+    if (event) event.preventDefault();
+    this.location.back();
   }
 }

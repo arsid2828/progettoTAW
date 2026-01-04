@@ -4,6 +4,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { TicketService } from '@app/shared/ticket.service';
+import { Location } from '@angular/common';
 import { FlightService } from '@app/services/flight.service';
 import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ export class PaymentMultiComponent implements OnInit {
   router = inject(Router);
   route = inject(ActivatedRoute);
   ticketService = inject(TicketService);
+  location = inject(Location);
   flightService = inject(FlightService);
 
   loading = false;
@@ -320,5 +322,10 @@ for (const passenger of passengers) {
         });
       });
     }, 900);
+  }
+
+  goBack(event?: Event) {
+    if (event) event.preventDefault();
+    this.location.back();
   }
 }

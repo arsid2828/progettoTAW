@@ -3,6 +3,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
 import { FlightService } from '@app/services/flight.service';
 import { FormsModule } from '@angular/forms';
@@ -23,6 +24,7 @@ export class PaymentComponent {
     || this.route.snapshot.queryParamMap.get('flightIds');
   ticketService = inject(TicketService);
   flightService = inject(FlightService);
+  location = inject(Location);
   loading = false;
   error: string | null = null;
   seat = this.route.snapshot.queryParamMap.get('seat') || null;
@@ -278,5 +280,10 @@ export class PaymentComponent {
         }
       });
     }, 900);
+  }
+
+  goBack(event?: Event) {
+    if (event) event.preventDefault();
+    this.location.back();
   }
 }

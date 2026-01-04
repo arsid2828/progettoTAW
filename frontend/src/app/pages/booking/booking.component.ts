@@ -4,6 +4,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
 import { FlightService } from '@app/services/flight.service';
 import { AuthService } from '@app/shared/auth.service';
@@ -18,6 +19,7 @@ import { AuthService } from '@app/shared/auth.service';
 export class BookingComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
+  location = inject(Location);
   ticketService = inject(TicketService);
   auth = inject(AuthService);
   flightId: string | null = null;
@@ -93,5 +95,10 @@ export class BookingComponent {
       }
       this.router.navigate(['/seat-choice'], navExtras);
     }
+  }
+
+  goBack(event?: Event) {
+    if (event) event.preventDefault();
+    this.location.back();
   }
 }

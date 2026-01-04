@@ -3,6 +3,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-seat-choice',
@@ -16,6 +17,7 @@ export class SeatChoiceComponent {
   router = inject(Router);
   flightId = this.route.snapshot.queryParamMap.get('flightId');
   selectedSeat: string | null = null;
+  location = inject(Location);
 
   chooseSeat(seat: string) { this.selectedSeat = seat; }
 
@@ -27,5 +29,10 @@ export class SeatChoiceComponent {
     if (passengers) qp.passengers = passengers;
     if (seatTypeId) qp.seatTypeId = seatTypeId;
     this.router.navigate(['/payment'], { queryParams: qp });
+  }
+
+  goBack(event?: Event) {
+    if (event) event.preventDefault();
+    this.location.back();
   }
 }

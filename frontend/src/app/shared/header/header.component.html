@@ -4,7 +4,7 @@
     <div class="header-section">
       <!-- Airline-login page: show back button -->
       <ng-container *ngIf="isAirlineLogin()">
-        <a class="btn btn-outline btn-back" routerLink="/search">← Torna indietro</a>
+        <a class="btn btn-outline btn-back" href="#" (click)="goBack($event)">← Torna indietro</a>
       </ng-container>
 
       <!-- Normal pages -->

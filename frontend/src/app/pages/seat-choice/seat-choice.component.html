@@ -18,7 +18,7 @@
 
         <div style="margin-top:12px">
           <button class="btn btn-primary" [disabled]="!selectedSeat">Continua al pagamento</button>
-          <a class="btn btn-outline" routerLink="/search">Annulla</a>
+          <a class="btn btn-outline" href="#" (click)="goBack($event)">Annulla</a>
         </div>
       </form>
     </div>
