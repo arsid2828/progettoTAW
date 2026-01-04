@@ -84,55 +84,55 @@ export class PaymentMultiComponent implements OnInit {
 
   // Find the seat type object for a specific flight consistent with the user's selection
   getSeatTypeForFlight(flightId: string) {
-    
-      let seatTypeObj = null;
-      let seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
-      if (seatTypeId == null) { seatTypeId = this.seatTypeSelections[flightId]; }
-      //if (seatTypeId == null) { seatTypeId = pass.seatTypeId; }
 
-      // Resolve Seat Price (Priority: ID -> Economy -> First Available)
-      if (this.seatTypesByFlight[flightId]) {
-        const types = this.seatTypesByFlight[flightId];
-        // 1. Try exact ID
-        seatTypeObj = types.find((s: any) => String(s._id) === String(seatTypeId));
-        // 2. Try 'Economy'
-        if (!seatTypeObj) seatTypeObj = types.find((s: any) => (s.type === 'Economy' || s.seat_class === 'Economy'));
-        // 3. Fallback
-        if (!seatTypeObj && types.length > 0) seatTypeObj = types[0];
+    let seatTypeObj = null;
+    let seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
+    if (seatTypeId == null) { seatTypeId = this.seatTypeSelections[flightId]; }
+    //if (seatTypeId == null) { seatTypeId = pass.seatTypeId; }
 
-        //if (seatTypeObj) seatprice = seatTypeObj.price || 0;
-      }
-      return seatTypeObj;
- /*   // 1. Identify Target Name from global ID, OR Default to Economy
-    let selectedSeatTypeName = 'Economy';
-
-    if (this.seatTypeId) {
-      for (const fid in this.seatTypesByFlight) {
-        const types = this.seatTypesByFlight[fid];
-        const match = types.find((t: any) => t._id === this.seatTypeId);
-        if (match) {
-          selectedSeatTypeName = match.type || match.seat_class || 'Economy';
-          break;
-        }
-      }
-    }*
-
-    // 2. Find matching type in current flight
+    // Resolve Seat Price (Priority: ID -> Economy -> First Available)
     if (this.seatTypesByFlight[flightId]) {
-      // Try exact global ID match first
-      let match = this.seatTypeId ? this.seatTypesByFlight[flightId].find((t: any) => t._id === this.seatTypeId) : null;
+      const types = this.seatTypesByFlight[flightId];
+      // 1. Try exact ID
+      seatTypeObj = types.find((s: any) => String(s._id) === String(seatTypeId));
+      // 2. Try 'Economy'
+      if (!seatTypeObj) seatTypeObj = types.find((s: any) => (s.type === 'Economy' || s.seat_class === 'Economy'));
+      // 3. Fallback
+      if (!seatTypeObj && types.length > 0) seatTypeObj = types[0];
 
-      // Try Name match
-      if (!match) {
-        match = this.seatTypesByFlight[flightId].find((t: any) => (t.type || t.seat_class) === selectedSeatTypeName);
-      }
-      // Fallback to first available if still nothing
-      if (!match && this.seatTypesByFlight[flightId].length > 0) {
-        match = this.seatTypesByFlight[flightId][0];
-      }
-      return match;
+      //if (seatTypeObj) seatprice = seatTypeObj.price || 0;
     }
-    return null;*/
+    return seatTypeObj;
+    /*   // 1. Identify Target Name from global ID, OR Default to Economy
+       let selectedSeatTypeName = 'Economy';
+   
+       if (this.seatTypeId) {
+         for (const fid in this.seatTypesByFlight) {
+           const types = this.seatTypesByFlight[fid];
+           const match = types.find((t: any) => t._id === this.seatTypeId);
+           if (match) {
+             selectedSeatTypeName = match.type || match.seat_class || 'Economy';
+             break;
+           }
+         }
+       }*
+   
+       // 2. Find matching type in current flight
+       if (this.seatTypesByFlight[flightId]) {
+         // Try exact global ID match first
+         let match = this.seatTypeId ? this.seatTypesByFlight[flightId].find((t: any) => t._id === this.seatTypeId) : null;
+   
+         // Try Name match
+         if (!match) {
+           match = this.seatTypesByFlight[flightId].find((t: any) => (t.type || t.seat_class) === selectedSeatTypeName);
+         }
+         // Fallback to first available if still nothing
+         if (!match && this.seatTypesByFlight[flightId].length > 0) {
+           match = this.seatTypesByFlight[flightId][0];
+         }
+         return match;
+       }
+       return null;*/
   }
 
   getPassengersByFlight(flightId: string) {
@@ -160,7 +160,7 @@ export class PaymentMultiComponent implements OnInit {
     // Resolve Seat Price
     let typePrice = 0;
     const seatTypeObj = this.getSeatTypeForFlight(flightId);
-    
+
 
     if (seatTypeObj) typePrice = seatTypeObj.price || 0;
 
@@ -230,37 +230,39 @@ export class PaymentMultiComponent implements OnInit {
 
       // Get fresh passengers list logic
       // Note: we're repeating logic a bit, but it ensures we grab latest state
-      let passengers: any[] = [];
+      /*let passengers: any[] = [];
       try { const p = localStorage.getItem('passengers'); if (p) passengers = JSON.parse(p); } catch { }
-
+     
       // If empty but we have stub
-      if (passengers.length === 0 && this.passengerStub) passengers = [this.passengerStub];
+      if (passengers.length === 0 && this.passengerStub) passengers = [this.passengerStub];*/
 
       // If still empty, maybe it's just a seat reservation flow without passengers named? 
       // Fallback to "single items loop" like before
 
-      if (passengers.length > 0) {
-        for (const passenger of passengers) {
+      //if (passengers.length > 0) {
+       // 
           for (const flight of this.flights) {
             const fid = flight._id;
-            const seatPref = this.seatSelections[fid] || 'random';
-
+            const seatPref = this.seatSelections[fid] || 'random'; 
+            let passengers = this.getPassengersByFlight(flight._id)
+for (const passenger of passengers) {
             // Resolve correct seat type ID for THIS flight
             const correctSeatType = this.getSeatTypeForFlight(fid);
 
             // Construct payload compatible with backend (requires 'passengers' as JSON string)
+            let p = this.getPassengersByFlight(flight._id);
             const singlePassengerObj: any = {
-              nome: passenger.nome,
-              cognome: passenger.cognome,
-              baggageChoice: passenger.baggageChoice,
+              nome: passenger.passenger.nome,
+              cognome: passenger.passenger.cognome,
+              baggageChoice: passenger.bag_label,
               seat_pref: seatPref,
-              seatTypeId: undefined
+              seatTypeId: passenger.seat_type._id
             };
 
             // Resolve Seat Type and add to passenger object if needed
-            if (passenger.seatTypeId) singlePassengerObj.seatTypeId = passenger.seatTypeId;
+            /*if (passenger.seatTypeId) singlePassengerObj.seatTypeId = passenger.seatTypeId;
             else if (correctSeatType) singlePassengerObj.seatTypeId = correctSeatType._id;
-            else if (seatTypeIdParam) singlePassengerObj.seatTypeId = seatTypeIdParam;
+            else if (seatTypeIdParam) singlePassengerObj.seatTypeId = seatTypeIdParam;*/
 
             const payload: any = {
               flightId: fid,
@@ -272,7 +274,7 @@ export class PaymentMultiComponent implements OnInit {
             calls.push(this.ticketService.createTicket(payload));
           }
         }
-      } else {
+      /*} else {
         // No passengers explicit (seat only flow?)
         for (const flight of this.flights) {
           const fid = flight._id;
@@ -295,7 +297,7 @@ export class PaymentMultiComponent implements OnInit {
 
           calls.push(this.ticketService.createTicket(payload));
         }
-      }
+      }*/
 
       console.log(`Submitting ${calls.length} ticket creation requests SEQUENTIALLY...`);
 

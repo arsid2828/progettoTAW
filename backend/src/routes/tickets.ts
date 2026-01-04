@@ -70,7 +70,12 @@ router.post('/', auth, async (req, res) => {
         console.log('PASSEGGERI:', passengersArray);
         for (const passenger of passengersArray) {
             console.log('ELABORAZIONE PASSEGGERO:', passenger);
-            const { nome, cognome, seat_number, baggageChoice, seat_pref } = passenger;
+            console.log('passenger.baggageChoice:', passenger.baggageChoice);
+            console.log('passenger.bag_label:', passenger.bag_label);
+            let { nome, cognome, seat_number, baggageChoice, seat_pref,bag_label} = passenger;
+            console.log('baggageChoice:', passenger.baggageChoice);
+            console.log('bag_label:', passenger.bag_label);
+            baggageChoice=baggageChoice||bag_label;
             // Determina tipo posto (classe) - preferenza per passeggero
             const passengerSeatTypeId = passenger && (passenger.seatTypeId || passenger.seat_type || passenger.seat_class);
             let seatType = null;
