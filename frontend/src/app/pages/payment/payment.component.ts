@@ -36,11 +36,15 @@ export class PaymentComponent {
   total = 0;
   seatTypesByFlight: any = {};
   passengerStub: any = null; // Stubs just in case
+  seatTypeSelections: Record<string, string | null> = {}; // flightId -> seatTypeId mapping
+  baggageSelections: Record<string, string | null> = {}; // flightId -> baggage choice mapping
 
   constructor() { }
 
   ngOnInit() {
     try { const p = localStorage.getItem('passengers'); if (p) { const arr = JSON.parse(p); if (Array.isArray(arr) && arr.length === 1) this.passenger = arr[0]; } } catch { }
+    try { const p = localStorage.getItem('seatTypeSelections'); if (p) { const arr = JSON.parse(p); this.seatTypeSelections = arr; } } catch { }
+    try { const p = localStorage.getItem('baggageSelections'); if (p) { const arr = JSON.parse(p); this.baggageSelections = arr; } } catch { }
 
     // load flight details and prepare items
     if (this.ticketId) {
@@ -188,8 +192,17 @@ export class PaymentComponent {
     if (!flight) return [];
 
     let items = passengersList.map((pass: any, index: number) => {
-      const baggageChoice = pass.baggageChoice || this.baggage || 'hand';
-      const seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || pass.seatTypeId || null;
+      let baggageChoice = null;
+      if (!baggageChoice) {
+        if (this.baggageSelections && this.baggageSelections[flightId]) {
+          baggageChoice = this.baggageSelections[flightId]![index] || null;
+        }
+      }
+      if (!baggageChoice) { baggageChoice = 'hand'; }
+
+      let seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
+      if (seatTypeId == null) { seatTypeId = this.seatTypeSelections[flightId]; }
+      if (seatTypeId == null) { seatTypeId = pass.seatTypeId; }
 
       let seatprice = 0;
       let seatTypeObj = null;

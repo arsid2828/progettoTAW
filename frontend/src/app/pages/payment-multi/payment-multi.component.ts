@@ -34,6 +34,8 @@ export class PaymentMultiComponent implements OnInit {
   seatSelections: Record<string, string> = {};
   seatTypesByFlight: any = {};
   passengerStub: any = null;
+  seatTypeSelections: Record<string, string | null> = {}; // flightId -> seatTypeId mapping
+  baggageSelections: Record<string, string | null> = {}; // flightId -> baggage choice mapping
 
   ngOnInit() {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
@@ -51,6 +53,8 @@ export class PaymentMultiComponent implements OnInit {
     } catch { }
 
     try { const s = localStorage.getItem('seatSelections'); if (s) this.seatSelections = JSON.parse(s); } catch { }
+    try { const p = localStorage.getItem('seatTypeSelections'); if (p) { const arr = JSON.parse(p); this.seatTypeSelections = arr; } } catch { }
+    try { const p = localStorage.getItem('baggageSelections'); if (p) { const arr = JSON.parse(p); this.baggageSelections = arr; } } catch { }
 
     // Fetch details for all flights
     const observables = flightIds.map(id => this.flightService.getFlightById(id));
@@ -80,7 +84,26 @@ export class PaymentMultiComponent implements OnInit {
 
   // Find the seat type object for a specific flight consistent with the user's selection
   getSeatTypeForFlight(flightId: string) {
-    // 1. Identify Target Name from global ID, OR Default to Economy
+    
+      let seatTypeObj = null;
+      let seatTypeId = this.route.snapshot.queryParamMap.get('seatTypeId') || null;
+      if (seatTypeId == null) { seatTypeId = this.seatTypeSelections[flightId]; }
+      //if (seatTypeId == null) { seatTypeId = pass.seatTypeId; }
+
+      // Resolve Seat Price (Priority: ID -> Economy -> First Available)
+      if (this.seatTypesByFlight[flightId]) {
+        const types = this.seatTypesByFlight[flightId];
+        // 1. Try exact ID
+        seatTypeObj = types.find((s: any) => String(s._id) === String(seatTypeId));
+        // 2. Try 'Economy'
+        if (!seatTypeObj) seatTypeObj = types.find((s: any) => (s.type === 'Economy' || s.seat_class === 'Economy'));
+        // 3. Fallback
+        if (!seatTypeObj && types.length > 0) seatTypeObj = types[0];
+
+        //if (seatTypeObj) seatprice = seatTypeObj.price || 0;
+      }
+      return seatTypeObj;
+ /*   // 1. Identify Target Name from global ID, OR Default to Economy
     let selectedSeatTypeName = 'Economy';
 
     if (this.seatTypeId) {
@@ -92,7 +115,7 @@ export class PaymentMultiComponent implements OnInit {
           break;
         }
       }
-    }
+    }*
 
     // 2. Find matching type in current flight
     if (this.seatTypesByFlight[flightId]) {
@@ -109,7 +132,7 @@ export class PaymentMultiComponent implements OnInit {
       }
       return match;
     }
-    return null;
+    return null;*/
   }
 
   getPassengersByFlight(flightId: string) {
@@ -137,10 +160,18 @@ export class PaymentMultiComponent implements OnInit {
     // Resolve Seat Price
     let typePrice = 0;
     const seatTypeObj = this.getSeatTypeForFlight(flightId);
+    
+
     if (seatTypeObj) typePrice = seatTypeObj.price || 0;
 
-    return passengersList.map((pass: any) => {
-      const baggageChoice = pass.baggageChoice || this.baggage || 'hand';
+    return passengersList.map((pass: any, index: number) => {
+      let baggageChoice = null;
+      if (!baggageChoice) {
+        if (this.baggageSelections && this.baggageSelections[flightId]) {
+          baggageChoice = this.baggageSelections[flightId]![index] || null;
+        }
+      }
+      if (!baggageChoice) { baggageChoice = 'hand'; }
 
       // Seat Selection Fee
       const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
@@ -170,6 +201,7 @@ export class PaymentMultiComponent implements OnInit {
 
       return {
         passenger: pass,
+        seat_type: seatTypeObj,
         seat_label: seatLabel,
         bag_label: baggageChoice,
         seat_fee,

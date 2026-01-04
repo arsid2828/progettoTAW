@@ -70,6 +70,20 @@ export class BookingComponent {
     if (this.passengerInputs.length > 0) {
       navExtras.queryParams.passengers = this.passengerInputs.length;
     }
+
+
+    let seatTypeSelections: any = {};
+      seatTypeSelections[this.flight._id || this.flight.id] = this.seatTypeId || null;
+    try { localStorage.setItem('seatTypeSelections', JSON.stringify(seatTypeSelections)); } catch { }
+
+
+    let baggageSelections: any = {};
+    baggageSelections[this.flight._id || this.flight.id] = [];
+    this.passengerInputs.forEach(element => {
+      baggageSelections[this.flight._id || this.flight.id].push(element.baggageChoice);
+    });
+    try { localStorage.setItem('baggageSelections', JSON.stringify(baggageSelections)); } catch { }
+
     if (this.passengerInputs.length > 1) {
 
       this.router.navigate(['/payment'], { queryParams: { flightIds: this.flightId, seatTypeId: this.seatTypeId } });

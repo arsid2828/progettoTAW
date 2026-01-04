@@ -69,7 +69,6 @@ export class BookingMultiComponent {
     try { localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch { }
     const qp: any = { flightIds: this.flightIds.join(','), passengers: this.passengersQty };
     if (this.seatTypeId) qp.seatTypeId = this.seatTypeId;
-    if (this.passengerInputs.length > 1) {
       let seatTypeSelections: any = {};
       this.flights.forEach((flight, idx) => {
         seatTypeSelections[flight._id || flight.id] = flight.seatTypeId || null;
@@ -83,7 +82,8 @@ export class BookingMultiComponent {
       });
      try { localStorage.setItem('baggageSelections', JSON.stringify(baggageSelections)); } catch { } 
 
-
+    if (this.passengerInputs.length > 1) {
+      console.log(JSON.stringify(seatTypeSelections));
       this.router.navigate(['/payment'], { queryParams: qp });
     } else {
       this.router.navigate(['/seat-choice-multi'], { queryParams: qp });
