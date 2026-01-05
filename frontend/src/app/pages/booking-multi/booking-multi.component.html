@@ -26,17 +26,17 @@
 
                 <div class="baggage-cards">
                   <label class="baggage-card">
-                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="hand" [(ngModel)]="f.bagage_choices[i]">
+                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="A  Mano" [(ngModel)]="f.bagage_choices[i]">
                     <div class="baggage-card-content"><span class="baggage-type">Mano</span><span
                         class="baggage-included">Incluso</span></div>
                   </label>
                   <label class="baggage-card">
-                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="big_cabin" [(ngModel)]="f.bagage_choices[i]">
-                    <div class="baggage-card-content"><span class="baggage-type">Grande cabina</span><span
+                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="Grande" [(ngModel)]="f.bagage_choices[i]">
+                    <div class="baggage-card-content"><span class="baggage-type">Grande</span><span
                         class="baggage-price">+ €{{ f.price_of_bag || 0 }}</span></div>
                   </label>
                   <label class="baggage-card">
-                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="big_hold" [(ngModel)]="f.bagage_choices[i]">
+                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="Stiva" [(ngModel)]="f.bagage_choices[i]">
                     <div class="baggage-card-content"><span class="baggage-type">Stiva</span><span
                         class="baggage-price">+
                         €{{ f.price_of_baggage || 0 }}</span></div>

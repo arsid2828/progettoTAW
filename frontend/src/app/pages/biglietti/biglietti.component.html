@@ -9,6 +9,8 @@
           <select id="sort" name="sort" (change)="sortTickets($any($event.target).value)">
             <option value="asc">Data di partenza (dal più vicino)</option>
             <option value="desc">Data di partenza (dal più lontano)</option>
+            <option value="buy_desc">Data acquisto (dal più recente)</option>
+            <option value="buy_asc">Data acquisto (dal più vecchio)</option>
           </select>
         </div>
       </div>
@@ -17,8 +19,6 @@
     <div *ngIf="trips && trips.length > 0; else noTickets">
       <div class="flight-list" id="flight-list">
         <div class="flight-card" *ngFor="let trip of trips" [attr.data-date]="trip.startDate" (click)="openModal(trip)" style="cursor:pointer">
-
-          <!-- Card Top: times / route / summary -->
           <div class="flight-card-top">
             <div class="time-block departure">
               <div class="time">{{ trip.startDate | date:'HH:mm' }}</div>
@@ -45,13 +45,11 @@
             </div>
           </div>
 
-          <!-- Summary row: airline and price -->
           <div class="flight-summary">
             <div class="airline"><strong>{{ trip.segments[0].flight?.airline?.name }}</strong></div>
             <div class="price">Totale: <span class="amount">{{ trip.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</span></div>
           </div>
 
-          <!-- Segments Detail -->
           <div class="trip-segments">
             <div class="segment-row" *ngFor="let seg of trip.segments; let i = index">
               <hr *ngIf="i > 0" class="segment-divider">
@@ -68,37 +66,9 @@
                 </div>
               </div>
             </div>
-
-            <!-- Modal overlay -->
-            <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()" #modalContainer>
-              <div class="modal-ticket" (click)="$event.stopPropagation()">
-                <button class="modal-close" (click)="closeModal()">×</button>
-                <div class="modal-content">
-                  <div class="modal-left">
-                    <h3 class="modal-route">{{ selectedTrip?.segments[0]?.flight?.from_airport?.code }} → {{ selectedTrip?.segments[selectedTrip.segments.length-1]?.flight?.to_airport?.code }}</h3>
-                    <div class="modal-times">Partenza: {{ selectedTrip?.startDate | date:'dd / MM / yyyy, HH:mm' }} — Arrivo: {{ selectedTrip?.endDate | date:'dd / MM / yyyy, HH:mm' }}</div>
-                    <div class="modal-airline">{{ selectedTrip?.segments[0]?.flight?.airline?.name }}</div>
-                    <div class="modal-pass">Passeggero: <strong>{{ selectedTrip?.passengerName }}</strong></div>
-                    <div class="modal-price">Totale: <strong>{{ selectedTrip?.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</strong></div>
-                  </div>
-                  <div class="modal-right">
-                    <img [src]="qrData" alt="QR" class="modal-qr" />
-                    <div class="qr-note">QR non funzionante — prototipo</div>
-                  </div>
-                </div>
-
-                <div class="modal-segments">
-                  <div *ngFor="let seg of selectedTrip?.segments" class="modal-seg">
-                    <div class="seg-info">{{ seg.flight?.from_airport?.code }} → {{ seg.flight?.to_airport?.code }}</div>
-                    <div class="seg-meta">{{ seg.flight?.date_departure | date:'dd / MM / yyyy, HH:mm' }} • {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div class="booking-date">Data prenotazione: {{ trip.segments[0].createdAt | date:'medium' }}</div>
-
         </div>
       </div>
     </div>
@@ -109,6 +79,44 @@
         <p><a class="btn btn-primary" routerLink="/search">Cerca un volo</a></p>
       </div>
     </ng-template>
+  </div>
 
+  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-ticket" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">×</button>
+
+      <div class="modal-content">
+        <div class="modal-left">
+          <h3 class="modal-route">
+            {{ selectedTrip?.segments[0]?.flight?.from_airport?.code }} → {{ selectedTrip?.segments[selectedTrip.segments.length-1]?.flight?.to_airport?.code }}
+          </h3>
+          <div class="modal-times">
+            Partenza: {{ selectedTrip?.startDate | date:'dd / MM / yyyy, HH:mm' }} — Arrivo: {{ selectedTrip?.endDate | date:'dd / MM / yyyy, HH:mm' }}
+          </div>
+          <div class="modal-airline">{{ selectedTrip?.segments[0].flight?.airline?.name }}</div>
+          <div class="modal-pass">Passeggero: <strong>{{ selectedTrip?.passengerName }}</strong></div>
+          <div class="modal-price">Totale: <strong>{{ selectedTrip?.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</strong></div>
+        </div>
+
+        <div class="modal-right" [class.multi]="(qrDataList?.length || 0) > 1">
+          <div class="qr-stack">
+            <div class="qr-item" *ngFor="let qr of qrDataList; let i = index">
+              <img [src]="qr" alt="QR" class="modal-qr" />
+              <div class="qr-caption">
+                {{ selectedTrip?.segments?.[i]?.flight?.from_airport?.code }} → {{ selectedTrip?.segments?.[i]?.flight?.to_airport?.code }}
+              </div>
+            </div>
+          </div>
+          <div class="qr-note">QR non funzionante — prototipo</div>
+        </div>
+      </div>
+
+      <div class="modal-segments">
+        <div *ngFor="let seg of selectedTrip?.segments" class="modal-seg">
+          <div class="seg-info">{{ seg.flight?.from_airport?.code }} → {{ seg.flight?.to_airport?.code }}</div>
+          <div class="seg-meta">{{ seg.flight?.date_departure | date:'dd / MM / yyyy, HH:mm' }} • {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>

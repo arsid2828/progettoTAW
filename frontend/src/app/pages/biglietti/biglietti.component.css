@@ -57,7 +57,6 @@
 
 .trip-header {
     margin-bottom: 0.5rem;
-    /* Tighter spacing for groups */
 }
 
 .airline {
@@ -106,7 +105,6 @@
     color: #222;
 }
 
-/* New card layout */
 .flight-card-top {
     display: grid;
     grid-template-columns: 100px 1fr 100px;
@@ -140,7 +138,7 @@
     justify-content:center;
     gap:12px;
     font-size:1.02rem;
-    color:#2e2a6d; /* stronger, still purple-themed */
+    color:#2e2a6d;
     font-weight:700;
 }
 .route-block .route-line .from,
@@ -196,7 +194,6 @@
 
 .booking-date{ margin-top:8px; font-size:0.85rem; color:#aeb6d9; }
 
-/* stronger container outlines for clarity */
 .flight-card::after{
     content: '';
     position: absolute;
@@ -213,36 +210,37 @@
     border-radius: 6px;
 }
 
-/* Modal overlay and ticket styles */
 .modal-overlay{
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0,0,0,0.90) !important;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.88) 65%, rgba(0,0,0,0.94) 100%) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 2147483647 !important; /* max z-index to sit above all */
+    z-index: 2147483647 !important;
     padding: 20px !important;
     backdrop-filter: blur(4px) !important;
 }
+
 .modal-ticket{
-    width: min(920px, 96%);
+    width: min(1020px, 96%);
     max-height: calc(100vh - 64px);
     overflow: auto;
     background: #ffffff;
     color: #0b1020;
     border-radius: 12px;
-    padding: 20px;
+    padding: 22px;
     box-shadow: 0 40px 120px rgba(3,8,32,0.75), 0 0 60px rgba(124,77,255,0.08) !important;
     position: relative;
-    border-left: 6px solid rgba(124,77,255,0.18); /* subtle purple accent on the ticket */
+    border-left: 6px solid rgba(124,77,255,0.18);
 }
+
 .modal-close{
     position: absolute;
-    left: 18px; /* moved to left */
+    left: 18px;
     right: auto;
     top: 18px;
     background: transparent;
@@ -256,21 +254,70 @@
 .modal-close:hover{
     background: rgba(0,0,0,0.06);
 }
-.modal-content{ display:flex; gap:20px; align-items:center; }
-.modal-left{ flex:1; }
-.modal-right{ width:180px; text-align:center; }
+
+.modal-content{
+    display:flex;
+    gap:22px;
+    align-items:flex-start;
+}
+
+.modal-left{
+    flex:1;
+    min-width: 420px;
+}
+
+.modal-right{
+    width: 220px;
+    text-align:center;
+}
+
+.qr-stack{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    align-items:center;
+}
+
+.qr-item{
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+}
+
 .modal-route{ font-size:1.25rem; margin:0 0 6px 0; color:#111; }
 .modal-times{ font-size:0.9rem; color:#444; margin-bottom:8px; }
 .modal-airline{ font-weight:700; color:#222; margin-bottom:6px; }
 .modal-pass, .modal-price{ color:#222; margin-bottom:6px; }
-.modal-qr{ width:170px; height:170px; border-radius:8px; background:#fff; box-shadow: 0 16px 34px rgba(6,4,30,0.18); }
-.qr-note{ font-size:0.8rem; color:#666; margin-top:8px; }
+
+.modal-qr{
+    width:170px;
+    height:170px;
+    border-radius:10px;
+    background:#fff;
+    box-shadow: 0 16px 34px rgba(6,4,30,0.18);
+}
+
+.modal-right.multi .modal-qr{
+    width:150px;
+    height:150px;
+}
+
+.qr-caption{
+    font-size: 0.82rem;
+    color:#3b3b3b;
+    font-weight: 650;
+    letter-spacing: 0.2px;
+}
+
+.qr-note{ font-size:0.8rem; color:#666; margin-top:10px; }
+
 .modal-segments{ margin-top:12px; }
 .modal-seg{ padding:8px 0; border-top:1px dashed #eee; display:flex; justify-content:space-between; color:#333; }
 .modal-seg:first-child{ border-top: none; }
 .modal-seg .seg-meta{ color:#555; }
 
-/* Trip Segments Section */
 .trip-segments {
     background: #f8f9fa;
     border-radius: 8px;
