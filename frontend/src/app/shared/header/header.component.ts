@@ -40,7 +40,7 @@ export class HeaderComponent {
   }
 
   isAdmin(): boolean {
-    return this.auth.userRole() === 'admin';
+    return this.auth.userRole() === 'admin' || this.auth.userRole() === 'airline';
   }
 
   isHome(): boolean {
@@ -66,7 +66,11 @@ export class HeaderComponent {
     });
   }
   goHome() {
-    console.log('Navigating to home');
+    console.log('Navigating to home '+this.auth.userRole());
+    if(this.auth.userRole() === 'airline'){
+      this.router.navigate(['/airline-area']);
+      return;
+    }
     this.router.navigate(['/search']);
     
   }

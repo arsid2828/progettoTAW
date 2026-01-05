@@ -10,8 +10,8 @@
       <p>Nessun volo trovato per i dettagli specificati.</p>
       <a routerLink="/" class="btn btn-outline">Torna alla ricerca</a>
     </div>
-
     <ng-container *ngFor="let flight of flights">
+
       <app-flight-summary [flight]="flight"></app-flight-summary>
       
       <h2 class="section-title">Riepilogo passeggeri</h2>
@@ -28,9 +28,9 @@
             <span>Prezzo: <strong>€{{ it.price.toFixed(2) }}</strong></span>
           </div>
         </div>
-      </div>
+      </div><div class="divider"></div>
     </ng-container>
-    <div class="divider"></div>
+    
     <!--
     -->
 

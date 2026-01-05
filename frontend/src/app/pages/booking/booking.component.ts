@@ -102,4 +102,19 @@ export class BookingComponent {
     if (event) event.preventDefault();
     this.location.back();
   }
+
+  ngOnInit() {
+    if (this.auth.userRole() == 'airline') {
+      this.router.navigate(['/airline-area']);
+      return;
+    }
+    if (this.auth.userRole() == 'admin') {
+      this.router.navigate(['/admin']);
+      return;
+    }
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+  }
 }

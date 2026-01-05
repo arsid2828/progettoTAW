@@ -66,6 +66,7 @@ export class AuthService {
   login(data: ILogData) {
     return this.http.post<ILogData>(this.apiUrl + "session/login", data).pipe(
       tap(response => {
+        console.log('Login response:', response);
         this._isLoggedIn.set(true);
 
         // Imposta email inizialmente; poi recupera profilo per nome reale

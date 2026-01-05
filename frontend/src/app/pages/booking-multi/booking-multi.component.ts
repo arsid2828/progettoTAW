@@ -7,6 +7,7 @@ import { TicketService } from '@app/shared/ticket.service';
 import { forkJoin } from 'rxjs';
 import { FlightService } from '@app/services/flight.service';
 import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
+import { AuthService } from '@app/shared/auth.service';
 
 @Component({
   selector: 'app-booking-multi',
@@ -21,6 +22,7 @@ export class BookingMultiComponent {
   ticketService = inject(TicketService);
   flightService = inject(FlightService);
   location = inject(Location);
+  auth = inject(AuthService);
 
   flightIds: string[] = [];
   flights: any[] = [];
@@ -36,9 +38,14 @@ export class BookingMultiComponent {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
     if (ids) this.flightIds = ids.split(',');
     const p = Number(this.route.snapshot.queryParamMap.get('passengers')) || 1;
+     // carica passeggeri da localStorage
+    try { const s = localStorage.getItem('passengers'); if (s) this.passengerInputs = JSON.parse(s); } catch { }
+    
     this.passengersQty = p;
-    for (let i = 0; i < this.passengersQty; i++) this.passengerInputs.push({ nome: '', cognome: '' });
-
+    for (let i = this.passengerInputs.length; i < this.passengersQty; i++) this.passengerInputs.push({ nome: '', cognome: '' });
+    if(this.passengerInputs.length > this.passengersQty){
+      this.passengerInputs = this.passengerInputs.slice(0,this.passengersQty);
+    }
     // load flight details
     if (this.flightIds.length) {
       const calls = this.flightIds.map(id => this.flightService.getFlightById(id));
@@ -95,5 +102,19 @@ export class BookingMultiComponent {
   goBack(event?: Event) {
     if (event) event.preventDefault();
     this.location.back();
+  }
+  ngOnInit() {
+    if (this.auth.userRole() == 'airline') {
+      this.router.navigate(['/airline-area']);
+      return;
+    }
+    if (this.auth.userRole() == 'admin') {
+      this.router.navigate(['/admin']);
+      return;
+    }
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
   }
 }

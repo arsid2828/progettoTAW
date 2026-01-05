@@ -9,6 +9,7 @@ import { FlightService } from '@app/services/flight.service';
 import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
+import { AuthService } from '@app/shared/auth.service';
 
 @Component({
   selector: 'app-payment-multi',
@@ -23,7 +24,7 @@ export class PaymentMultiComponent implements OnInit {
   ticketService = inject(TicketService);
   location = inject(Location);
   flightService = inject(FlightService);
-
+  auth = inject(AuthService);
 
   loading = false;
   error: string | null = null;
@@ -42,6 +43,20 @@ export class PaymentMultiComponent implements OnInit {
   baggageSelections: Record<string, string | null> = {}; // flightId -> baggage choice mapping
 
   ngOnInit() {
+     if (this.auth.userRole() == 'airline') {
+      this.router.navigate(['/airline-area']);
+      return;
+    }
+    if (this.auth.userRole() == 'admin') {
+      this.router.navigate(['/admin']);
+      return;
+    }
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
     if (!ids) return;
     const flightIds = ids.split(',').map(s => s.trim()).filter(Boolean);
@@ -330,4 +345,5 @@ for (const passenger of passengers) {
     if (event) event.preventDefault();
     this.location.back();
   }
+
 }

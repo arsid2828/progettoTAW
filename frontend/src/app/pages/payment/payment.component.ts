@@ -9,11 +9,12 @@ import { forkJoin } from 'rxjs';
 import { FlightService } from '@app/services/flight.service';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@app/shared/auth.service';
+import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule,FlightSummaryComponent],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })
@@ -46,7 +47,22 @@ export class PaymentComponent {
 
   constructor() { }
 
+  stringify = JSON.stringify;
   ngOnInit() {
+     if (this.auth.userRole() == 'airline') {
+      this.router.navigate(['/airline-area']);
+      return;
+    }
+    if (this.auth.userRole() == 'admin') {
+      this.router.navigate(['/admin']);
+      return;
+    }
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
+
     try { const p = localStorage.getItem('passengers'); if (p) { const arr = JSON.parse(p); if (Array.isArray(arr) && arr.length === 1) this.passenger = arr[0]; } } catch { }
     try { const p = localStorage.getItem('seatTypeSelections'); if (p) { const arr = JSON.parse(p); this.seatTypeSelections = arr; } } catch { }
     try { const p = localStorage.getItem('baggageSelections'); if (p) { const arr = JSON.parse(p); this.baggageSelections = arr; } } catch { }
