@@ -16,7 +16,7 @@
           <label class="seat-pref-card"><input type="radio" name="pref" value="random" (change)="chooseSeat('random')"> <div class="seat-pref-content"><span class="seat-pref-type">Casuale</span><span class="seat-pref-price">0€</span></div></label>
         </div>
 
-        <div style="margin-top:12px">
+        <div class="form-actions">
           <button class="btn btn-primary" [disabled]="!selectedSeat">Continua al pagamento</button>
           <a class="btn btn-outline" href="#" (click)="goBack($event)">Annulla</a>
         </div>

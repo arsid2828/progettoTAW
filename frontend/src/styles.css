@@ -272,22 +272,51 @@ input:checked + .slider:before { transform: translateX(26px); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
-  font-weight: 600;
+  gap: 0.5rem;
+  padding: 0.85rem 1.45rem;
+  min-height: 48px;
+  border-radius: calc(var(--radius) + 4px);
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-  transition: var(--transition);
-  border: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  border: 1px solid transparent;
   font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 30px -18px rgba(17, 24, 39, 0.45);
 }
+.btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 2px;
+}
+.btn:active { transform: translateY(0); }
 /* Varianti di colore per i bottoni */
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border-color: var(--primary-dark);
+  box-shadow: 0 16px 32px -18px rgba(37, 99, 235, 0.6);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark), #1a3fb8);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px -18px rgba(37, 99, 235, 0.65);
+}
 .btn-secondary { background: var(--secondary); color: white; }
 .btn-secondary:hover { opacity: 0.9; transform: translateY(-1px); }
-.btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
-.btn-outline:hover { background: rgba(37,99,235,0.1); }
+.btn-outline {
+  background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(37,99,235,0.02));
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  box-shadow: inset 0 0 0 1px rgba(37,99,235,0.08), 0 10px 30px -20px rgba(37,99,235,0.5);
+}
+.btn-outline:hover {
+  background: linear-gradient(135deg, rgba(37,99,235,0.14), rgba(37,99,235,0.05));
+  color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px -20px rgba(37,99,235,0.55);
+}
 .btn-airline { background: var(--warning); color: white; }
 .btn-airline:hover { background: #1d4ed8; transform: translateY(-1px); }
 .btn-submit { background: var(--primary); color: white; padding: 1rem; font-size: 1.1rem; margin-top: 0.5rem; width: 100%; }
@@ -298,6 +327,24 @@ input:checked + .slider:before { transform: translateX(26px); }
 .btn-danger:hover { background: var(--danger-dark); }
 .btn-icon { margin-right: 0.5rem; }
 .btn-back { padding: 0.5rem 1rem; font-size: 0.9rem; margin-right: auto; }
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  justify-content: flex-start;
+}
+.form-actions .btn {
+  min-width: 120px;
+  min-height: 52px;
+  padding: 0.9rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 650;
+}
+.form-actions .btn-submit {
+  width: auto;
+}
 
 /* ----------------------------
    RISULTATI VOLI

@@ -64,8 +64,8 @@
         </div>
       </div>
 
-      <div style="margin-top:12px">
-        <button class="btn btn-submit" type="submit" [disabled]="loading">Paga €{{ total.toFixed(2) }}</button>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="loading">Paga €{{ total.toFixed(2) }}</button>
         <a class="btn btn-outline" href="#" (click)="goBack($event)">Annulla</a>
       </div>
       <div *ngIf="error" class="flash-messages">

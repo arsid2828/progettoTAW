@@ -14,7 +14,7 @@
           <label class="seat-pref-card"><input type="radio" name="pref_{{f._id}}" (change)="choose(f._id,'random')"><div class="seat-pref-content"><span class="seat-pref-type">Casuale</span><span class="seat-pref-price">0€</span></div></label>
         </div>
       </div>
-      <div style="margin-top:12px">
+      <div class="form-actions">
         <button class="btn btn-primary" (click)="continue()">Continua</button>
         <a class="btn btn-outline" href="#" (click)="goBack($event)">Annulla</a>
       </div>
