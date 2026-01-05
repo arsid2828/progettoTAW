@@ -65,4 +65,9 @@ export class HeaderComponent {
       window.location.reload();
     });
   }
+  goHome() {
+    console.log('Navigating to home');
+    this.router.navigate(['/search']);
+    
+  }
 }

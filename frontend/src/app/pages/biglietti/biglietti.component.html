@@ -22,7 +22,7 @@
           <div class="flight-card-top">
             <div class="time-block departure">
               <div class="time">{{ trip.startDate | date:'HH:mm' }}</div>
-              <div class="date">{{ trip.startDate | date:'dd MMM yyyy' }}</div>
+              <div class="date">{{ trip.startDate | date:'dd / MM / yyyy' }}</div>
               <div class="airport">{{ trip.segments[0].flight?.from_airport?.code }}</div>
             </div>
 
@@ -40,7 +40,7 @@
 
             <div class="time-block arrival">
               <div class="time">{{ trip.endDate | date:'HH:mm' }}</div>
-              <div class="date">{{ trip.endDate | date:'dd MMM yyyy' }}</div>
+              <div class="date">{{ trip.endDate | date:'dd / MM / yyyy' }}</div>
               <div class="airport">{{ trip.segments[trip.segments.length - 1].flight?.to_airport?.code }}</div>
             </div>
           </div>
@@ -57,9 +57,9 @@
               <hr *ngIf="i > 0" class="segment-divider">
               <div class="segment-info">
                 <div class="seg-times">
-                  <div class="seg-time">{{ seg.flight?.departure | date:'dd MMM yyyy, HH:mm' }}</div>
+                  <div class="seg-time">{{ seg.flight?.departure | date:'dd / MM / yyyy, HH:mm' }}</div>
                   <div class="seg-airports"><strong>{{ seg.flight?.from_airport?.code }}</strong> → <strong>{{ seg.flight?.to_airport?.code }}</strong></div>
-                  <div class="seg-arrival">{{ seg.flight?.arrival | date:'dd MMM yyyy, HH:mm' }}</div>
+                  <div class="seg-arrival">{{ seg.flight?.arrival | date:'dd / MM / yyyy, HH:mm' }}</div>
                 </div>
                 <div class="seg-meta">
                   <div>{{ seg.seat_class?.seat_class || 'Economy' }}</div>
@@ -76,7 +76,7 @@
                 <div class="modal-content">
                   <div class="modal-left">
                     <h3 class="modal-route">{{ selectedTrip?.segments[0]?.flight?.from_airport?.code }} → {{ selectedTrip?.segments[selectedTrip.segments.length-1]?.flight?.to_airport?.code }}</h3>
-                    <div class="modal-times">Partenza: {{ selectedTrip?.startDate | date:'dd MMM yyyy, HH:mm' }} — Arrivo: {{ selectedTrip?.endDate | date:'dd MMM yyyy, HH:mm' }}</div>
+                    <div class="modal-times">Partenza: {{ selectedTrip?.startDate | date:'dd / MM / yyyy, HH:mm' }} — Arrivo: {{ selectedTrip?.endDate | date:'dd / MM / yyyy, HH:mm' }}</div>
                     <div class="modal-airline">{{ selectedTrip?.segments[0]?.flight?.airline?.name }}</div>
                     <div class="modal-pass">Passeggero: <strong>{{ selectedTrip?.passengerName }}</strong></div>
                     <div class="modal-price">Totale: <strong>{{ selectedTrip?.totalPrice | currency:'EUR':'symbol':'1.0-2' }}</strong></div>
@@ -90,7 +90,7 @@
                 <div class="modal-segments">
                   <div *ngFor="let seg of selectedTrip?.segments" class="modal-seg">
                     <div class="seg-info">{{ seg.flight?.from_airport?.code }} → {{ seg.flight?.to_airport?.code }}</div>
-                    <div class="seg-meta">{{ seg.flight?.date_departure | date:'dd MMM, HH:mm' }} • {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }}</div>
+                    <div class="seg-meta">{{ seg.flight?.date_departure | date:'dd / MM / yyyy, HH:mm' }} • {{ seg.seat_class?.seat_class || 'Economy' }} • Posto: {{ seg.seat_number || 'ND' }}</div>
                   </div>
                 </div>
               </div>

@@ -197,11 +197,11 @@
                 <ul class="flight-items">
                     <li *ngFor="let f of flights" class="flight-item">
                         <div class="flight-route">
-                            {{ f.from_airport?.name }} ({{f.from_airport?.code}}) → {{ f.to_airport?.name }}
+                            {{ f.from_airport?.city}} ({{f.from_airport?.code}}) → {{ f.to_airport?.city }}
                             ({{f.to_airport?.code}})
                         </div>
                         <div class="flight-details">
-                            {{ f.date_departure | date:'shortDate' }} {{ f.departure }} •
+                            {{ f.date_departure | date:'dd/MM/yyyy HH:mm' }} •{{ f.date_arrival | date:'dd/MM/yyyy HH:mm' }}
                             <span *ngFor="let seat_type of f.seat_types">
                                 {{ seat_type.type | titlecase }} €{{ seat_type.price | number:'1.2-2' }} •
                             </span>

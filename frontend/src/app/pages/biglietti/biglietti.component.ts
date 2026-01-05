@@ -1,12 +1,14 @@
 import { Component, OnInit, inject, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
+import { AuthService } from '@app/shared/auth.service';
 
 @Component({
   selector: 'app-biglietti',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './biglietti.component.html',
   styleUrls: ['./biglietti.component.css']
 })
@@ -15,7 +17,8 @@ export class BigliettiComponent implements OnInit {
   ticketService = inject(TicketService);
   router = inject(Router);
   trips: any[] = [];
-
+  auth = inject(AuthService);
+  location = inject(Location);
   // Modal state
   showModal = false;
   selectedTrip: any = null;
