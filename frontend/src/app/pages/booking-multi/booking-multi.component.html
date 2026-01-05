@@ -1,32 +1,91 @@
 <main class="container">
   <div class="passenger-baggage-card">
     <h1 class="page-title">Conferma prenotazione multipla</h1>
-    <p *ngIf="!flightIds.length">Nessun volo selezionato.</p>
-    <div *ngIf="flightIds.length">
-      <div *ngIf="flights.length">
-        <div *ngFor="let f of flights" class="flight-summary">
-          <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{ f.airline?.name }}</span></div>
-          <div class="summary-item"><span class="summary-label">Rotta:</span><span class="summary-value">{{ f.from_airport?.name }} → {{ f.to_airport?.name }}</span></div>
-          <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{ f.date_departure | date:'mediumDate' }}</span></div>
+    <form (submit)="$event.preventDefault(); confirmMulti()">
+      <div *ngFor="let p of passengerInputs; let i = index" class="passenger-section">
+        <h3 class="passenger-section-title">Passeggero {{ i + 1 }}</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Nome</label><input [(ngModel)]="passengerInputs[i].nome" name="nome{{i}}">
+          </div>
+          <div class="form-group"><label>Cognome</label><input [(ngModel)]="passengerInputs[i].cognome"
+              name="cognome{{i}}"></div>
         </div>
       </div>
-
       <div class="divider"></div>
+      <p *ngIf="!flightIds.length">Nessun volo selezionato.</p>
+      <div *ngIf="flightIds.length">
+        <pre>{{stringify(flights, null, 2)}}</pre>
+        <div *ngIf="flights.length">
+          <div *ngFor="let f of flights; let fi = index">
 
-      <form (submit)="$event.preventDefault(); confirmMulti()">
-        <div *ngFor="let p of passengerInputs; let i = index" class="passenger-section">
-          <h3 class="passenger-section-title">Passeggero {{ i + 1 }}</h3>
-          <div class="form-row">
-            <div class="form-group"><label>Nome</label><input [(ngModel)]="passengerInputs[i].nome" name="nome{{i}}"></div>
-            <div class="form-group"><label>Cognome</label><input [(ngModel)]="passengerInputs[i].cognome" name="cognome{{i}}"></div>
+            <div class="flight-summary">
+              <div class="summary-item"><span class="summary-label">Rotta:</span><span class="summary-value">{{
+                  f.from_airport?.name }} → {{ f.to_airport?.name }}</span></div>
+              <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{
+                  f.airline?.name }}</span></div>
+              <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{
+                  f.date_departure | date:'dd MMMM yyyy' }}</span></div>
+              <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{
+                  f.date_departure | date:'HH:mm' }} → {{
+                  f.date_arrival | date:'HH:mm' }}</span></div>
+            </div>
+            <div class="passenger-section-title">Bagagli {{f._id}}</div>
+            <div *ngFor="let pp of passengerInputs; let i = index">
+              <h3 class="form-group">{{pp.nome || 'Passeggero '+(i+1)}} {{pp.cognome}}</h3>
+              <div class="baggage-section" style="margin-top:12px">
+
+                <div class="baggage-cards">
+                  <label class="baggage-card">
+                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="hand" [(ngModel)]="f.bagage_choices[i]">
+                    <div class="baggage-card-content"><span class="baggage-type">Mano</span><span
+                        class="baggage-included">Incluso</span></div>
+                  </label>
+                  <label class="baggage-card">
+                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="big_cabin" [(ngModel)]="f.bagage_choices[i]">
+                    <div class="baggage-card-content"><span class="baggage-type">Grande cabina</span><span
+                        class="baggage-price">+ €{{ f.price_of_bag || 0 }}</span></div>
+                  </label>
+                  <label class="baggage-card">
+                    <input type="radio" name="bag_{{ fi}}_{{i}}" value="big_hold" [(ngModel)]="f.bagage_choices[i]">
+                    <div class="baggage-card-content"><span class="baggage-type">Stiva</span><span
+                        class="baggage-price">+
+                        €{{ f.price_of_baggage || 0 }}</span></div>
+                  </label>
+                </div>
+
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div><strong>Seleziona classe {{seatTypeId}}</strong></div>
+              <div class="class-cards">
+                <label class="baggage-card" *ngFor="let st of f.seatTypes">
+                  <input type="radio" name="class_sel_{{ fi}}" [value]="st._id" [checked]="f.seatTypes[0] === st"
+                    [(ngModel)]="f.seatTypeId" *ngIf="st.number_available >= passengerInputs.length">
+                  <div class="baggage-card-content">
+                    <span class="baggage-type">{{ st.seat_class }}<br /><span
+                        style="font-size: 0.5rem;">{{st._id}}</span></span>
+                    <span class="baggage-price">€{{ st.price }}</span>
+                    <div>
+                      <span class="seats-badge">Posti: {{ st.number_available }}</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+
+            <div class="divider"></div>
           </div>
         </div>
 
+
         <div style="display:flex;gap:12px;margin-top:12px">
-           <button class="btn btn-primary" type="submit" [disabled]="loading">{{ loading ? 'Attendere...' : 'Conferma & Paga' }}</button>
-           <a class="btn btn-outline" href="#" (click)="goBack($event)">Annulla</a>
+          <button class="btn btn-primary" type="submit" [disabled]="loading">{{ loading ? 'Attendere...' : 'Conferma &
+            Paga' }}</button>
+          <a class="btn btn-outline" href="#" (click)="goBack($event)">Annulla</a>
         </div>
-      </form>
-    </div>
+
+      </div>
+    </form>
   </div>
 </main>
