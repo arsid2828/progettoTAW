@@ -6,11 +6,12 @@ import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
 import { forkJoin } from 'rxjs';
 import { FlightService } from '@app/services/flight.service';
+import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
 
 @Component({
   selector: 'app-booking-multi',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FlightSummaryComponent],
   templateUrl: './booking-multi.component.html',
   styleUrls: ['./booking-multi.component.css']
 })

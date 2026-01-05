@@ -135,4 +135,6 @@ export class AuthService {
     return this.http.post<IProfile>(this.apiUrl + "profile", newUser);
   }
 
+
+  
 }

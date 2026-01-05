@@ -8,11 +8,12 @@ import { Location } from '@angular/common';
 import { FlightService } from '@app/services/flight.service';
 import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
 
 @Component({
   selector: 'app-payment-multi',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, FlightSummaryComponent],
   templateUrl: './payment-multi.component.html',
   styleUrls: ['./payment-multi.component.css']
 })
@@ -22,6 +23,7 @@ export class PaymentMultiComponent implements OnInit {
   ticketService = inject(TicketService);
   location = inject(Location);
   flightService = inject(FlightService);
+
 
   loading = false;
   error: string | null = null;

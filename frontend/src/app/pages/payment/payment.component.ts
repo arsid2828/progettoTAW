@@ -8,6 +8,7 @@ import { TicketService } from '@app/shared/ticket.service';
 import { forkJoin } from 'rxjs';
 import { FlightService } from '@app/services/flight.service';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '@app/shared/auth.service';
 
 @Component({
   selector: 'app-payment',
@@ -19,6 +20,7 @@ import { FormsModule } from '@angular/forms';
 export class PaymentComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
+  auth = inject(AuthService);
   // Support multiple parameter names for compatibility: ticketId, ticketFlightId, flightIds
   ticketId = this.route.snapshot.queryParamMap.get('ticketId')
     || this.route.snapshot.queryParamMap.get('ticketFlightId')

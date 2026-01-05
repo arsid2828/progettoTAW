@@ -3,17 +3,9 @@
     <h1 class="page-title">Conferma prenotazione</h1>
     <p *ngIf="!flightId">Nessun volo selezionato.</p>
     <div *ngIf="flight">
-      <div class="flight-summary">
-        <div><strong>Compagnia:</strong> {{ flight.airline?.name }}</div>
-        <div><strong>Rotta:</strong> {{ flight.from_airport?.name }} ({{ flight.from_airport?.code }}) → {{
-          flight.to_airport?.name }} ({{ flight.to_airport?.code }})</div>
-        <div><strong>Data:</strong> {{ flight.date_departure | date:'dd MMMM yyyy' }}</div>
-        <div><strong>Orario:</strong> {{ flight.date_departure | date:'shortTime' }} → {{ flight.date_arrival |
-          date:'shortTime' }}</div>
-      </div>
-
+      <app-flight-summary [flight]="flight"></app-flight-summary>
       <div class="divider" style="margin:12px 0"></div>
-{{stringify(passengerInputs)}}
+      <!--{{stringify(passengerInputs)}}-->
       <form (submit)="$event.preventDefault(); confirmBooking()">
         <div *ngIf="passengerInputs?.length">
           <div *ngFor="let p of passengerInputs; let i = index" class="passenger-section">

@@ -1,0 +1,35 @@
+<div class="flight-summary">
+  <div class="summary-item">
+    <span class="summary-label">Rotta:</span>
+    <span class="summary-value">
+      {{ flight.from_airport?.city }} ({{ flight.from_airport?.code }})
+      →
+      {{ flight.to_airport?.city }} ({{ flight.to_airport?.code }})
+    </span>
+  </div>
+
+  <div class="summary-item">
+    <span class="summary-label">Data:</span>
+    <span class="summary-value">
+      {{ flight.date_departure | date:'dd/MM/yyyy'}} <ng-container
+        *ngIf=" !compareDatesIngoreTime(flight.date_arrival, flight.date_departure)">→
+        {{ flight.date_arrival | date:'dd/MM/yyyy' }} </ng-container>
+    </span>
+  </div>
+
+  <div class="summary-item">
+    <span class="summary-label">Orario:</span>
+    <span class="summary-value">
+      {{ flight.date_departure | date:'HH:mm' }} →
+      {{ flight.date_arrival | date:'HH:mm' }}
+    </span>
+  </div>
+
+  
+  <div class="summary-item">
+    <span class="summary-label">Compagnia:</span>
+    <span class="summary-value">
+      {{ flight.airline?.name }}
+    </span>
+  </div>
+</div>

@@ -14,22 +14,12 @@
       <div class="divider"></div>
       <p *ngIf="!flightIds.length">Nessun volo selezionato.</p>
       <div *ngIf="flightIds.length">
-        <pre>{{stringify(flights, null, 2)}}</pre>
+      <!--{{stringify(flights, null, 2)}}-->
         <div *ngIf="flights.length">
           <div *ngFor="let f of flights; let fi = index">
-
-            <div class="flight-summary">
-              <div class="summary-item"><span class="summary-label">Rotta:</span><span class="summary-value">{{
-                  f.from_airport?.name }} → {{ f.to_airport?.name }}</span></div>
-              <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{
-                  f.airline?.name }}</span></div>
-              <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{
-                  f.date_departure | date:'dd MMMM yyyy' }}</span></div>
-              <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{
-                  f.date_departure | date:'HH:mm' }} → {{
-                  f.date_arrival | date:'HH:mm' }}</span></div>
-            </div>
-            <div class="passenger-section-title">Bagagli {{f._id}}</div>
+            <app-flight-summary [flight]="f"></app-flight-summary>
+            
+            <div class="passenger-section-title">Bagagli </div>
             <div *ngFor="let pp of passengerInputs; let i = index">
               <h3 class="form-group">{{pp.nome || 'Passeggero '+(i+1)}} {{pp.cognome}}</h3>
               <div class="baggage-section" style="margin-top:12px">
@@ -56,14 +46,13 @@
               </div>
             </div>
             <div style="margin-top:12px">
-              <div><strong>Seleziona classe {{seatTypeId}}</strong></div>
+              <div><strong>Seleziona classe </strong></div>
               <div class="class-cards">
                 <label class="baggage-card" *ngFor="let st of f.seatTypes">
                   <input type="radio" name="class_sel_{{ fi}}" [value]="st._id" [checked]="f.seatTypes[0] === st"
                     [(ngModel)]="f.seatTypeId" *ngIf="st.number_available >= passengerInputs.length">
                   <div class="baggage-card-content">
-                    <span class="baggage-type">{{ st.seat_class }}<br /><span
-                        style="font-size: 0.5rem;">{{st._id}}</span></span>
+                    <span class="baggage-type">{{ st.seat_class }}<br /></span>
                     <span class="baggage-price">€{{ st.price }}</span>
                     <div>
                       <span class="seats-badge">Posti: {{ st.number_available }}</span>

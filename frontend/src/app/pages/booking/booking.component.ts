@@ -8,11 +8,12 @@ import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
 import { FlightService } from '@app/services/flight.service';
 import { AuthService } from '@app/shared/auth.service';
+import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
 
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FlightSummaryComponent],
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.css']
 })

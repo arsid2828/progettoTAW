@@ -3,13 +3,15 @@
     <h1 class="page-title">Seleziona i posti (multipli)</h1>
     <div *ngIf="!flightIds.length">Nessun volo selezionato.</div>
     <div *ngIf="flightIds.length">
-      <div *ngFor="let f of flightIds" style="margin-bottom:8px">
-        <div>Volo: {{ f }}</div>
+      <div *ngFor="let f of flights" style="margin-bottom:8px">
+        <div>Volo: {{ f.from_airport?.city }} ({{ f.from_airport?.code }})
+      →
+      {{ f.to_airport?.city }} ({{ f.to_airport?.code }})</div>
         <div class="seat-pref-cards" style="margin-top:8px">
-          <label class="seat-pref-card"><input type="radio" name="pref_{{f}}" (change)="choose(f,'window')"><div class="seat-pref-content"><span class="seat-pref-type">Finestrino</span><span class="seat-pref-price">+€15</span></div></label>
-          <label class="seat-pref-card"><input type="radio" name="pref_{{f}}" (change)="choose(f,'aisle')"><div class="seat-pref-content"><span class="seat-pref-type">Corridoio</span><span class="seat-pref-price">+€12</span></div></label>
-          <label class="seat-pref-card"><input type="radio" name="pref_{{f}}" (change)="choose(f,'middle')"><div class="seat-pref-content"><span class="seat-pref-type">In mezzo</span><span class="seat-pref-price">+€8</span></div></label>
-          <label class="seat-pref-card"><input type="radio" name="pref_{{f}}" (change)="choose(f,'random')"><div class="seat-pref-content"><span class="seat-pref-type">Casuale</span><span class="seat-pref-price">0€</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref_{{f._id}}" (change)="choose(f._id,'window')"><div class="seat-pref-content"><span class="seat-pref-type">Finestrino</span><span class="seat-pref-price">+€15</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref_{{f._id}}" (change)="choose(f._id,'aisle')"><div class="seat-pref-content"><span class="seat-pref-type">Corridoio</span><span class="seat-pref-price">+€12</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref_{{f._id}}" (change)="choose(f._id,'middle')"><div class="seat-pref-content"><span class="seat-pref-type">In mezzo</span><span class="seat-pref-price">+€8</span></div></label>
+          <label class="seat-pref-card"><input type="radio" name="pref_{{f._id}}" (change)="choose(f._id,'random')"><div class="seat-pref-content"><span class="seat-pref-type">Casuale</span><span class="seat-pref-price">0€</span></div></label>
         </div>
       </div>
       <div style="margin-top:12px">

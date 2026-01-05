@@ -1,6 +1,6 @@
 <main class="container">
   <div class="booking-card">
-    <h1 class="booking-title">PagamentoSingolo</h1>
+    <h1 class="booking-title">Pagamento</h1>
 
     <!-- Flight summary -->
 
@@ -12,18 +12,8 @@
     </div>
 
     <ng-container *ngFor="let flight of flights">
-      <div class="flight-summary" *ngIf="flight">
-        <div class="summary-item"><span class="summary-label">Compagnia:</span><span class="summary-value">{{
-            flight.airline?.name || flight.airline }}</span></div>
-        <div class="summary-item"><span class="summary-label">Rotta:</span>
-          <span class="summary-value">{{ flight.from_airport?.name || '' }} ({{ flight.from_airport?.code || '' }}) → {{
-            flight.to_airport?.name || '' }} ({{ flight.to_airport?.code || '' }})</span>
-        </div>
-        <div class="summary-item"><span class="summary-label">Data:</span><span class="summary-value">{{
-            flight.date_departure | date:'dd MMMM yyyy' }}</span></div>
-        <div class="summary-item"><span class="summary-label">Orario:</span><span class="summary-value">{{
-            flight.date_departure | date:'HH:mm' }} → {{ flight.date_arrival | date:'HH:mm dd/MM/yyyy' }}</span></div>
-      </div>
+      <app-flight-summary [flight]="flight"></app-flight-summary>
+      
       <h2 class="section-title">Riepilogo passeggeri</h2>
       <div class="flight-list">
         <!-- Error if getPassengersByFlight fails? -->
@@ -44,7 +34,7 @@
     <!--
     -->
 
-    <div class="divider"></div>
+
     <div class="summary-item" style="justify-content:flex-end;">
       <span class="summary-label" style="min-width:auto;margin-right:.5rem;">Totale:</span>
       <span class="summary-value" style="font-weight:700;">€{{ total.toFixed(2) }}</span>

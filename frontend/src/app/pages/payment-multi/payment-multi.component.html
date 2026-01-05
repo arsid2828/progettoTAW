@@ -2,28 +2,14 @@
   <div class="booking-card">
     <h1 class="booking-title">Pagamento Multiplo</h1>
 
-    <ng-container *ngFor="let flight of flights">{{flight._id}}
-      <div class="flight-summary" *ngIf="flight">
-        <h2 class="section-title">Volo: {{ flight.from_airport?.name || '' }} → {{ flight.to_airport?.name || '' }}</h2>
+    <ng-container *ngFor="let flight of flights">
 
-        <div class="summary-item">
-          <span class="summary-label">Compagnia:</span>
-          <span class="summary-value">{{ flight.airline?.name || flight.airline }}</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Data:</span>
-          <span class="summary-value">{{ flight.date_departure | date:'dd MMMM yyyy' }}</span>
-        </div>
-        <div class="summary-item">
-          <span class="summary-label">Orario:</span>
-          <span class="summary-value">{{ flight.date_departure | date:'HH:mm' }} → {{ flight.date_arrival | date:'HH:mm
-            dd/MM/yyyy' }}</span>
-        </div>
-      </div>
+      <app-flight-summary [flight]="flight"></app-flight-summary>
+      
 
       <h3 class="section-title" style="font-size: 1rem; margin-top: 10px;">Riepilogo passeggeri per questa tratta</h3>
       <div class="flight-list">
-        <div class="flight-item" *ngFor="let it of getPassengersByFlight(flight._id)">{{flight._id}}
+        <div class="flight-item" *ngFor="let it of getPassengersByFlight(flight._id)">
           <div class="flight-details" style="justify-content:space-between;flex-wrap:wrap;">
             <span><strong>{{ it.passenger?.nome }} {{ it.passenger?.cognome }}</strong></span>
             <span>Classe: <strong>{{ it.seat_type?.type || it.seat_type?.seat_class || 'ECONOMY' }}</strong></span>

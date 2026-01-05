@@ -4,6 +4,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { FlightService } from '@app/services/flight.service';
+import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({
   selector: 'app-seat-choice-multi',
@@ -18,10 +20,23 @@ export class SeatChoiceMultiComponent {
   flightIds: string[] = [];
   selections: Record<string, string> = {};
   location = inject(Location);
-
+  flightService = inject(FlightService);
+  flights: any[] = [];
   constructor() {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
     if (ids) this.flightIds = ids.split(',');
+
+        const observables = this.flightIds.map(id => this.flightService.getFlightById(id));
+
+        forkJoin(observables).subscribe({
+          next: (responses: any[]) => {
+            this.flights = responses.map(r => r.flight || r);
+    
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
   }
 
   choose(flightId: string, seat: string) { this.selections[flightId] = seat; }
