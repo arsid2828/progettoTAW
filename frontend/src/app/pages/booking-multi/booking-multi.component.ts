@@ -38,15 +38,15 @@ export class BookingMultiComponent {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
     if (ids) this.flightIds = ids.split(',');
     const p = Number(this.route.snapshot.queryParamMap.get('passengers')) || 1;
-     // carica passeggeri da localStorage
+    // carica passeggeri da localStorage
     try { const s = localStorage.getItem('passengers'); if (s) this.passengerInputs = JSON.parse(s); } catch { }
-    
+
     this.passengersQty = p;
     for (let i = this.passengerInputs.length; i < this.passengersQty; i++) this.passengerInputs.push({ nome: '', cognome: '' });
-    if(this.passengerInputs.length > this.passengersQty){
-      this.passengerInputs = this.passengerInputs.slice(0,this.passengersQty);
+    if (this.passengerInputs.length > this.passengersQty) {
+      this.passengerInputs = this.passengerInputs.slice(0, this.passengersQty);
     }
-    // load flight details
+    // Carica dettagli volo
     if (this.flightIds.length) {
       const calls = this.flightIds.map(id => this.flightService.getFlightById(id));
       forkJoin(calls).subscribe({
@@ -74,7 +74,7 @@ export class BookingMultiComponent {
 
   confirmMulti() {
     if (!this.flightIds.length) return;
-    // save passengers to localStorage for next steps
+    // Salva passeggeri in localStorage per passaggi successivi
     try { localStorage.setItem('passengers', JSON.stringify(this.passengerInputs)); } catch { }
     const qp: any = { flightIds: this.flightIds.join(','), passengers: this.passengersQty };
 

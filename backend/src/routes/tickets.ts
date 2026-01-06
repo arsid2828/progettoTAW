@@ -46,7 +46,7 @@ router.post('/', auth, async (req, res) => {
     try {
         console.log('BODY RICEVUTO NELLA ROUTE TICKETS:', req.body);
         const { flightId, passengers, seatTypeId } = req.body;
-        const userId = req.user?._id; // Use optional chaining to handle undefined user
+        const userId = req.user?._id; // Usa optional chaining per gestire utente non definito
         if (!userId) {
             return res.status(401).json({ message: 'Unauthorized: User not found' });
         }
@@ -69,7 +69,7 @@ router.post('/', auth, async (req, res) => {
         }
         let tickets = [];
         console.log('PASSEGGERI:', passengersArray);
-        let seat_pref='random';
+        let seat_pref = 'random';
         if (passengersArray.length == 1 && passengersArray[0].seat_pref) {
             seat_pref = passengersArray[0].seat_pref;
         }
@@ -83,7 +83,7 @@ router.post('/', auth, async (req, res) => {
         if (!allocation.success) {
             return res.status(400).json({ error: allocation.message });
         }
-        let cc=0;
+        let cc = 0;
         for (const passenger of passengersArray) {
             console.log('ELABORAZIONE PASSEGGERO:', passenger);
             console.log('passenger.baggageChoice:', passenger.baggageChoice);

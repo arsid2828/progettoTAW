@@ -14,7 +14,7 @@ import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summar
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule,FlightSummaryComponent],
+  imports: [CommonModule, RouterModule, FormsModule, FlightSummaryComponent],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.css']
 })
@@ -22,7 +22,7 @@ export class PaymentComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);
   auth = inject(AuthService);
-  // Support multiple parameter names for compatibility: ticketId, ticketFlightId, flightIds
+  // Supporta nomi parametri multipli per compatibilità: ticketId, ticketFlightId, flightIds
   ticketId = this.route.snapshot.queryParamMap.get('ticketId')
     || this.route.snapshot.queryParamMap.get('ticketFlightId')
     || this.route.snapshot.queryParamMap.get('flightIds');
@@ -41,15 +41,15 @@ export class PaymentComponent {
   items: any[] = [];
   total = 0;
   seatTypesByFlight: any = {};
-  passengerStub: any = null; // Stubs just in case
-  seatTypeSelections: Record<string, string | null> = {}; // flightId -> seatTypeId mapping
-  baggageSelections: Record<string, string | null> = {}; // flightId -> baggage choice mapping
+  passengerStub: any = null; // Stub di sicurezza
+  seatTypeSelections: Record<string, string | null> = {}; // Mappatura flightId -> seatTypeId
+  baggageSelections: Record<string, string | null> = {}; // Mappatura flightId -> scelta bagaglio
 
   constructor() { }
 
   stringify = JSON.stringify;
   ngOnInit() {
-     if (this.auth.userRole() == 'airline') {
+    if (this.auth.userRole() == 'airline') {
       this.router.navigate(['/airline-area']);
       return;
     }
@@ -67,7 +67,7 @@ export class PaymentComponent {
     try { const p = localStorage.getItem('seatTypeSelections'); if (p) { const arr = JSON.parse(p); this.seatTypeSelections = arr; } } catch { }
     try { const p = localStorage.getItem('baggageSelections'); if (p) { const arr = JSON.parse(p); this.baggageSelections = arr; } } catch { }
 
-    // load flight details and prepare items
+    // Carica dettagli volo e prepara articoli
     if (this.ticketId) {
       this.loading = true;
       console.log('Fetching details for ticketId:', this.ticketId);
@@ -77,17 +77,17 @@ export class PaymentComponent {
           this.loading = false;
           console.log('Flight details response:', res);
 
-          // Robustly handle single vs multi response
+          // Gestisce robustamente risposta singola vs multi
           if (res.flight) {
             this.flights = [res.flight];
-            // Map seat types using the ACTUAL flight ID from response
+            // Mappa tipi posto usando l'ID volo REALE dalla risposta
             if (res.seatTypes) {
               this.seatTypesByFlight[String(res.flight._id)] = res.seatTypes;
             }
           } else if (res.flights) {
             this.flights = res.flights;
             this.seatTypesByFlight = res.seatTypesByFlight || {};
-            // Ensure keys are strings just in case
+            // Assicura che le chiavi siano stringhe
             const newMap: any = {};
             for (const k in this.seatTypesByFlight) newMap[String(k)] = this.seatTypesByFlight[k];
             this.seatTypesByFlight = newMap;
@@ -122,14 +122,14 @@ export class PaymentComponent {
           const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
 
           this.items = passengersList.map((pass: any) => {
-            // Keep this for backward compatibility if template uses 'items' anywhere, 
-            // but mainly we rely on getPassengersByFlight now.
-            // We can just execute the same single-flight logic for the first flight to populate 'items' 
-            // as a fallback for single-passenger view.
-            return { passenger: pass, price: 0 }; // Placeholder
+            // Mantieni per retrocompatibilità se il template usa 'items',
+            // ma principalmente usiamo getPassengersByFlight.
+            // Eseguiamo logica volo singolo per il primo volo per popolare 'items'
+            // come fallback per vista passeggero singolo.
+            return { passenger: pass, price: 0 }; // Segnaposto
           });
 
-          // Calculate REAL total across all flights
+          // Calcola totale REALE su tutti i voli
           this.calculateTotal();
 
           try {
@@ -165,7 +165,7 @@ export class PaymentComponent {
       if (passengersList.length === 0) passengersList = [{ nome: '', cognome: '', baggageChoice: 'hand' }];
     }
 
-    // Since we call this from template often, optimize lookup
+    // Poiché chiamato spesso dal template, ottimizza lookup
     const flight = this.flights.find((f: any) => String(f._id) === String(flightId));
     if (!flight) return [];
 
@@ -185,12 +185,12 @@ export class PaymentComponent {
       let seatprice = 0;
       let seatTypeObj = null;
 
-      // Resolve Seat Price (Priority: ID -> Economy -> First Available)
+      // Risolvi Prezzo Posto (Priorità: ID -> Economy -> Primo Disponibile)
       if (this.seatTypesByFlight[flightId]) {
         const types = this.seatTypesByFlight[flightId];
-        // 1. Try exact ID
+        // 1. Prova ID esatto
         seatTypeObj = types.find((s: any) => String(s._id) === String(seatTypeId));
-        // 2. Try 'Economy'
+        // 2. Prova 'Economy'
         if (!seatTypeObj) seatTypeObj = types.find((s: any) => (s.type === 'Economy' || s.seat_class === 'Economy'));
         // 3. Fallback
         if (!seatTypeObj && types.length > 0) seatTypeObj = types[0];
@@ -243,12 +243,12 @@ export class PaymentComponent {
     if (!this.flights || !this.flights.length) return;
     this.loading = true;
 
-    // Create a request for EACH flight
+    // Crea una richiesta per OGNI volo
     const requests = this.flights.map((flight: any) => {
       const flightItems = this.getPassengersByFlight(flight._id);
 
       const passengersPayload = flightItems.map((it: any) => {
-        // Ensure seat_pref is cleaned (remove quotes if JSON stringified)
+        // Assicura pulizia seat_pref (rimuovi virgolette se stringa JSON)
         let seatPrefClean = this.seat;
         if (seatPrefClean) {
           try { seatPrefClean = JSON.parse(seatPrefClean); } catch { }

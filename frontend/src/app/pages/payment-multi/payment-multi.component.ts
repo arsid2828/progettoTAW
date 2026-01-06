@@ -39,11 +39,11 @@ export class PaymentMultiComponent implements OnInit {
   seatSelections: Record<string, string> = {};
   seatTypesByFlight: any = {};
   passengerStub: any = null;
-  seatTypeSelections: Record<string, string | null> = {}; // flightId -> seatTypeId mapping
-  baggageSelections: Record<string, string | null> = {}; // flightId -> baggage choice mapping
+  seatTypeSelections: Record<string, string | null> = {}; // Mappatura flightId -> seatTypeId
+  baggageSelections: Record<string, string | null> = {}; // Mappatura flightId -> scelta bagaglio
 
   ngOnInit() {
-     if (this.auth.userRole() == 'airline') {
+    if (this.auth.userRole() == 'airline') {
       this.router.navigate(['/airline-area']);
       return;
     }
@@ -61,12 +61,12 @@ export class PaymentMultiComponent implements OnInit {
     if (!ids) return;
     const flightIds = ids.split(',').map(s => s.trim()).filter(Boolean);
 
-    // load passengers from localstorage just to know count or direct data
+    // Carica passeggeri da localstorage solo per conteggio o dati diretti
     try {
       const p = localStorage.getItem('passengers');
       if (p) {
         const arr = JSON.parse(p);
-        // If single passenger booking (old style) or just one in list
+        // Se prenotazione singolo passeggero (vecchio stile) o solo uno in lista
         if (Array.isArray(arr) && arr.length === 1) this.passengerStub = arr[0];
       }
     } catch { }
@@ -75,17 +75,17 @@ export class PaymentMultiComponent implements OnInit {
     try { const p = localStorage.getItem('seatTypeSelections'); if (p) { const arr = JSON.parse(p); this.seatTypeSelections = arr; } } catch { }
     try { const p = localStorage.getItem('baggageSelections'); if (p) { const arr = JSON.parse(p); this.baggageSelections = arr; } } catch { }
 
-    // Fetch details for all flights
+    // Recupera dettagli per tutti i voli
     const observables = flightIds.map(id => this.flightService.getFlightById(id));
 
     forkJoin(observables).subscribe({
       next: (responses: any[]) => {
         this.flights = responses.map(r => r.flight || r);
 
-        // Collect seat types if available
+        // Raccoglie tipi di posto se disponibili
         responses.forEach((r, idx) => {
-          // The API might return { flight: ..., seatTypes: ... }
-          // We store it by flight ID
+          // L'API potrebbe restituire { flight: ..., seatTypes: ... }
+          // Memorizziamo per ID volo
           const fid = this.flights[idx]._id;
           if (r.seatTypes) {
             this.seatTypesByFlight[fid] = r.seatTypes;
@@ -101,7 +101,7 @@ export class PaymentMultiComponent implements OnInit {
     });
   }
 
-  // Find the seat type object for a specific flight consistent with the user's selection
+  // Trova oggetto tipo posto per un volo specifico coerente con selezione utente
   getSeatTypeForFlight(flightId: string) {
 
     let seatTypeObj = null;
@@ -109,12 +109,12 @@ export class PaymentMultiComponent implements OnInit {
     if (seatTypeId == null) { seatTypeId = this.seatTypeSelections[flightId]; }
     //if (seatTypeId == null) { seatTypeId = pass.seatTypeId; }
 
-    // Resolve Seat Price (Priority: ID -> Economy -> First Available)
+    // Risolvi Prezzo Posto (Priorità: ID -> Economy -> Primo Disponibile)
     if (this.seatTypesByFlight[flightId]) {
       const types = this.seatTypesByFlight[flightId];
-      // 1. Try exact ID
+      // 1. Prova ID esatto
       seatTypeObj = types.find((s: any) => String(s._id) === String(seatTypeId));
-      // 2. Try 'Economy'
+      // 2. Prova 'Economy'
       if (!seatTypeObj) seatTypeObj = types.find((s: any) => (s.type === 'Economy' || s.seat_class === 'Economy'));
       // 3. Fallback
       if (!seatTypeObj && types.length > 0) seatTypeObj = types[0];
@@ -122,36 +122,7 @@ export class PaymentMultiComponent implements OnInit {
       //if (seatTypeObj) seatprice = seatTypeObj.price || 0;
     }
     return seatTypeObj;
-    /*   // 1. Identify Target Name from global ID, OR Default to Economy
-       let selectedSeatTypeName = 'Economy';
-   
-       if (this.seatTypeId) {
-         for (const fid in this.seatTypesByFlight) {
-           const types = this.seatTypesByFlight[fid];
-           const match = types.find((t: any) => t._id === this.seatTypeId);
-           if (match) {
-             selectedSeatTypeName = match.type || match.seat_class || 'Economy';
-             break;
-           }
-         }
-       }*
-   
-       // 2. Find matching type in current flight
-       if (this.seatTypesByFlight[flightId]) {
-         // Try exact global ID match first
-         let match = this.seatTypeId ? this.seatTypesByFlight[flightId].find((t: any) => t._id === this.seatTypeId) : null;
-   
-         // Try Name match
-         if (!match) {
-           match = this.seatTypesByFlight[flightId].find((t: any) => (t.type || t.seat_class) === selectedSeatTypeName);
-         }
-         // Fallback to first available if still nothing
-         if (!match && this.seatTypesByFlight[flightId].length > 0) {
-           match = this.seatTypesByFlight[flightId][0];
-         }
-         return match;
-       }
-       return null;*/
+
   }
 
   getPassengersByFlight(flightId: string) {
@@ -161,12 +132,12 @@ export class PaymentMultiComponent implements OnInit {
       if (p) passengersList = JSON.parse(p);
     } catch { }
 
-    // Fallback if no list but we have a single passengerStub or param
+    // Fallback se nessuna lista ma abbiamo un singolo passengerStub o param
     if (!passengersList || passengersList.length === 0) {
       if (this.passengerStub) passengersList = [this.passengerStub];
     }
 
-    // Helper to generate passengers if count param is present (unlikely in this flow but safe to have)
+    // Helper per generare passeggeri se parametro count presente (improbabile qui ma sicuro averlo)
     const passengersParam = this.route.snapshot.queryParamMap.get('passengers');
     const pNum = Number(passengersParam) || 0;
     if (pNum > 0 && passengersList.length === 0) {
@@ -176,7 +147,7 @@ export class PaymentMultiComponent implements OnInit {
     const flight = this.flights.find(f => f._id === flightId);
     if (!flight) return [];
 
-    // Resolve Seat Price
+    // Risolvi Prezzo Posto
     let typePrice = 0;
     const seatTypeObj = this.getSeatTypeForFlight(flightId);
 
@@ -192,11 +163,11 @@ export class PaymentMultiComponent implements OnInit {
       }
       if (!baggageChoice) { baggageChoice = 'hand'; }
 
-      // Seat Selection Fee
+      // Tariffa Selezione Posto
       const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
 
       let specificSeatPref = this.seatSelections[flightId] || 'random';
-      // Fallback to global param if not specific
+      // Fallback a parametro globale se non specifico
       if (!this.seatSelections[flightId] && this.seat) {
         try {
           const parsed = JSON.parse(this.seat);
@@ -208,13 +179,13 @@ export class PaymentMultiComponent implements OnInit {
 
       const seat_fee = seatPrefSurcharge[specificSeatPref] ? seatPrefSurcharge[specificSeatPref] : 0;
 
-      // Calculate final price: Class Price + Seat Fee + Baggage
+      // Calcola prezzo finale: Prezzo Classe + Tariffa Posto + Bagaglio
       let price = typePrice + seat_fee;
 
       if (baggageChoice === 'big_cabin') price += flight.price_of_bag || 0;
       if (baggageChoice === 'big_hold') price += flight.price_of_baggage || 0;
 
-      // Labels
+      // Etichette
       const prefLabels = ['window', 'aisle', 'middle', 'random'];
       const seatLabel = pass.seat_number || (prefLabels.includes(specificSeatPref) ? specificSeatPref : 'Assegnato al check-in');
 
@@ -242,85 +213,49 @@ export class PaymentMultiComponent implements OnInit {
     if (this.flights.length === 0) return;
     this.loading = true;
 
-    // Simulate payment delay
+    // Simula ritardo pagamento
     setTimeout(() => {
       const calls: any[] = [];
       const seatTypeIdParam = this.route.snapshot.queryParamMap.get('seatTypeId');
 
-      // Get fresh passengers list logic
-      // Note: we're repeating logic a bit, but it ensures we grab latest state
-      /*let passengers: any[] = [];
-      try { const p = localStorage.getItem('passengers'); if (p) passengers = JSON.parse(p); } catch { }
-     
-      // If empty but we have stub
-      if (passengers.length === 0 && this.passengerStub) passengers = [this.passengerStub];*/
 
-      // If still empty, maybe it's just a seat reservation flow without passengers named? 
-      // Fallback to "single items loop" like before
 
       //if (passengers.length > 0) {
-       // 
-          for (const flight of this.flights) {
-            const fid = flight._id;
-            const seatPref = this.seatSelections[fid] || 'random'; 
-            let passengers = this.getPassengersByFlight(flight._id)
-for (const passenger of passengers) {
-            // Resolve correct seat type ID for THIS flight
-            const correctSeatType = this.getSeatTypeForFlight(fid);
-
-            // Construct payload compatible with backend (requires 'passengers' as JSON string)
-            let p = this.getPassengersByFlight(flight._id);
-            const singlePassengerObj: any = {
-              nome: passenger.passenger.nome,
-              cognome: passenger.passenger.cognome,
-              baggageChoice: passenger.bag_label,
-              seat_pref: seatPref,
-              seatTypeId: passenger.seat_type._id
-            };
-
-            // Resolve Seat Type and add to passenger object if needed
-            /*if (passenger.seatTypeId) singlePassengerObj.seatTypeId = passenger.seatTypeId;
-            else if (correctSeatType) singlePassengerObj.seatTypeId = correctSeatType._id;
-            else if (seatTypeIdParam) singlePassengerObj.seatTypeId = seatTypeIdParam;*/
-
-            const payload: any = {
-              flightId: fid,
-              seatTypeId: singlePassengerObj.seatTypeId, // Global seat type for the flight (fallback)
-              passengers: JSON.stringify([singlePassengerObj])
-            };
-
-            console.log(`Adding call for flight ${fid} with payload:`, payload);
-            calls.push(this.ticketService.createTicket(payload));
-          }
-        }
-      /*} else {
-        // No passengers explicit (seat only flow?)
-        for (const flight of this.flights) {
-          const fid = flight._id;
-          const seatPref = this.seatSelections[fid] || 'random';
+      // 
+      for (const flight of this.flights) {
+        const fid = flight._id;
+        const seatPref = this.seatSelections[fid] || 'random';
+        let passengers = this.getPassengersByFlight(flight._id)
+        for (const passenger of passengers) {
+          // Risolvi ID tipo posto corretto per QUESTO volo
           const correctSeatType = this.getSeatTypeForFlight(fid);
 
-          // Legacy/Fallback payload if no passenger info
-          const payload: any = { flightId: fid };
-          if (correctSeatType) payload.seatTypeId = correctSeatType._id;
-
-          // Even here, backend might expect passengers array for logic to run? 
-          // If backend requires passengers array to create ticket, we must provide it or update backend.
-          // Assuming we need at least one passenger stub
-          const stubPassenger = {
-            nome: 'Utente', cognome: 'Guest',
+          // Costruisci payload compatibile con backend (richiede 'passengers' come stringa JSON)
+          let p = this.getPassengersByFlight(flight._id);
+          const singlePassengerObj: any = {
+            nome: passenger.passenger.nome,
+            cognome: passenger.passenger.cognome,
+            baggageChoice: passenger.bag_label,
             seat_pref: seatPref,
-            seatTypeId: correctSeatType ? correctSeatType._id : seatTypeIdParam
+            seatTypeId: passenger.seat_type._id
           };
-          payload.passengers = JSON.stringify([stubPassenger]);
 
+
+          const payload: any = {
+            flightId: fid,
+            seatTypeId: singlePassengerObj.seatTypeId, // Tipo posto globale per il volo (fallback)
+            passengers: JSON.stringify([singlePassengerObj])
+          };
+
+          console.log(`Adding call for flight ${fid} with payload:`, payload);
           calls.push(this.ticketService.createTicket(payload));
         }
-      }*/
+      }
+
 
       console.log(`Submitting ${calls.length} ticket creation requests SEQUENTIALLY...`);
 
-      // Execute sequentially
+      // Esegui sequenzialmente
       import('rxjs').then(({ concat, of }) => {
         concat(...calls).subscribe({
           next: (res) => {

@@ -26,23 +26,23 @@ export class SeatChoiceMultiComponent {
     const ids = this.route.snapshot.queryParamMap.get('flightIds');
     if (ids) this.flightIds = ids.split(',');
 
-        const observables = this.flightIds.map(id => this.flightService.getFlightById(id));
+    const observables = this.flightIds.map(id => this.flightService.getFlightById(id));
 
-        forkJoin(observables).subscribe({
-          next: (responses: any[]) => {
-            this.flights = responses.map(r => r.flight || r);
-    
-          },
-          error: (err) => {
-            console.error(err);
-          }
-        });
+    forkJoin(observables).subscribe({
+      next: (responses: any[]) => {
+        this.flights = responses.map(r => r.flight || r);
+
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
   }
 
   choose(flightId: string, seat: string) { this.selections[flightId] = seat; }
 
   continue() {
-    // save selections and forward passengers param if present
+    // Salva selezioni e inoltra parametro passeggeri se presente
     try { localStorage.setItem('seatSelections', JSON.stringify(this.selections)); } catch { }
     const flightIds = this.flightIds.join(',');
     const passengers = this.route.snapshot.queryParamMap.get('passengers') || '1';
