@@ -22,14 +22,14 @@ const randomPrice = (min: number, max: number) => Math.floor(Math.random() * (ma
 const getRandomDuration = () => Math.floor(Math.random() * 8) + 1; // Voli da 1 a 9 ore
 
 export const seedFlights = async () => {
-    console.log("✈️  Inizio seeding voli (Pool Aerei Globale)...");
+    console.log("Inizio seeding voli (Pool Aerei Globale)...");
 
 
     // 1. CONTROLLO PREVENTIVO
     // Se ci sono già voli, ci fermiamo subito.
     const existingFlightsCount = await Flight.countDocuments();
     if (existingFlightsCount > 0) {
-        console.log(`⚠️  Trovati già ${existingFlightsCount} voli nel DB. Seeding annullato per non sovrascrivere.`);
+        console.log(`Trovati già ${existingFlightsCount} voli nel DB. Seeding annullato per non sovrascrivere.`);
         return null;
     }
 
@@ -39,7 +39,7 @@ export const seedFlights = async () => {
     const planes = await Plane.find();
 
     if (airports.length < 4 || airlines.length === 0 || planes.length === 0) {
-        console.error("❌ Errore: Assicurati di aver seedato Aeroporti, Airline e Aerei prima.");
+        console.error("Errore: Assicurati di aver seedato Aeroporti, Airline e Aerei prima.");
         return;
     }
 

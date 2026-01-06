@@ -7,7 +7,7 @@ import { auth } from '../middleware/auth';
 
 const router = express.Router();
 
-// Ottieni tutte le compagnie
+//Ottieni tutte le compagnie
 router.get('/', auth, async (req: any, res: any) => {
     if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
     try {
@@ -18,7 +18,7 @@ router.get('/', auth, async (req: any, res: any) => {
     }
 });
 
-// Crea compagnia
+//Crea compagnia
 router.post('/', auth, async (req: any, res: any) => {
     if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
     try {

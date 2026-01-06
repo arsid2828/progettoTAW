@@ -1,5 +1,5 @@
-// Interceptor per autenticazione
-// Aggiunge token Bearer e gestisce errori 401
+//Interceptor per autenticazione
+//Aggiunge token Bearer e gestisce errori 401
 import {
   HttpErrorResponse,
   HttpEvent,

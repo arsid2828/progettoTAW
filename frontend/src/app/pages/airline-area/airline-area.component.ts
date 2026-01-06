@@ -115,9 +115,23 @@ export class AirlineAreaComponent implements OnInit {
         }
 
         console.log('Adding flight:', this.newFlight);
-        this.flightService.addFlight(this.newFlight).subscribe({
+
+        // Pre-calcolo delle date in formato ISO UTC corrette
+        // Costruiamo la data combinando i campi stringa e l'ora locale del browser
+        const depDate = new Date(`${this.newFlight.dateDeparture}T${this.newFlight.timeDeparture}`);
+        const arrDate = new Date(`${this.newFlight.dateArrival}T${this.newFlight.timeArrival}`);
+
+        // Creiamo un payload esteso
+        const payload = {
+            ...this.newFlight,
+            dateTimeDepartureUTC: depDate.toISOString(),
+            dateTimeArrivalUTC: arrDate.toISOString()
+        };
+
+        this.flightService.addFlight(payload).subscribe({
             next: (res) => {
                 console.log('Flight added!', res);
+                alert('Volo aggiunto con successo!');
                 // Reset form o mostra messaggio successo
                 this.loadFlights();
             },

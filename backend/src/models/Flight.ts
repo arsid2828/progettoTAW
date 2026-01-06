@@ -26,12 +26,10 @@ const flightSchema = new mongoose.Schema<FlightDoc>({
   price_of_bag: Number,
   price_of_baggage: Number,
   check_in: String,
-  // departure: { type: String, required: true }, da fare
-  // arrival:   { type: String, required: true }, abbiamo fatto un errore, teniamo l'orario nella data
   date_departure: { type: Date, required: true },
   date_arrival: { type: Date, required: true }
 }, { timestamps: true });
 
-flightSchema.index({ from_airport: 1, date_departure: 1 }); // come l'indice SQL
+flightSchema.index({ from_airport: 1, date_departure: 1 }); //come l'indice SQL
 
 export const Flight = mongoose.model<FlightDoc>("Flight", flightSchema);

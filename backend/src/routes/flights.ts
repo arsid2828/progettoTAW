@@ -80,7 +80,7 @@ router.get('/stats', auth, async (req, res) => {
   }
 });
 
-// GET /api/flights/my-flights - Ottiene i voli per la compagnia aerea loggata
+//GET /api/flights/my-flights - Ottiene i voli per la compagnia aerea loggata
 router.get('/my-flights', auth, async (req, res) => {
   try {
     const flights = await Flight.find({ airline: req.user?._id })
@@ -99,8 +99,8 @@ router.get('/my-flights', auth, async (req, res) => {
       return {
         ...f.toObject(),
         seat_types: seats,
-        sold,       // Aggiunto
-        revenue     // Aggiunto
+        sold,    //Aggiunto
+        revenue   //Aggiunto
       };
     }));
 
@@ -120,12 +120,22 @@ router.post('/', auth, async (req, res) => {
       priceEconomy, seatsEconomy,
       priceBusiness, seatsBusiness,
       priceFirst, seatsFirst,
-      priceBag, priceBaggage
+      priceBag, priceBaggage,
+      // Optionali: date già calcolate in UTC dal frontend
+      dateTimeDepartureUTC, dateTimeArrivalUTC
     } = req.body;
 
-    // Combina data e ora
-    const startDateTime = new Date(`${dateDeparture}T${timeDeparture}`);
-    const endDateTime = new Date(`${dateArrival}T${timeArrival}`);
+    // Combina data e ora: Se abbiamo già l'ISO UTC dal frontend, usiamo quello, altrimenti fallback
+    let startDateTime: Date;
+    let endDateTime: Date;
+
+    if (dateTimeDepartureUTC && dateTimeArrivalUTC) {
+      startDateTime = new Date(dateTimeDepartureUTC);
+      endDateTime = new Date(dateTimeArrivalUTC);
+    } else {
+      startDateTime = new Date(`${dateDeparture}T${timeDeparture}`);
+      endDateTime = new Date(`${dateArrival}T${timeArrival}`);
+    }
 
     if (!isValidDate(startDateTime) || !isValidDate(endDateTime)) {
       return res.status(400).json({ message: 'Date o orari non validi' });

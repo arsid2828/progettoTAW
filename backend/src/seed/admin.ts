@@ -9,7 +9,7 @@ export const seedAdmin = async () => {
         const exists = await Profile.findOne({ email });
 
         if (!exists) {
-            console.log('👑 Creating Admin User...');
+            console.log('Creating Admin User...');
             const password = 'admin123';
             const hashedSHA256 = crypto.createHash('sha256').update(password).digest('hex');
 
@@ -23,18 +23,18 @@ export const seedAdmin = async () => {
                 citta_nascita: 'System',
                 role: 'admin'
             });
-            console.log('✅ Admin user created: admin@skyjourney.com / admin123');
+            console.log('Admin user created: admin@skyjourney.com / admin123');
         } else {
             // Assicura che il ruolo sia admin se esiste (nel caso sia stato creato prima dell'aggiornamento schema)
             if (exists.role !== 'admin') {
                 exists.role = 'admin';
                 await exists.save();
-                console.log(' Admin role updated for existing user');
+                console.log('Admin role updated for existing user');
             } else {
-                console.log('ℹ  Admin user already exists.');
+                console.log('Admin user already exists.');
             }
         }
     } catch (error) {
-        console.error(' Errore seed admin:', error);
+        console.error('Errore seed admin:', error);
     }
 };

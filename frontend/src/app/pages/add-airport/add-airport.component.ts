@@ -1,5 +1,5 @@
-// Componente per aggiungere aeroporti
-// Form per la creazione di nuovi aeroporti nel sistema
+//Componente per aggiungere aeroporti
+//Form per la creazione di nuovi aeroporti nel sistema
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

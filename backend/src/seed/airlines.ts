@@ -10,7 +10,7 @@ const rawAirlines = [
     email: 'info@skyhigh.com',
   },
   {
-    name: 'Oceanic Airlines', // Citazione classica
+    name: 'Oceanic Airlines',
     email: 'contact@oceanic.com',
   },
   {
