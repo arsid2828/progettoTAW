@@ -42,8 +42,7 @@ e credenziali, con validazione JavaScript per la password.
       </div>
       <div class="form-group">
         <label for="data_nascita">Data di nascita</label>
-        <input id="data_nascita" name="data_nascita" type="date" [max]="today" required
-          [(ngModel)]="data_nascita">{{data_nascita}}
+        <input id="data_nascita" name="data_nascita" type="date" [max]="today" required [(ngModel)]="data_nascita">
       </div>
     </div>
 
@@ -97,7 +96,7 @@ e credenziali, con validazione JavaScript per la password.
           required>
       </div>
     </div>
-    {{areValidPasswords()}}
+    <!-- {{areValidPasswords()}} to do-->
     <!-- Bottone Registrati -->
     <button class="btn btn-submit" (click)="onSubmit()">Registrati</button>
     <!--</form>-->

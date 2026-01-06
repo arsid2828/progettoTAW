@@ -30,7 +30,7 @@ export class ChangePasswordComponent {
             console.log('Form invalid, aborting');
             return;
         }
-
+        //LA PASSWORD DEVE ESSERE DI ALMENO 6 CARATTERI
         this.http.post(`${this.apiUrl}/session/change-password`, this.form.value).subscribe({
             next: (res) => {
                 console.log('Password changed successfully', res);

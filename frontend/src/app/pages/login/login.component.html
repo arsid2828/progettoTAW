@@ -23,7 +23,7 @@
       <a class="btn btn-outline" [routerLink]="['/signup']" [queryParams]="route.snapshot.queryParams">Registrati</a>
     </div>
 
-    <div *ngIf="errorMessage" class="error-message" style="color: red; text-align: center; margin-top: 10px;">
+    <div *ngIf="errorMessage" style="color: red; text-align: center; margin-top: 10px;" class="error-message">
       {{ errorMessage }}
     </div>
   </div>
