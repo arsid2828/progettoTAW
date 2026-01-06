@@ -30,7 +30,7 @@
                 <h2 class="flights-title">Tratte maggiormente richieste</h2>
                 <ul class="flight-items">
                     <li *ngFor="let r of topRoutes" class="flight-item">
-                        <div class="flight-route">{{ r.from_name }} → {{ r.to_name }}</div>
+                        <div class="flight-route">{{ r.from_city }} - {{ r.from_name }}({{r.from_code}}) → {{ r.to_city }} - {{ r.to_name }}({{r.to_code}})</div>
                         <div class="flight-details">Biglietti venduti: <strong>{{ r.sold }}</strong></div>
                     </li>
                 </ul>
@@ -64,7 +64,7 @@
                         <select id="from_airport_id" name="from_airport_id" [(ngModel)]="newFlight.fromAirportId"
                             required>
                             <option *ngFor="let airport of availableFromAirports" [value]="airport._id">
-                                {{ airport.name }} ({{ airport.code }})
+                                {{airport.city}} - {{ airport.name }} ({{ airport.code }})
                             </option>
                         </select>
                     </div>
@@ -72,7 +72,7 @@
                         <label for="to_airport_id">Aeroporto di arrivo</label>
                         <select id="to_airport_id" name="to_airport_id" [(ngModel)]="newFlight.toAirportId" required>
                             <option *ngFor="let airport of availableToAirports" [value]="airport._id">
-                                {{ airport.name }} ({{ airport.code }})
+                               {{airport.city}} - {{ airport.name }} ({{ airport.code }})
                             </option>
                         </select>
                     </div>

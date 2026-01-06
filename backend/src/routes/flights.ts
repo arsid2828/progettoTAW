@@ -63,6 +63,10 @@ router.get('/stats', auth, async (req, res) => {
       return {
         from_name: (f?.from_airport as any)?.name || 'Unknown',
         to_name: (f?.to_airport as any)?.name || 'Unknown',
+        from_city: (f?.from_airport as any)?.city || 'Unknown',
+        to_city: (f?.to_airport as any)?.city || 'Unknown',
+        from_code: (f?.from_airport as any)?.code || 'XXX',
+        to_code: (f?.to_airport as any)?.code || 'XXX',
         sold: item.sold,
         revenue: item.revenue
       };
