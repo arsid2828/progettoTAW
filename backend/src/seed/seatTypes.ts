@@ -14,43 +14,7 @@ export const seedSeatTypes = async () => {
     const count = await SeatType.countDocuments();
 
     console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
-    console.log(` Trovati ${count} SeatType nel DB.`);
+
 
     if (count === 0) {
         console.log(" Inizio seeding SeatTypes...");

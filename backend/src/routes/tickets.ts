@@ -7,6 +7,7 @@ import { Flight } from '../models/Flight';
 import { SeatType } from '../models/SeatType';
 import { Ticket } from '../models/Ticket';
 import { Profile } from '../models/Profile';
+import { SeatAllocationService } from '../seatAllocationService';
 
 const router = express.Router();
 
@@ -68,14 +69,33 @@ router.post('/', auth, async (req, res) => {
         }
         let tickets = [];
         console.log('PASSEGGERI:', passengersArray);
+        let seat_pref='random';
+        if (passengersArray.length == 1 && passengersArray[0].seat_pref) {
+            seat_pref = passengersArray[0].seat_pref;
+        }
+        const allocation = await SeatAllocationService.findBestSeats(
+            ///flightId,
+            passengersArray[0].seatTypeId,
+            passengersArray.length,
+            seat_pref// 'window', 'aisle', etc. (usato solo se numTickets == 1)
+        );
+
+        if (!allocation.success) {
+            return res.status(400).json({ error: allocation.message });
+        }
+        let cc=0;
         for (const passenger of passengersArray) {
             console.log('ELABORAZIONE PASSEGGERO:', passenger);
             console.log('passenger.baggageChoice:', passenger.baggageChoice);
             console.log('passenger.bag_label:', passenger.bag_label);
-            let { nome, cognome, seat_number, baggageChoice, seat_pref,bag_label} = passenger;
+            let { nome, cognome, /*seat_number,*/ baggageChoice, seat_pref, bag_label } = passenger;
+            let seatNumber = allocation.seatNumbers[cc];
+            cc++;
+            console.log('Assegnazione posto:', seatNumber);
+            let seat_number = seatNumber; // Sovrascrivi con il posto assegnato
             console.log('baggageChoice:', passenger.baggageChoice);
             console.log('bag_label:', passenger.bag_label);
-            baggageChoice=baggageChoice||bag_label;
+            baggageChoice = baggageChoice || bag_label;
             // Determina tipo posto (classe) - preferenza per passeggero
             const passengerSeatTypeId = passenger && (passenger.seatTypeId || passenger.seat_type || passenger.seat_class);
             let seatType = null;
@@ -111,6 +131,7 @@ router.post('/', auth, async (req, res) => {
             // Supplemento bagaglio
             if (baggageChoice === 'big_cabin') finalPrice += flight.price_of_bag || 0;
             if (baggageChoice === 'big_hold') finalPrice += flight.price_of_baggage || 0;
+
 
 
             console.log('PRIMA ', {

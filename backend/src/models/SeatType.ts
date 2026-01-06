@@ -7,7 +7,6 @@ export type SeatTypeDoc = {
   number_available: number;
   number_total: number;
   price: number;
-  baggage: boolean;
   type: string;
 };
 const schema = new mongoose.Schema<SeatTypeDoc>({
@@ -16,7 +15,6 @@ const schema = new mongoose.Schema<SeatTypeDoc>({
   number_available: { type: Number, required: true },
   number_total: { type: Number, required: true },
   price: { type: Number, required: true },
-  baggage: { type: Boolean, default: false },
   type: { type: String }
 }, { timestamps: true });
 schema.index({ flight: 1 });
