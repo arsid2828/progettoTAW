@@ -3,9 +3,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FlightService, Route, Airport, Plane, Flight } from '../../services/flight.service';
-
+import { Location } from '@angular/common';
 import { AuthService } from '../../shared/auth.service';
 import { inject } from '@angular/core';
 
@@ -25,7 +25,8 @@ interface SeatType {
 export class AirlineAreaComponent implements OnInit {
     auth = inject(AuthService);
     get airlineName() { return this.auth.name() || this.auth.userName() || 'Compagnia'; }
-
+    location = inject(Location);
+    router = inject(Router);
     totalRevenue: number = 0;
     totalSold: number = 0;
     topRoutes: Route[] = [];
@@ -61,91 +62,100 @@ export class AirlineAreaComponent implements OnInit {
 
     constructor(private flightService: FlightService) { }
 
+
     ngOnInit(): void {
+        if (this.auth.userRole() == 'user') {
+        this.router.navigate(['/search']);
+        return;
+        }
+        if (this.auth.userRole() == 'admin') {
+        this.router.navigate(['/admin']);
+        return;
+        }
         this.loadAirlineData();
         this.loadPlanes();
         this.loadFlights();
     }
 
-    loadAirlineData(): void {
-        this.flightService.getAirlineStats().subscribe(data => {
-            this.totalRevenue = data.revenue;
-            this.totalSold = data.sold;
-            this.topRoutes = data.topRoutes;
-        });
-    }
+loadAirlineData(): void {
+    this.flightService.getAirlineStats().subscribe(data => {
+        this.totalRevenue = data.revenue;
+        this.totalSold = data.sold;
+        this.topRoutes = data.topRoutes;
+    });
+}
 
-    loadPlanes(): void {
-        this.flightService.getPlanes().subscribe(data => {
-            this.planes = data;
-        });
-    }
+loadPlanes(): void {
+    this.flightService.getPlanes().subscribe(data => {
+        this.planes = data;
+    });
+}
 
-    loadFlights(): void {
-        this.flightService.getFlights().subscribe(data => {
-            this.flights = data;
-        });
-    }
+loadFlights(): void {
+    this.flightService.getFlights().subscribe(data => {
+        this.flights = data;
+    });
+}
 
-    loadAirports(): void {
-        this.flightService.getAirports().subscribe(data => {
-            // Filtra se è stata digitata una città, altrimenti mostra tutto
-            // Approccio semplice: mostra tutti quelli disponibili nel DB per la selezione
-            if (this.newFlight.fromCity) {
-                this.availableFromAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()));
-            } else {
-                this.availableFromAirports = data;
-            }
-
-            if (this.newFlight.toCity) {
-                this.availableToAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.toCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.toCity.toLowerCase()));
-            } else {
-                this.availableToAirports = data;
-            }
-        });
-    }
-
-    onAddFlight(): void {
-        console.log('Validating flight form...', this.newFlight);
-        // Controlla se i campi obbligatori sono presenti (check basilare)
-        if (!this.newFlight.fromAirportId || !this.newFlight.toAirportId || !this.newFlight.planeId) {
-            console.error('Missing required fields');
-            alert('Compila tutti i campi obbligatori (Aeroporti, Aereo, Date)');
-            return;
+loadAirports(): void {
+    this.flightService.getAirports().subscribe(data => {
+        // Filtra se è stata digitata una città, altrimenti mostra tutto
+        // Approccio semplice: mostra tutti quelli disponibili nel DB per la selezione
+        if (this.newFlight.fromCity) {
+            this.availableFromAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()));
+        } else {
+            this.availableFromAirports = data;
         }
 
-        console.log('Adding flight:', this.newFlight);
+        if (this.newFlight.toCity) {
+            this.availableToAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.toCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.toCity.toLowerCase()));
+        } else {
+            this.availableToAirports = data;
+        }
+    });
+}
 
-        // Pre-calcolo delle date in formato ISO UTC corrette
-        // Costruiamo la data combinando i campi stringa e l'ora locale del browser
-        const depDate = new Date(`${this.newFlight.dateDeparture}T${this.newFlight.timeDeparture}`);
-        const arrDate = new Date(`${this.newFlight.dateArrival}T${this.newFlight.timeArrival}`);
+onAddFlight(): void {
+    console.log('Validating flight form...', this.newFlight);
+    // Controlla se i campi obbligatori sono presenti (check basilare)
+    if(!this.newFlight.fromAirportId || !this.newFlight.toAirportId || !this.newFlight.planeId) {
+    console.error('Missing required fields');
+    alert('Compila tutti i campi obbligatori (Aeroporti, Aereo, Date)');
+    return;
+}
 
-        // Creiamo un payload esteso
-        const payload = {
-            ...this.newFlight,
-            dateTimeDepartureUTC: depDate.toISOString(),
-            dateTimeArrivalUTC: arrDate.toISOString()
-        };
+console.log('Adding flight:', this.newFlight);
 
-        this.flightService.addFlight(payload).subscribe({
-            next: (res) => {
-                console.log('Flight added!', res);
-                alert('Volo aggiunto con successo!');
-                // Reset form o mostra messaggio successo
-                this.loadFlights();
-            },
-            error: (err) => {
-                console.error('Error adding flight', err);
-            }
-        });
+// Pre-calcolo delle date in formato ISO UTC corrette
+// Costruiamo la data combinando i campi stringa e l'ora locale del browser
+const depDate = new Date(`${this.newFlight.dateDeparture}T${this.newFlight.timeDeparture}`);
+const arrDate = new Date(`${this.newFlight.dateArrival}T${this.newFlight.timeArrival}`);
+
+// Creiamo un payload esteso
+const payload = {
+    ...this.newFlight,
+    dateTimeDepartureUTC: depDate.toISOString(),
+    dateTimeArrivalUTC: arrDate.toISOString()
+};
+
+this.flightService.addFlight(payload).subscribe({
+    next: (res) => {
+        console.log('Flight added!', res);
+        alert('Volo aggiunto con successo!');
+        // Reset form o mostra messaggio successo
+        this.loadFlights();
+    },
+    error: (err) => {
+        console.error('Error adding flight', err);
+    }
+});
     }
 
-    getSold(flight: any): number {
-        return flight.sold || 0;
-    }
+getSold(flight: any): number {
+    return flight.sold || 0;
+}
 
-    getRevenue(flight: any): number {
-        return flight.revenue || 0;
-    }
+getRevenue(flight: any): number {
+    return flight.revenue || 0;
+}
 }

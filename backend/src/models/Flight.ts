@@ -11,8 +11,8 @@ export type FlightDoc = {
   price_of_bag?: number;
   price_of_baggage?: number;
 
-  departure: string;      // "HH:mm"
-  arrival: string;        // "HH:mm"
+  departure: string;      // DEPRECATO, abbiamo scelto di metterli dentro la data_departure ecc
+  arrival: string;        // --------------------------------
   check_in: string;       // Stato
   date_departure: Date;   // data partenza
   date_arrival: Date;     // data arrivo
