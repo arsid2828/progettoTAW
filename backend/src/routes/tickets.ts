@@ -116,10 +116,6 @@ router.post('/', auth, async (req, res) => {
             // Se l'utente è un Admin o Airline, potrebbe non avere un documento "Profile"
             // Quindi rimuoviamo il blocco bloccante per "Profile not found" a meno che non sia strettamente necessario per logica business
 
-            // const profile = await Profile.findById(userId);
-            // if (!profile) {
-            //    // return res.status(404).json({ message: 'Profile not found' });
-            // }
 
             // Prezzo base dal tipo di posto
             let finalPrice = seatType.price || 0;

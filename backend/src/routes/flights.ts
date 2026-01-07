@@ -281,7 +281,7 @@ router.get('', async (req, res) => {
 
       // 2. Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
       const MAX_LAYOVER_HOURS = 24;
-      const MIN_LAYOVER_HOURS = 2; // Aggiornato a 2 ore come richiesto
+      const MIN_LAYOVER_HOURS = 2;
 
       for (const leg1 of firstLegs) {
         if (!leg1.date_arrival) continue;
@@ -336,7 +336,7 @@ router.get('', async (req, res) => {
         }
       }
     }
-    // 4. Ordinamento
+    //4.Ordinamento
     const sort = req.query.sort as string || 'price';
 
     results.sort((a, b) => {
@@ -352,7 +352,7 @@ router.get('', async (req, res) => {
       return 0;
     });
 
-    // 5. Filtro per numero passeggeri
+    // 5.Filtro per numero passeggeri
     const passengers = parseInt(req.query.passengers as string) || 1;
     const filteredResults = results.filter(r => r.available_seats >= passengers);
 
@@ -366,23 +366,7 @@ router.get('', async (req, res) => {
 
 
 export default router;
-/*
-// Ottieni singolo volo per ID
-router.get('/:id', async (req, res) => {
-    const id = req.params.id;
-  try {
-    const flight = await Flight.findById(id)
-      .populate('airline')
-      .populate('from_airport')
-      .populate('to_airport');
-    if (!flight) return res.status(404).json({ message: 'Flight not found' });
-    const seatTypes = await SeatType.find({ flight: flight._id });
-    res.json({ flight, seatTypes });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Internal server error'+id });
-  }
-});*/
+
 
 
 // Ottieni uno o più voli per ID (supporta ID singolo o multipli separati da virgola)
@@ -433,8 +417,7 @@ router.get('/:id', async (req, res) => {
     // Rispondi con array di voli + seatTypes (raggruppati o piatti, scegli tu)
     res.json({
       flights,
-      seatTypesByFlight//,        // versione raggruppata (consigliata)
-      // seatTypes,             // alternativa: array piatto di tutti i seatTypes
+      seatTypesByFlight
     });
 
   } catch (err) {
@@ -443,10 +426,3 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Estensione interfaccia Request...
-// Rimosso: uso dichiarazione in auth.ts
-/*declare module 'express-serve-static-core' {
-  interface Request {
-    user?: { _id: string };
-  }
-}*/

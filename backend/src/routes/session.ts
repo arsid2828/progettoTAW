@@ -135,7 +135,7 @@ router.post('/logout', async (req, res) => {
     const { refreshToken } = req.body;
     console.log('refreshToken RICEVUTO:', refreshToken); let deleted = 0;
     if (refreshToken) {
-        deleted = await redis.del(`rt:${refreshToken}`); // ← 1 se esiste, 0 se no
+        deleted = await redis.del(`rt:${refreshToken}`); // 1 se esiste, 0 se no
     }
 
     res.json({
