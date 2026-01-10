@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
-import { FlightService } from '@app/services/flight.service';
+import { FlightService } from '@app/shared/admin.flight.service';
 import { AuthService } from '@app/shared/auth.service';
 import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
 

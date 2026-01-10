@@ -4,7 +4,7 @@ import { Component, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { FlightService } from '../../services/flight.service';
+import { FlightService } from '../../shared/admin.flight.service';
 import { AuthService } from '../../shared/auth.service';
 
 

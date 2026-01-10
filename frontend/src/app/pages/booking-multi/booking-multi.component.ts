@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
 import { forkJoin } from 'rxjs';
-import { FlightService } from '@app/services/flight.service';
+import { FlightService } from '@app/shared/admin.flight.service';
 import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
 import { AuthService } from '@app/shared/auth.service';
 

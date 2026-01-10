@@ -4,7 +4,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { FlightService } from '@app/services/flight.service';
+import { FlightService } from '@app/shared/admin.flight.service';
 import { forkJoin } from 'rxjs/internal/observable/forkJoin';
 
 @Component({

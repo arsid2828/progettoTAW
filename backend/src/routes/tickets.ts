@@ -125,8 +125,8 @@ router.post('/', auth, async (req, res) => {
             if (seat_pref && seatPrefSurcharge[String(seat_pref)]) finalPrice += seatPrefSurcharge[String(seat_pref)];
 
             // Supplemento bagaglio
-            if (baggageChoice === 'big_cabin') finalPrice += flight.price_of_bag || 0;
-            if (baggageChoice === 'big_hold') finalPrice += flight.price_of_baggage || 0;
+            if (baggageChoice === 'Grande') finalPrice += flight.price_of_bag || 0;
+            if (baggageChoice === 'Stiva') finalPrice += flight.price_of_baggage || 0;
 
 
 

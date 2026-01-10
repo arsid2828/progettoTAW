@@ -6,7 +6,7 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { TicketService } from '@app/shared/ticket.service';
 import { forkJoin } from 'rxjs';
-import { FlightService } from '@app/services/flight.service';
+import { FlightService } from '@app/shared/admin.flight.service';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@app/shared/auth.service';
 import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
@@ -209,8 +209,8 @@ export class PaymentComponent {
       const seat_fee = seat_pref && seatPrefSurcharge[String(seat_pref)] ? seatPrefSurcharge[String(seat_pref)] : 0;
 
       let price = (seatprice || 0) + seat_fee;
-      if (baggageChoice === 'big_cabin') price += flight.price_of_bag || 0;
-      if (baggageChoice === 'big_hold') price += flight.price_of_baggage || 0;
+      if (baggageChoice === 'Grande') price += flight.price_of_bag || 0;
+      if (baggageChoice === 'Stiva') price += flight.price_of_baggage || 0;
 
       const prefLabels = ['window', 'aisle', 'middle', 'random'];
       const seatLabel = pass.seat_number || (seat_pref && prefLabels.includes(String(seat_pref)) ? String(seat_pref) : null);
@@ -260,11 +260,12 @@ export class PaymentComponent {
           baggageChoice: it.bag_label,
           seat_pref: seatPrefClean || undefined,
           seat_number: it.seat_label || undefined,
-          seatTypeId: it.seat_type && it.seat_type._id ? String(it.seat_type._id) : (this.seatTypeId || undefined)
+          seatTypeId: it.seat_type && it.seat_type._id ? String(it.seat_type._id) : (this.seatTypeId || undefined),
+          price: it.price
         };
       });
 
-      const payload: any = { flightId: flight._id, passengers: JSON.stringify(passengersPayload) };
+      const payload: any = { flightId: flight._id, passengers: JSON.stringify(passengersPayload), totalPrice: flightItems.reduce((sum: number, it: any) => sum + (it.price || 0), 0) };
 
       return this.ticketService.createTicket(payload);
     });

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { TicketService } from '@app/shared/ticket.service';
 import { Location } from '@angular/common';
-import { FlightService } from '@app/services/flight.service';
+import { FlightService } from '@app/shared/admin.flight.service';
 import { forkJoin } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FlightSummaryComponent } from '@app/shared/flight-summary/flight-summary.component';
@@ -182,8 +182,8 @@ export class PaymentMultiComponent implements OnInit {
       // Calcola prezzo finale: Prezzo Classe + Tariffa Posto + Bagaglio
       let price = typePrice + seat_fee;
 
-      if (baggageChoice === 'big_cabin') price += flight.price_of_bag || 0;
-      if (baggageChoice === 'big_hold') price += flight.price_of_baggage || 0;
+      if (baggageChoice === 'Grande') price += flight.price_of_bag || 0;
+      if (baggageChoice === 'Stiva') price += flight.price_of_baggage || 0;
 
       // Etichette
       const prefLabels = ['window', 'aisle', 'middle', 'random'];
@@ -237,14 +237,16 @@ export class PaymentMultiComponent implements OnInit {
             cognome: passenger.passenger.cognome,
             baggageChoice: passenger.bag_label,
             seat_pref: seatPref,
-            seatTypeId: passenger.seat_type._id
+            seatTypeId: passenger.seat_type._id,
+            price: passenger.price
           };
 
 
           const payload: any = {
             flightId: fid,
             seatTypeId: singlePassengerObj.seatTypeId, // Tipo posto globale per il volo (fallback)
-            passengers: JSON.stringify([singlePassengerObj])
+            passengers: JSON.stringify([singlePassengerObj]),
+            totalPrice: passenger.price
           };
 
           console.log(`Adding call for flight ${fid} with payload:`, payload);
