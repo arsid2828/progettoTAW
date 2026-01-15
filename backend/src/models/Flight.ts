@@ -13,7 +13,7 @@ export type FlightDoc = {
 
   departure: string;      // DEPRECATO, abbiamo scelto di metterli dentro la data_departure ecc
   arrival: string;        // --------------------------------
-  check_in: string;       // Stato
+  check_in: string;       // Stato DEPRECATO, non gestito più
   date_departure: Date;   // data partenza
   date_arrival: Date;     // data arrivo
 };

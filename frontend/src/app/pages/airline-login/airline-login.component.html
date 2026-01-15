@@ -10,7 +10,7 @@
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="Password" required [(ngModel)]="password" name="passwordNg">
+        <input id="password" name="password" type="password" placeholder="Password ( min 6 caratteri)" required [(ngModel)]="password" name="passwordNg">
       </div>
 
       <button type="submit" class="btn btn-airline" [disabled]="loading">{{ loading ? 'Accedi...' : 'Accedi' }}</button>
