@@ -8,6 +8,9 @@ import { tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  mustChangePassword() {
+      return localStorage.getItem('mustChangePassword') === 'true';
+  }
   // Aggiunge il token alla richiesta
   addToken(req: HttpRequest<any>) {
     const token = localStorage.getItem('accessToken');
@@ -84,6 +87,7 @@ export class AuthService {
         localStorage.setItem('role', role);
         localStorage.setItem('accessToken', response.accessToken!);
         localStorage.setItem('refreshToken', response.refreshToken!);
+        localStorage.setItem('mustChangePassword', (response as any).mustChangePassword ? 'true' : 'false');
         // Recupera profile/me per ottenere il nome completo
         this.http.get<any>(this.apiUrl + 'session/me').subscribe({
           next: (p) => {

@@ -36,6 +36,10 @@ ngOnInit() {
             this.router.navigate(['/admin']);
             return;
         }
+        if(this.auth.mustChangePassword()) {
+            this.router.navigate(['/change-password']);
+            return;
+        }
     }
 
     onAddPlane() {

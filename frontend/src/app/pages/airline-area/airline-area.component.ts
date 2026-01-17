@@ -64,6 +64,7 @@ export class AirlineAreaComponent implements OnInit {
 
 
     ngOnInit(): void {
+        
         if (this.auth.userRole() == 'user') {
         this.router.navigate(['/search']);
         return;
@@ -71,6 +72,10 @@ export class AirlineAreaComponent implements OnInit {
         if (this.auth.userRole() == 'admin') {
         this.router.navigate(['/admin']);
         return;
+        }
+        if(this.auth.mustChangePassword()) {
+            this.router.navigate(['/change-password']);
+            return;
         }
         this.loadAirlineData();
         this.loadPlanes();

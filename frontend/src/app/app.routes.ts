@@ -9,7 +9,7 @@ export const routes: Routes = [
   { path: 'search', component: SearchComponent, title: 'Cerca Voli' },
   { path: 'signup', component: SignupComponent, title: 'Registrati' },
   { path: 'login', component: LoginComponent, title: 'Accedi' },
-  { path: 'biglietti', loadComponent: () => import('./pages/biglietti/biglietti.component').then(m => m.BigliettiComponent), title: 'I miei biglietti' },
+  { path: 'biglietti', loadComponent: () => import('./pages/biglietti/biglietti.component').then(m => m.BigliettiComponent), title: 'I miei biglietti' }, //Da rendere uniforme a quelli sopra.
   { path: 'booking', loadComponent: () => import('./pages/booking/booking.component').then(m => m.BookingComponent), title: 'Prenota' },
   { path: 'booking-multi', loadComponent: () => import('./pages/booking-multi/booking-multi.component').then(m => m.BookingMultiComponent), title: 'Prenotazione multipla' },
   { path: 'seat-choice', loadComponent: () => import('./pages/seat-choice/seat-choice.component').then(m => m.SeatChoiceComponent), title: 'Selezione posto' },

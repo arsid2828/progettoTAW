@@ -40,6 +40,10 @@ export class AddAirportComponent implements OnInit {
         this.router.navigate(['/admin']);
         return;
         }
+        if(this.auth.mustChangePassword()) {
+            this.router.navigate(['/change-password']);
+            return;
+        }
         this.route.queryParams.subscribe(params => {
             if (params['city']) {
                 this.airport.city = params['city'];
