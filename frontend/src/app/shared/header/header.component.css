@@ -2,16 +2,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.35rem 1rem; /* thin vertical spacing */
+  padding: 0.35rem 1rem;
   gap: 1rem;
-  background: var(--bg-light); /* make the whole header area white */
+  background: var(--bg-light);
   box-shadow: var(--shadow);
   min-height: 44px;
-  max-height: 72px; /* prevent the header from becoming very tall */
+  max-height: 72px;
   overflow: hidden;
 }
 
-/* Make header fixed on top */
 .main-header {
   position: fixed !important;
   top: 0;
@@ -20,38 +19,43 @@
   z-index: 99999;
 }
 
-/* Auth pages: stack logo above and keep buttons on a separate row */
+
 .header-container.auth-page {
-  /* keep logo centered above but avoid full-width stacked rows which enlarge header */
+
   flex-direction: column;
   align-items: center;
   padding: 0.25rem 1rem;
   gap: 0.15rem;
-  max-height: 110px; /* allow a little extra room for stacked layout but capped */
+  max-height: 110px;
 }
 
 .header-container.auth-page .header-center {
   order: 0;
   display: flex;
   justify-content: center;
-  margin: 0; /* remove extra vertical margins */
+  margin: 0;
 }
 
 .header-container.auth-page .header-left,
 .header-container.auth-page .header-right {
   order: 1;
-  width: auto; /* do NOT force full width — keeps buttons compact */
+  width: auto;
   display: flex;
   align-items: center;
-  padding: 0; /* remove inner horizontal padding so they don't push width */
+  padding: 0;
   align-self: stretch;
 }
 
-.header-container.auth-page .header-left { justify-content: flex-start; }
-.header-container.auth-page .header-right { justify-content: flex-end; }
+.header-container.auth-page .header-left {
+  justify-content: flex-start;
+}
+
+.header-container.auth-page .header-right {
+  justify-content: flex-end;
+}
 
 .header-container.auth-page .header-logo .logo-text {
-  font-size: 1.6rem; /* keep logo same size to avoid extra height */
+  font-size: 1.6rem;
 }
 
 .header-left {
@@ -60,45 +64,64 @@
   gap: 0.8rem;
 }
 
-/* Intentionally minimal: main layout and visuals are provided by global styles.css */
-:host { display: block; }
+
+:host {
+  display: block;
+}
 
 .header-logo .logo-text {
   font-weight: 700;
-  font-size: 1.55rem; /* slightly reduced to help fit header */
+  font-size: 1.55rem;
   line-height: 1;
 }
 
 .header-strip {
-  display: none; /* replaced by full white header background */
+  display: none;
 }
 
-/* kept for backward compatibility */
-.btn-airline { background: var(--warning); color: #fff; }
+.btn-airline {
+  background: var(--warning);
+  color: #fff;
+}
 
-/* Ensure header buttons (Accedi and Area Compagnie) have same appearance and do not expand full-width */
-.header-right .btn, .header-left .btn {
-  width: auto !important; /* override .btn-submit width:100% when used in header */
-  padding: 0.46rem 0.9rem; /* slightly smaller padding to reduce header height */
-  font-size: 1rem; /* balanced size */
+
+.header-right .btn,
+.header-left .btn {
+  width: auto !important;
+  padding: 0.46rem 0.9rem;
+  font-size: 1rem;
   line-height: 1;
   border-radius: 0.55rem;
   box-sizing: border-box;
-  white-space: nowrap; /* prevent wrapping which can increase height */
+  white-space: nowrap;
 }
 
-/* if one button still visually differs, ensure minimum width parity */
-.header-left .btn, .header-right .btn { min-width: 100px; }
 
-/* adjust underline of logo if necessary (keeps it centered and not too far below) */
+.header-left .btn,
+.header-right .btn {
+  min-width: 100px;
+}
+
+
 .header-center .logo-text::after {
   bottom: -6px;
   height: 3px;
 }
 
-/* Small responsiveness: reduce logo on narrow screens to avoid pushing header height */
+
 @media (max-width: 480px) {
-  .header-logo .logo-text { font-size: 1.25rem; }
-  .header-container { padding: 0.25rem 0.6rem; max-height: 84px; }
-  .header-left .btn, .header-right .btn { min-width: 80px; padding: 0.36rem 0.6rem; }
+  .header-logo .logo-text {
+    font-size: 1.25rem;
+  }
+
+  .header-container {
+    padding: 0.25rem 0.6rem;
+    max-height: 84px;
+  }
+
+  .header-left .btn,
+  .header-right .btn {
+    min-width: 80px;
+    padding: 0.36rem 0.6rem;
+  }
 }

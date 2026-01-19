@@ -9,7 +9,7 @@ import { tap } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   mustChangePassword() {
-      return localStorage.getItem('mustChangePassword') === 'true';
+    return localStorage.getItem('mustChangePassword') === 'true';
   }
   // Aggiunge il token alla richiesta
   addToken(req: HttpRequest<any>) {
@@ -23,13 +23,11 @@ export class AuthService {
     const refreshToken = localStorage.getItem('refreshToken');
     return this.http.post<{ accessToken: string }>(this.apiUrl + 'session/refresh', { refreshToken }).pipe(
       tap(res => {
-        // 1. Save new token IMMEDIATELY
+
         localStorage.setItem('accessToken', res.accessToken);
         this._isLoggedIn.set(true);
 
-        // LOOP FIX: Do NOT call session/me here. 
-        // If it fails (401), the interceptor might trigger refresh() again => Infinite Loop.
-        // We accept that the username might just be the email until next full reload or navigation.
+
         this._userName.set(localStorage.getItem('email') || 'User');
       })
     );
@@ -141,5 +139,5 @@ export class AuthService {
   }
 
 
-  
+
 }

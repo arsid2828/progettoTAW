@@ -1,8 +1,4 @@
 <div class="airline-body">
-    <!-- ===== HEADER (Assuming header is handled by main layout, but adding airline specific header part if needed or just title) ===== -->
-    <!-- The provided HTML has a custom header. In Angular, usually header is global. 
-         However, the request asks to convert the specific page. 
-         I will wrap the content in a container as per the 'airline-card' in the source. -->
 
     <div class="container">
         <div class="airline-card">
@@ -12,7 +8,6 @@
                 {{ airlineName }}
             </h1>
 
-            <!-- KPI riepilogo compagnia -->
             <div class="kpi-row">
                 <div class="kpi-card">
                     <div class="kpi-label">Incasso totale</div>
@@ -21,7 +16,6 @@
                 <div class="kpi-card">
                     <div class="kpi-label">Biglietti venduti</div>
                     <div class="kpi-value">{{ totalSold }}</div>
-                    <!-- or default 0 handling in TS -->
                 </div>
             </div>
 
@@ -30,7 +24,8 @@
                 <h2 class="flights-title">Tratte maggiormente richieste</h2>
                 <ul class="flight-items">
                     <li *ngFor="let r of topRoutes" class="flight-item">
-                        <div class="flight-route">{{ r.from_city }} - {{ r.from_name }}({{r.from_code}}) → {{ r.to_city }} - {{ r.to_name }}({{r.to_code}})</div>
+                        <div class="flight-route">{{ r.from_city }} - {{ r.from_name }}({{r.from_code}}) → {{ r.to_city
+                            }} - {{ r.to_name }}({{r.to_code}})</div>
                         <div class="flight-details">Biglietti venduti: <strong>{{ r.sold }}</strong></div>
                     </li>
                 </ul>
@@ -72,7 +67,7 @@
                         <label for="to_airport_id">Aeroporto di arrivo</label>
                         <select id="to_airport_id" name="to_airport_id" [(ngModel)]="newFlight.toAirportId" required>
                             <option *ngFor="let airport of availableToAirports" [value]="airport._id">
-                               {{airport.city}} - {{ airport.name }} ({{ airport.code }})
+                                {{airport.city}} - {{ airport.name }} ({{ airport.code }})
                             </option>
                         </select>
                     </div>
@@ -201,7 +196,8 @@
                             ({{f.to_airport?.code}})
                         </div>
                         <div class="flight-details">
-                            {{ f.date_departure | date:'dd/MM/yyyy HH:mm' }} •{{ f.date_arrival | date:'dd/MM/yyyy HH:mm' }}
+                            {{ f.date_departure | date:'dd/MM/yyyy HH:mm' }} •{{ f.date_arrival | date:'dd/MM/yyyy
+                            HH:mm' }}
                             <span *ngFor="let seat_type of f.seat_types">
                                 {{ seat_type.type | titlecase }} €{{ seat_type.price | number:'1.2-2' }} •
                             </span>

@@ -1,8 +1,7 @@
-<!-- HEADER (converted from provided template) -->
 <header class="main-header">
   <div class="header-content">
     <div class="header-section">
-      <!-- Airline-login page: show back button -->
+      <!-- Airline-login page -->
       <ng-container *ngIf="isAirlineLogin()">
         <a class="btn btn-outline btn-back" href="#" (click)="goBack($event)">← Torna indietro</a>
       </ng-container>
@@ -13,12 +12,12 @@
           <div class="user-greeting">
             <span class="welcome-text">Ciao, {{ auth.name() }} {{ auth.surname() }}! </span>
             <ng-container *ngIf="!isAirlinePage() && !isAdmin()">
-              <!-- Show only one of the two buttons depending on current route -->
+
               <ng-container *ngIf="isBigliettiPage(); else showBiglietti">
                 <a class="btn btn-primary" routerLink="/search">Cerca volo</a>
               </ng-container>
               <ng-template #showBiglietti>
-                <a class="btn btn-primary" routerLink="/biglietti" >I miei voli</a>
+                <a class="btn btn-primary" routerLink="/biglietti">I miei voli</a>
               </ng-template>
             </ng-container>
             <a class="btn btn-outline" (click)="onLogout()">Logout</a>
@@ -26,7 +25,7 @@
         </ng-container>
 
         <ng-template #showLoginOrSearch>
-          <!-- If on login/signup page, show Search button. Otherwise show Login/Register -->
+
           <ng-container *ngIf="isAuthPage(); else showDefaultLogin">
             <a class="btn btn-primary" routerLink="/search">Cerca un volo</a>
           </ng-container>
@@ -37,7 +36,7 @@
       </ng-container>
     </div>
 
-    <div class="header-logo"(click)="goHome()"><span class="logo-text" >SkyJourney</span></div>
+    <div class="header-logo" (click)="goHome()"><span class="logo-text">SkyJourney</span></div>
 
     <div class="header-section">
       <a class="btn btn-airline" routerLink="/airline-login">Area Compagnie</a>
@@ -45,5 +44,4 @@
   </div>
 </header>
 
-<!-- keep an available small separator for older layouts if needed -->
 <div class="header-strip" aria-hidden="true"></div>

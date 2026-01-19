@@ -27,7 +27,7 @@ router.post('/', async (req: Request, res: Response) => {
     // Rispondi con il profilo creato (status 201 = Creato)
     res.status(201).json(savedProfile);
   } catch (error) {
-    // Gestisci errori (es. validazione fallita o duplicati)
+    // Gestisci errori
     console.error(error);
 
     // Restringi il tipo di errore

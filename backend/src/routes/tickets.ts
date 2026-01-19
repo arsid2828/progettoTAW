@@ -120,7 +120,7 @@ router.post('/', auth, async (req, res) => {
             // Prezzo base dal tipo di posto
             let finalPrice = seatType.price || 0;
 
-            // Seat preference surcharge
+            // Sovrapprezzo
             const seatPrefSurcharge: Record<string, number> = { window: 15, aisle: 12, middle: 8, random: 0 };
             if (seat_pref && seatPrefSurcharge[String(seat_pref)]) finalPrice += seatPrefSurcharge[String(seat_pref)];
 

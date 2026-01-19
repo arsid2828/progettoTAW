@@ -9,7 +9,7 @@ import airportsRoute from './routes/airports';
 import planesRoute from './routes/planes';
 import profileRouter from './routes/profile';
 import sessionRouter from './routes/session';
-import airlinesRouter from './routes/airlines'; // Nuova importazione
+import airlinesRouter from './routes/airlines';
 import { seedAirports } from './seed/airports';
 import { seedAll } from './seed/seed';
 

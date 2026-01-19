@@ -87,8 +87,8 @@ e credenziali, con validazione JavaScript per la password.
     <div class="form-row">
       <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" placeholder="Password sicura ( min 5 caratteri)" [(ngModel)]="password"
-          required>
+        <input id="password" name="password" type="password" placeholder="Password sicura ( min 5 caratteri)"
+          [(ngModel)]="password" required>
       </div>
       <div class="form-group">
         <label for="password2">Conferma Password</label>
@@ -108,7 +108,6 @@ e credenziali, con validazione JavaScript per la password.
     </div>
 
     <!-- Messaggi flash -->
-    <!-- TODO: manual template logic here -->
     <ng-container *ngIf="messages">
       <ul class="flash-messages">
         <ng-container *ngFor="let msg of messages; let i = index">
@@ -116,6 +115,5 @@ e credenziali, con validazione JavaScript per la password.
         </ng-container>
       </ul>
     </ng-container>
-    <!-- TODO: manual template logic here -->
   </div>
 </main>

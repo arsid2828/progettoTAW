@@ -193,7 +193,7 @@ router.post('/', auth, async (req, res) => {
 
 router.get('', async (req, res) => {
   try {
-    // 1. Estrazione Query Params
+    //Estrazione Query Params
     // Esempio URL: /search?from=Roma&to=New York&date=2026-04-01
     const { from, to, date } = req.query;
 
@@ -206,8 +206,8 @@ router.get('', async (req, res) => {
       return res.status(400).json({ message: "Formato data non valido (usa YYYY-MM-DD)." });
     }
 
-    // 2. Risoluzione Aeroporti (Da Nome/Città a ID)
-    // TROVIAMO TUTTI GLI AEROPORTI CHE MATCHANO (es. "Roma" -> [FCO, CIA])
+    //Risoluzione Aeroporti
+    // TROVIAMO TUTTI GLI AEROPORTI CHE MATCHANO
     const originAirports = await Airport.find({
       $or: [{ name: new RegExp(from as string, 'i') }, { city: new RegExp(from as string, 'i') }]
     });
@@ -228,7 +228,7 @@ router.get('', async (req, res) => {
     const startOfDay = new Date(searchDate);
     startOfDay.setHours(0, 0, 0, 0);
 
-    // --- STRATEGIA A: VOLI DIRETTI ---
+    //STRATEGIA A: VOLI DIRETTI
     const query: any = {
       from_airport: { $in: originAirports.map(a => a._id) }, // Controlla QUALSIASI aeroporto corrispondente
       date_departure: { $gte: startOfDay }
@@ -244,7 +244,6 @@ router.get('', async (req, res) => {
       .populate('to_airport')
       .populate('plane'); // Opzionale
 
-    // Formattiamo i risultati diretti
     // Formattiamo i risultati diretti
     const results = await Promise.all(directFlights.map(async (f) => {
       const seats = await SeatType.find({ flight: f._id });
@@ -263,13 +262,13 @@ router.get('', async (req, res) => {
         legs: [f]
       };
     }));
-    // --- STRATEGIA B: VOLI CON 1 SCALO ---
+    //STRATEGIA B: VOLI CON 1 SCALO
     // Eseguiamo solo se non richiesto "directOnly"
     const directOnly = req.query.directOnly === 'true';
 
     if (!directOnly) {
-      // 1. Trova potenziali prime tratte: da Origin a (Ovunque tranne Destination)
-      //    Partenza >= startOfDay
+      // Trova potenziali prime tratte: da Origin a (Ovunque tranne Destinazione)
+      //Partenza >= startOfDay
       const firstLegs = await Flight.find({
         from_airport: { $in: originAirports.map(a => a._id) },
         date_departure: { $gte: startOfDay },
@@ -279,7 +278,7 @@ router.get('', async (req, res) => {
         .populate('to_airport')
         .populate('plane');
 
-      // 2. Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
+      // Per ogni prima tratta, cerca una seconda tratta che colleghi l'hub alla destinazione
       const MAX_LAYOVER_HOURS = 24;
       const MIN_LAYOVER_HOURS = 2;
 
@@ -303,8 +302,8 @@ router.get('', async (req, res) => {
           .populate('plane');
 
         for (const leg2 of connectingFlights) {
-          // Calcolo prezzi (somma dei min prices found)
-          // Nota: Questo è approssimativo per scopi dimostrativi
+          // Calcolo prezzi
+          // Nota:Questo è approssimativo per scopi dimostrativi
           const seats1 = await SeatType.find({ flight: leg1._id });
           const seats2 = await SeatType.find({ flight: leg2._id });
 
@@ -336,7 +335,7 @@ router.get('', async (req, res) => {
         }
       }
     }
-    //4.Ordinamento
+    //Ordinamento
     const sort = req.query.sort as string || 'price';
 
     results.sort((a, b) => {
@@ -352,7 +351,7 @@ router.get('', async (req, res) => {
       return 0;
     });
 
-    // 5.Filtro per numero passeggeri
+    //Filtro per numero passeggeri
     const passengers = parseInt(req.query.passengers as string) || 1;
     const filteredResults = results.filter(r => r.available_seats >= passengers);
 
@@ -369,7 +368,7 @@ export default router;
 
 
 
-// Ottieni uno o più voli per ID (supporta ID singolo o multipli separati da virgola)
+// Ottieni uno o più voli per ID 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -408,13 +407,12 @@ router.get('/:id', async (req, res) => {
     const flightIds = flights.map(f => f._id);
     const seatTypes = await SeatType.find({ flight: { $in: flightIds } });
 
-    // Opzionale: raggruppa i seatTypes per volo (più comodo per il frontend)
+    //raggruppa i seatTypes per volo (più comodo per il frontend)
     const seatTypesByFlight = flightIds.reduce((acc, flightId) => {
       acc[String(flightId)] = seatTypes.filter(st => st.flight.toString() === flightId.toString());
       return acc;
     }, {} as Record<string, typeof seatTypes>);/**/
 
-    // Rispondi con array di voli + seatTypes (raggruppati o piatti, scegli tu)
     res.json({
       flights,
       seatTypesByFlight

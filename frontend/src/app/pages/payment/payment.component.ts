@@ -248,7 +248,7 @@ export class PaymentComponent {
       const flightItems = this.getPassengersByFlight(flight._id);
 
       const passengersPayload = flightItems.map((it: any) => {
-        // Assicura pulizia seat_pref (rimuovi virgolette se stringa JSON)
+        // Assicura pulizia seat_pref
         let seatPrefClean = this.seat;
         if (seatPrefClean) {
           try { seatPrefClean = JSON.parse(seatPrefClean); } catch { }

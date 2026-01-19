@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 export type AirportDoc = {
   name: string;
   city: string;
-  code: string; // es.FCO
+  code: string;
 };
 const schema = new mongoose.Schema<AirportDoc>({
   name: { type: String, required: true },

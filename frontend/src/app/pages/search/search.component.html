@@ -60,7 +60,6 @@
   </div>
 
   <div *ngFor="let res of results" class="result-card">
-    <!-- Assuming "legs" array has at least one flight. Using first leg for main info for now -->
     <ng-container *ngIf="res.legs && res.legs.length > 0">
       <div class="card-header">
         <div class="route-info">
@@ -96,7 +95,6 @@
       </div>
 
       <div class="card-footer">
-        <!-- Using total_price from response or fallback -->
         <button class="btn btn-book" (click)="bookTicket(res)" [disabled]="res.available_seats === 0">
           Da €{{ res.total_price | number:'1.2-2' }} - Prenota
         </button>

@@ -42,11 +42,6 @@ router.post('/login', async (req, res) => {
         isValidByHash = true;
     }
     console.log('isValidByHash:', isValidByHash);
-    // Tentativo 2: BCrypt (Nuovo sistema Airline)
-    // Nota: bcrypt.compare funziona solo se la psw nel DB è un hash bcrypt valido.
-    // Se è uno SHA256, bcrypt.compare darà false o errore, quindi lo gestiamo in try/catch o fidandoci del tipo.
-    // Per sicurezza, se è Profile usiamo SHA256 (come sopra), se è Airline usiamo bcrypt.
-    // Tentativo 2: BCrypt (Nuovo sistema Airline)
     if (userModelType === 'Airline') {
         isValidByBcrypt = await bcrypt.compare(password, user.password);
     }

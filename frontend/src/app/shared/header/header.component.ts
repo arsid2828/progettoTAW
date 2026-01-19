@@ -26,7 +26,6 @@ export class HeaderComponent {
   }
 
   isAuthPage(): boolean {
-    // Show back button and hide Area Compagnie on login/signup pages
     const currentUrl = this.router.url;
     return currentUrl.includes('/login') || currentUrl.includes('/signup');
   }
@@ -61,17 +60,16 @@ export class HeaderComponent {
   onLogout() {
     this.auth.logout();
     this.router.navigate(['/search']).then(() => {
-      // Optional: reload if state persists oddly
       window.location.reload();
     });
   }
   goHome() {
-    console.log('Navigating to home '+this.auth.userRole());
-    if(this.auth.userRole() === 'airline'){
+    console.log('Navigating to home ' + this.auth.userRole());
+    if (this.auth.userRole() === 'airline') {
       this.router.navigate(['/airline-area']);
       return;
     }
     this.router.navigate(['/search']);
-    
+
   }
 }

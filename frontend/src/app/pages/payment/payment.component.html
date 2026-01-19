@@ -13,7 +13,7 @@
     <ng-container *ngFor="let flight of flights">
 
       <app-flight-summary [flight]="flight"></app-flight-summary>
-      
+
       <h2 class="section-title">Riepilogo passeggeri</h2>
       <div class="flight-list">
         <!-- Error if getPassengersByFlight fails? -->
@@ -28,11 +28,10 @@
             <span>Prezzo: <strong>€{{ it.price.toFixed(2) }}</strong></span>
           </div>
         </div>
-      </div><div class="divider"></div>
+      </div>
+      <div class="divider"></div>
     </ng-container>
-    
-    <!--
-    -->
+
 
 
     <div class="summary-item" style="justify-content:flex-end;">

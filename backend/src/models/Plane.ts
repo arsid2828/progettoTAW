@@ -3,8 +3,8 @@
 import mongoose from 'mongoose';
 
 export type PlaneDoc = {
-  brand: string;        // Marca (es. Boeing)
-  model: string;        // Modello (es. 737-800)
+  brand: string;   // Marca (es. Boeing)
+  model: string;   // Modello (es. 737-800)
   registration: string; // Targa (es. I-BIXI) - Univoca
 };
 

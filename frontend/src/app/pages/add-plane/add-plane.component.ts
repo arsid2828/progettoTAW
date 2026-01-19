@@ -1,6 +1,6 @@
 // Componente per aggiungere aerei
 // Form per la creazione di nuovi aerei per la flotta
-import { Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -26,8 +26,7 @@ export class AddPlaneComponent {
         model: '',
         registration: ''
     };
-ngOnInit() {
-        // Logica di protezione copiata dall'altro componente
+    ngOnInit() {
         if (this.auth.userRole() == 'user') {
             this.router.navigate(['/search']);
             return;
@@ -36,7 +35,7 @@ ngOnInit() {
             this.router.navigate(['/admin']);
             return;
         }
-        if(this.auth.mustChangePassword()) {
+        if (this.auth.mustChangePassword()) {
             this.router.navigate(['/change-password']);
             return;
         }

@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { Ticket } from './models/Ticket'; // Assumi che il tuo modello sia qui
-import { SeatType } from './models/SeatType'; // Assumi che il tuo modello sia qui
+import { Ticket } from './models/Ticket';
+import { SeatType } from './models/SeatType';
 
-// Tipi di supporto
+
 type SeatPreference = 'window' | 'aisle' | 'middle' | 'random';
 
 interface SeatAllocationResult {
@@ -13,7 +13,7 @@ interface SeatAllocationResult {
 
 export class SeatAllocationService {
   private static COLS = ['A', 'B', 'C', 'D', 'E', 'F'];
-  
+
   // Mappa delle preferenze alle colonne specifiche
   private static PREF_MAP: Record<string, string[]> = {
     window: ['A', 'F'],
@@ -25,16 +25,16 @@ export class SeatAllocationService {
    * Trova i posti migliori disponibili
    */
   public static async findBestSeats(
-  ///  flightId: string | mongoose.Types.ObjectId,
+    ///  flightId: string | mongoose.Types.ObjectId,
     seatClassId: string | mongoose.Types.ObjectId,
     ticketsToSell: number,
     seatPref: string = 'random'
   ): Promise<SeatAllocationResult> {
-    
+
     console.log(`Ricerca posti per classe ${seatClassId}, numero biglietti: ${ticketsToSell}, preferenza: ${seatPref}`);
     // 1. Recupera info sulla classe di posto (totale posti)
-    const seatTypeConfig = await SeatType.findOne({ 
-  ///    flight: flightId, 
+    const seatTypeConfig = await SeatType.findOne({
+      ///    flight: flightId, 
       _id: seatClassId // O seat_class string, a seconda di come passi l'ID
     });
 
@@ -47,14 +47,14 @@ export class SeatAllocationService {
 
     // 3. Recupera tutti i biglietti già venduti per questo volo e classe
     const soldTickets = await Ticket.find({
-    ///  flight: flightId,
+      ///  flight: flightId,
       seat_class: seatClassId,
     }).select('seat_number');
 
     // Crea un Set per accesso veloce O(1)
     const occupiedSeats = new Set(soldTickets.map(t => t.seat_number));
 
-    // --- LOGICA DI ASSEGNAZIONE ---
+    //LOGICA DI ASSEGNAZIONE
 
     // CASO A: Passeggero Singolo (rispetta le preferenze)
     if (ticketsToSell === 1) {
@@ -66,7 +66,7 @@ export class SeatAllocationService {
     // CASO B: Gruppo (cerca posti vicini)
     // Per i gruppi ignoriamo la preferenza specifica (window/aisle) per privilegiare la vicinanza
     const seats = this.findGroupSeats(totalRows, occupiedSeats, ticketsToSell);
-    
+
     if (seats.length === ticketsToSell) {
       return { seatNumbers: seats, success: true };
     }
@@ -74,17 +74,17 @@ export class SeatAllocationService {
     return { seatNumbers: [], success: false, message: 'Non ci sono abbastanza posti disponibili' };
   }
 
-  // ----------------------------------------------------------------
+  // --------------------------------------------
   // LOGICA INTERNA
-  // ----------------------------------------------------------------
+  // -------------------------------------------
 
   private static findSingleSeat(
-    totalRows: number, 
-    occupied: Set<string | undefined>, 
+    totalRows: number,
+    occupied: Set<string | undefined>,
     pref: string//SeatPreference
   ): string | null {
-    const targetCols = (pref || 'random') === 'random' 
-      ? this.COLS 
+    const targetCols = (pref || 'random') === 'random'
+      ? this.COLS
       : this.PREF_MAP[pref];
 
     // Scansiona riga per riga, dal davanti verso il retro
@@ -96,23 +96,23 @@ export class SeatAllocationService {
         }
       }
     }
-    
+
     // Se la preferenza specifica non è disponibile, prova 'random' come fallback?
     // Il prompt dice "rispettare la scelta", quindi restituiamo null se non trovato.
-    return null; 
+    return null;
   }
 
   private static findGroupSeats(
-    totalRows: number, 
-    occupied: Set<string | undefined>, 
+    totalRows: number,
+    occupied: Set<string | undefined>,
     count: number
   ): string[] {
-    
+
     // STRATEGIA 1: Cerca una riga con 'count' posti CONSECUTIVI
     // (es. 1A, 1B, 1C per 3 persone)
     for (let r = 1; r <= totalRows; r++) {
       const rowSeats = this.COLS.map(c => `${r}${c}`);
-      
+
       // Finestra scorrevole per trovare contiguità
       for (let i = 0; i <= 6 - count; i++) {
         const chunk = rowSeats.slice(i, i + count);
