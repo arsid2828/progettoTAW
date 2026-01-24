@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
         return res.status(401).json({ message: 'Credenziali errate' });
     }
 
-    const token = crypto.randomBytes(48).toString('hex');
+    const token = crypto.randomBytes(48).toString('hex'); //deprecato
     const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 giorni
 
     console.log(`Utente ${userModelType} autenticato con successo:`, user.email);
@@ -133,19 +133,24 @@ router.get('/me', async (req, res) => {
     res.json({ message: 'Logout ok' });
 });*/
 // LOGOUT (globale e immediato)
-router.post('/logout', async (req, res) => {
-    console.log('BODY RICEVUTO:', req.body);
-    const { refreshToken } = req.body;
-    console.log('refreshToken RICEVUTO:', refreshToken); let deleted = 0;
-    if (refreshToken) {
-        deleted = await redis.del(`rt:${refreshToken}`); // 1 se esiste, 0 se no
-    }
+router.delete('/', auth, async (req: any, res: any) => {
+    try {
+        console.log('Logout request da utente:', req.user._id);
+        const { refreshToken } = req.body;
+        
+        let deleted = 0;
+        if (refreshToken) {
+            deleted = await redis.del(`rt:${refreshToken}`); // 1 se esiste, 0 se no
+        }
 
-    res.json({
-        msg: 'Logout eseguito',
-        tokenEliminato: !!deleted,
-        numeroChiaviCancellate: deleted   // sarà 0 o 1
-    });
+        res.json({
+            message: 'Logout eseguito con successo',
+            tokenEliminato: !!deleted
+        });
+    } catch (err) {
+        console.error('Errore durante logout:', err);
+        res.status(500).json({ message: 'Errore durante logout' });
+    }
 });
 
 //CAMBIO PASSWORD

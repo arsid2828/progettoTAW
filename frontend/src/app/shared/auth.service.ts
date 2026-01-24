@@ -119,18 +119,31 @@ export class AuthService {
   }
 
   logout() {
-    this._isLoggedIn.set(false);
-    this._userName.set(null);
-    this._userRole.set(null);
-    this._name.set(null);
-    this._surname.set(null);
-    localStorage.removeItem('email');
-    localStorage.removeItem('role');
-    localStorage.removeItem('nome');
-    localStorage.removeItem('cognome');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('sj_user'); // Fix: rimuovi dati utente persistenti
+    // Chiama il backend per invalidare la sessione
+    const refreshToken = localStorage.getItem('refreshToken');
+    this.http.delete(this.apiUrl + 'session', { body: { refreshToken } }).subscribe({
+      next: () => {
+        console.log('Logout eseguito sul backend');
+      },
+      error: (err) => {
+        console.error('Errore durante logout sul backend:', err);
+      },
+      complete: () => {
+        // Pulisci i dati locali indipendentemente dal risultato
+        this._isLoggedIn.set(false);
+        this._userName.set(null);
+        this._userRole.set(null);
+        this._name.set(null);
+        this._surname.set(null);
+        localStorage.removeItem('email');
+        localStorage.removeItem('role');
+        localStorage.removeItem('nome');
+        localStorage.removeItem('cognome');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('sj_user');
+      }
+    });
   }
 
   signup(newUser: IProfile) {
