@@ -21,18 +21,10 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token = authHeader.split(' ')[1];
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'access-secret-lungo');
 
-    let user: any = await Profile.findById(decoded.id);
-    if (!user) {
-      user = await Airline.findById(decoded.id);
-    }
-
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    req.user = { _id: user._id.toString(), role: user.role };
+    // Il role è già nel token, non c'è bisogno di cercare nel DB
+    req.user = { _id: decoded.id, role: decoded.role };
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Unauthorized!!!!' + (error instanceof Error ? ': ' + error.message : '') });
+    return res.status(401).json({ message: 'Unauthorized: ' + (error instanceof Error ? error.message : 'Unknown error') });
   }
 };

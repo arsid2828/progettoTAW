@@ -3,6 +3,7 @@
 import express, { Request } from 'express';
 import { Airport } from '../models/Airport';
 import { auth } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 import { Flight } from '../models/Flight';
 import { SeatType } from '../models/SeatType';
 import { Ticket } from '../models/Ticket';
@@ -12,7 +13,7 @@ import { SeatAllocationService } from '../seatAllocationService';
 const router = express.Router();
 
 // Aggiungi qui le rotte biglietti
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, authorize('user'), async (req, res) => {
     try {
         const userId = req.user?._id;
         if (!userId) {
@@ -42,7 +43,7 @@ router.get('/', auth, async (req, res) => {
     }
 });
 // Aggiungi qui le rotte biglietti
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, authorize('user'), async (req, res) => {
     try {
         console.log('BODY RICEVUTO NELLA ROUTE TICKETS:', req.body);
         const { flightId, passengers, seatTypeId } = req.body;

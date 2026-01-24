@@ -4,12 +4,12 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import { Airline } from '../models/Airline';
 import { auth } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 
 const router = express.Router();
 
 //Ottieni tutte le compagnie
-router.get('/', auth, async (req: any, res: any) => {
-    if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
+router.get('/', auth, authorize('admin'), async (req: any, res: any) => {
     try {
         const airlines = await Airline.find().select('-password');
         res.json(airlines);
@@ -19,8 +19,7 @@ router.get('/', auth, async (req: any, res: any) => {
 });
 
 //Crea compagnia
-router.post('/', auth, async (req: any, res: any) => {
-    if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
+router.post('/', auth, authorize('admin'), async (req: any, res: any) => {
     try {
         const { name, email, password } = req.body;
         if (!name || !email || !password) return res.status(400).json({ message: 'Missing fields' });

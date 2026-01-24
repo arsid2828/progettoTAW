@@ -26,8 +26,7 @@ export class SignupComponent {
   indirizzo: string = '';
   nazionalita: string = '';
   citta_nascita: string = '';
-  maschio: boolean = true;
-  femmina: boolean = false;
+  sesso: number = 0; // 0=maschio,1=femmina
   password: string = '';
   password2: string = '';
   authService: AuthService = inject(AuthService);
@@ -54,7 +53,7 @@ export class SignupComponent {
       password: this.password,
       nome: this.nome,
       cognome: this.cognome,
-      sesso: this.maschio ? 0 : 1, // 0=M,1=F (come nel BD)
+      sesso: this.sesso, // 0=M,1=F (come nel BD)
       telefono: this.telefono,
       nazionalita: this.nazionalita,
       data_nascita: this.data_nascita as Date,

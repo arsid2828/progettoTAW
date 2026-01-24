@@ -4,6 +4,7 @@ import express, { Request, Response } from 'express';
 import { Profile } from '../models/Profile';  // Importa il MODELLO (non ProfileDoc)
 import crypto from 'crypto';
 import { auth } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 
 const router = express.Router();
 
@@ -41,15 +42,13 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // Admin: Ottieni tutti i profili
-router.get('/', auth, async (req: Request, res: Response) => {
-  if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
+router.get('/', auth, authorize('admin'), async (req: Request, res: Response) => {
   const profiles = await Profile.find({ role: { $ne: 'admin' } }).select('-password');
   res.json(profiles);
 });
 
 // Admin: Elimina profilo
-router.delete('/:id', auth, async (req: Request, res: Response) => {
-  if (req.user?.role !== 'admin') return res.status(403).json({ message: 'Forbidden' });
+router.delete('/:id', auth, authorize('admin'), async (req: Request, res: Response) => {
   try {
     await Profile.findByIdAndDelete(req.params.id);
     res.json({ message: 'User deleted' });

@@ -2,6 +2,7 @@
 // Gestisce API per voli, statistiche airline e ricerca voli multipli (diretti/scalo)
 import { Router } from 'express';
 import { auth } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 import { Airport } from '../models/Airport';
 import { Flight } from '../models/Flight';
 import { SeatType } from '../models/SeatType';
@@ -14,7 +15,7 @@ const router = Router();
 const isValidDate = (d: any) => d instanceof Date && !isNaN(d.getTime());
 
 // GET /api/flights/stats - Ottiene statistiche aggregate per la compagnia aerea loggata
-router.get('/stats', auth, async (req, res) => {
+router.get('/stats', auth, authorize('airline'), async (req, res) => {
   try {
     const airlineId = req.user?._id;
     // Trova tutti i voli per questa compagnia aerea
@@ -116,7 +117,7 @@ router.get('/my-flights', auth, async (req, res) => {
 });
 
 // POST /api/flights - Crea nuovo volo
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, authorize('airline'), async (req, res) => {
   try {
     const {
       fromAirportId, toAirportId, dateDeparture, dateArrival,

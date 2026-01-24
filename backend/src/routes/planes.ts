@@ -1,6 +1,8 @@
 // Gestione aerei
 // API per listare e creare aerei
 import express, { Request, Response } from 'express';
+import { auth } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 import { Plane } from '../models/Plane';
 
 const router = express.Router();
@@ -17,7 +19,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // POST /api/planes - Aggiunge nuovo aereo
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', auth, authorize('airline'), async (req: Request, res: Response) => {
     try {
         const { brand, model, registration } = req.body;
         if (!brand || !model || !registration) {

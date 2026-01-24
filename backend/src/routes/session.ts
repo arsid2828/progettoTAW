@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user) {
-        return res.status(401).json({ message: 'Credenziali errate (Utente non trovato)' });
+        return res.status(401).json({ message: 'Credenziali errate' });
     }
 
     // 3. Verifica password
@@ -65,9 +65,8 @@ router.post('/login', async (req, res) => {
     console.log(`Utente ${userModelType} autenticato con successo:`, user.email);
 
     const userId = user._id.toString();
-
     // Access token 15 min
-    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
+    const accessToken = jwt.sign({ id: userId , role: user.role  }, ACCESS_SECRET, { expiresIn: '15m' });
 
     // Refresh token 30 giorni + salvato in Redis
     const refreshToken = randomUUID();
@@ -100,7 +99,16 @@ router.post('/refresh', async (req, res) => {
     const userId = await redis.get(`rt:${refreshToken}`);
     if (!userId) return res.status(401).json({ msg: 'Invalid refresh' });
 
-    const accessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
+    // Recupera il ruolo dell'utente per includerlo nel nuovo token
+    let user: any = await Profile.findById(userId);
+    if (!user) {
+        user = await Airline.findById(userId);
+    }
+    if (!user) {
+        return res.status(401).json({ msg: 'User not found' });
+    }
+
+    const accessToken = jwt.sign({ id: userId, role: user.role }, ACCESS_SECRET, { expiresIn: '15m' });
     res.json({ accessToken });
 });
 // 2. ME restituisce dati utente loggato
