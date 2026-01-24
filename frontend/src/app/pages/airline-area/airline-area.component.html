@@ -39,18 +39,18 @@
                     <div class="form-group">
                         <label for="from_city">Città di partenza</label>
                         <input id="from_city" name="from_city" type="text" placeholder="Es: Roma"
-                            [(ngModel)]="newFlight.fromCity" required>
+                            [(ngModel)]="newFlight.fromCity" required (change)="loadAirports()">
                     </div>
                     <div class="form-group">
                         <label for="to_city">Città di arrivo</label>
                         <input id="to_city" name="to_city" type="text" placeholder="Es: Milano"
-                            [(ngModel)]="newFlight.toCity" required>
+                            [(ngModel)]="newFlight.toCity" required (change)="loadAirports()">
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-primary" (click)="loadAirports()">
+              <!-- Deprecato  <button type="button" class="btn btn-primary" (click)="loadAirports()">
                     Scegli aeroporti
-                </button>
+                </button> -->
 
                 <!-- Selezione aeroporti -->
                 <div *ngIf="availableFromAirports.length > 0 || availableToAirports.length > 0" class="form-row">

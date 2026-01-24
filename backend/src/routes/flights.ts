@@ -142,7 +142,7 @@ router.post('/', auth, authorize('airline'), async (req, res) => {
       endDateTime = new Date(`${dateArrival}T${timeArrival}`);
     }
 
-    if (!isValidDate(startDateTime) || !isValidDate(endDateTime)) {
+    if (!isValidDate(startDateTime) || !isValidDate(endDateTime) || startDateTime >= endDateTime) {
       return res.status(400).json({ message: 'Date o orari non validi' });
     }
 

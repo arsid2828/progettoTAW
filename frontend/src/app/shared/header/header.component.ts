@@ -72,4 +72,11 @@ export class HeaderComponent {
     this.router.navigate(['/search']);
 
   }
+  goAirLineArea() {
+    if (this.auth.userRole() === 'airline') {
+      this.router.navigate(['/airline-area']);
+      return;
+    }
+    this.router.navigate(['/airline-login']);
+  }
 }

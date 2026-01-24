@@ -108,12 +108,14 @@ export class AirlineAreaComponent implements OnInit {
             // Approccio semplice: mostra tutti quelli disponibili nel DB per la selezione
             if (this.newFlight.fromCity) {
                 this.availableFromAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.fromCity.toLowerCase()));
+                this.newFlight.fromAirportId = this.availableFromAirports[0]?._id || '';
             } else {
                 this.availableFromAirports = data;
             }
 
             if (this.newFlight.toCity) {
                 this.availableToAirports = data.filter(a => a.city.toLowerCase().includes(this.newFlight.toCity.toLowerCase()) || a.name.toLowerCase().includes(this.newFlight.toCity.toLowerCase()));
+                this.newFlight.toAirportId = this.availableToAirports[0]?._id || '';
             } else {
                 this.availableToAirports = data;
             }
@@ -152,6 +154,7 @@ export class AirlineAreaComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Error adding flight', err);
+                alert('Errore durante l\'aggiunta del volo: ' + (err.error?.message || err.message || 'Unknown error'));
             }
         });
     }
