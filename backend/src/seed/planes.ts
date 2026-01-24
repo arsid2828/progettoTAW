@@ -6,32 +6,32 @@ const samplePlanes: PlaneDoc[] = [
   {
     brand: 'Boeing',
     model: '737-800',
-    registration: 'EI-DCL' // Targa Ryanair tipica
+    registration: 'EI-DCL'
   },
   {
     brand: 'Airbus',
     model: 'A320-200',
-    registration: 'I-BIXI' // Targa Alitalia/ITA style
+    registration: 'I-BIXI'
   },
   {
     brand: 'Boeing',
     model: '787-9 Dreamliner',
-    registration: 'N885AR' // Targa Americana
+    registration: 'N885AR'
   },
   {
     brand: 'Airbus',
     model: 'A380-800',
-    registration: 'A6-EEO' // Targa Emirates style
+    registration: 'A6-EEO'
   },
   {
     brand: 'Embraer',
     model: 'E190',
-    registration: 'D-AECG' // Targa Tedesca
+    registration: 'D-AECG'
   },
   {
     brand: 'Airbus',
     model: 'A350-900',
-    registration: 'F-HTYA' // Targa Francese
+    registration: 'F-HTYA'
   }
 ];
 

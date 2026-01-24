@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 export type SeatTypeDoc = {
   flight: mongoose.Types.ObjectId; // riferimento Flight
-  seat_class: string; // "ECONOMY"/"BUSINESS"/"FIRST" ecc.
+  seat_class: string; // "ECONOMY"/"BUSINESS"/"FIRST"
   number_available: number;
   number_total: number;
   price: number;

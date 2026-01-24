@@ -1,13 +1,11 @@
 // Gestione biglietti
 // Gestisce API per visualizzare e acquistare biglietti
 import express, { Request } from 'express';
-import { Airport } from '../models/Airport';
 import { auth } from '../middleware/auth';
 import { authorize } from '../middleware/authorize';
 import { Flight } from '../models/Flight';
 import { SeatType } from '../models/SeatType';
 import { Ticket } from '../models/Ticket';
-import { Profile } from '../models/Profile';
 import { SeatAllocationService } from '../seatAllocationService';
 
 const router = express.Router();
@@ -47,7 +45,7 @@ router.post('/', auth, authorize('user'), async (req, res) => {
     try {
         console.log('BODY RICEVUTO NELLA ROUTE TICKETS:', req.body);
         const { flightId, passengers, seatTypeId } = req.body;
-        const userId = req.user?._id; // Usa optional chaining per gestire utente non definito
+        const userId = req.user?._id;
         if (!userId) {
             return res.status(401).json({ message: 'Unauthorized: User not found' });
         }
@@ -112,10 +110,6 @@ router.post('/', auth, authorize('user'), async (req, res) => {
             if (!seatType || seatType.number_available <= 0) {
                 return res.status(400).json({ message: 'No seats available for selected class' });
             }
-
-            // Recupera dettagli profilo (Opzionale per validazione, ma il middleware auth garantisce già che l'utente esiste)
-            // Se l'utente è un Admin o Airline, potrebbe non avere un documento "Profile"
-            // Quindi rimuoviamo il blocco bloccante per "Profile not found" a meno che non sia strettamente necessario per logica business
 
 
             // Prezzo base dal tipo di posto

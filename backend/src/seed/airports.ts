@@ -47,15 +47,15 @@ export const sampleAirports: AirportDoc[] = [
 
 export const seedAirports = async () => {
   try {
-    // 1. Controlla se esistono già documenti
+    // Controlla se esistono già documenti
     const count = await Airport.countDocuments();
 
     if (count === 0) {
-      // 2. Se è vuoto, inserisci i dati
+      // Se è vuoto, inserisci i dati
       await Airport.insertMany(sampleAirports);
       console.log('Dati iniziali degli aeroporti caricati con successo!');
     } else {
-      // 3. Se ci sono già dati, non fare nulla
+      // Se ci sono già dati, non fare nulla
       console.log('Database già popolato. Skipping seed.');
     }
   } catch (error) {

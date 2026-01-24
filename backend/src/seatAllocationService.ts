@@ -21,9 +21,9 @@ export class SeatAllocationService {
     aisle: ['C', 'D'],
   };
 
-  /**
-   * Trova i posti migliori disponibili
-   */
+
+  //Trova i posti migliori disponibili
+
   public static async findBestSeats(
     ///  flightId: string | mongoose.Types.ObjectId,
     seatClassId: string | mongoose.Types.ObjectId,
@@ -32,7 +32,7 @@ export class SeatAllocationService {
   ): Promise<SeatAllocationResult> {
 
     console.log(`Ricerca posti per classe ${seatClassId}, numero biglietti: ${ticketsToSell}, preferenza: ${seatPref}`);
-    // 1. Recupera info sulla classe di posto (totale posti)
+    // Recupera info sulla classe di posto (totale posti)
     const seatTypeConfig = await SeatType.findOne({
       ///    flight: flightId, 
       _id: seatClassId // O seat_class string, a seconda di come passi l'ID
@@ -42,10 +42,10 @@ export class SeatAllocationService {
       throw new Error('Configurazione SeatClass non trovata');
     }
 
-    // 2. Calcola numero di righe (ogni riga ha 6 posti)
+    // Calcola numero di righe (ogni riga ha 6 posti)
     const totalRows = Math.ceil(seatTypeConfig.number_total / 6);
 
-    // 3. Recupera tutti i biglietti già venduti per questo volo e classe
+    // Recupera tutti i biglietti già venduti per questo volo e classe
     const soldTickets = await Ticket.find({
       ///  flight: flightId,
       seat_class: seatClassId,
@@ -56,14 +56,14 @@ export class SeatAllocationService {
 
     //LOGICA DI ASSEGNAZIONE
 
-    // CASO A: Passeggero Singolo (rispetta le preferenze)
+    // Passeggero Singolo (rispetta le preferenze)
     if (ticketsToSell === 1) {
       const seat = this.findSingleSeat(totalRows, occupiedSeats, seatPref);
       if (seat) return { seatNumbers: [seat], success: true };
       return { seatNumbers: [], success: false, message: 'Nessun posto disponibile con questa preferenza' };
     }
 
-    // CASO B: Gruppo (cerca posti vicini)
+    // Gruppo (cerca posti vicini)
     // Per i gruppi ignoriamo la preferenza specifica (window/aisle) per privilegiare la vicinanza
     const seats = this.findGroupSeats(totalRows, occupiedSeats, ticketsToSell);
 

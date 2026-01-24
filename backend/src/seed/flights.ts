@@ -1,6 +1,5 @@
 // Seed voli
 // Genera voli casuali per riempire il database
-import mongoose from "mongoose";
 import { Flight, FlightDoc } from "../models/Flight";
 import { Airport } from "../models/Airport";
 import { Airline } from "../models/Airline";
@@ -25,7 +24,7 @@ export const seedFlights = async () => {
     console.log("Inizio seeding voli (Pool Aerei Globale)...");
 
 
-    // 1. CONTROLLO PREVENTIVO
+    // CONTROLLO PREVENTIVO
     // Se ci sono già voli, ci fermiamo subito.
     const existingFlightsCount = await Flight.countDocuments();
     if (existingFlightsCount > 0) {
@@ -33,7 +32,7 @@ export const seedFlights = async () => {
         return null;
     }
 
-    // 1. Recupero Dati Esistenti
+    // Recupero Dati Esistenti
     const airports = await Airport.find();
     const airlines = await Airline.find();
     const planes = await Plane.find();
@@ -43,7 +42,7 @@ export const seedFlights = async () => {
         return;
     }
 
-    // 2. Inizializzazione Tracker Aerei
+    // Inizializzazione Tracker Aerei
     // Mappa: ID Aereo -> Data in cui sarà libero
     // Partiamo dal 1 Aprile 2026 ore 06:00
     const initialDate = new Date("2026-04-01T06:00:00Z");
@@ -95,35 +94,8 @@ export const seedFlights = async () => {
         };
     };
 
-    // --- GENERAZIONE SCENARI COMPLESSI ---
 
-    // SCENARIO 1: Voli Multi-Tratta (2 Scali)
-    // Esempio: Roma -> Parigi -> New York -> Los Angeles
-    console.log("   ↳ Generando rotte con 2 scali...");
-    for (let i = 0; i < 5; i++) {
-        // Scegliamo 4 aeroporti diversi
-        const shuffledAirports = [...airports].sort(() => 0.5 - Math.random()).slice(0, 4);
-        const [origin, hub1, hub2, dest] = shuffledAirports;
-
-        // Una sola airline gestisce tutta la tratta (comune per le prenotazioni)
-        const airline = airlines[Math.floor(Math.random() * airlines.length)];
-
-        // Tratta A -> B
-        const leg1 = await createFlightData(origin, hub1, airline, initialDate);
-        if (leg1) flightsToInsert.push(leg1);
-
-        // Tratta B -> C (Parte minimo 3 ore dopo l'arrivo della precedente per permettere lo scalo passeggeri)
-        const leg2Start = addHours(leg1!.date_arrival!, 3);
-        const leg2 = await createFlightData(hub1, hub2, airline, leg2Start);
-        if (leg2) flightsToInsert.push(leg2);
-
-        // Tratta C -> D
-        const leg3Start = addHours(leg2!.date_arrival!, 3);
-        const leg3 = await createFlightData(hub2, dest, airline, leg3Start);
-        if (leg3) flightsToInsert.push(leg3);
-    }
-
-    // SCENARIO 2: Voli con 1 Scalo
+    // Voli con 1 Scalo
     // Esempio: Milano -> Londra -> Dublino
     console.log("   ↳ Generando rotte con 1 scalo...");
     for (let i = 0; i < 15; i++) {
@@ -145,7 +117,7 @@ export const seedFlights = async () => {
         if (leg2) flightsToInsert.push(leg2);
     }
 
-    // SCENARIO 3: Voli Diretti (Riempimento)
+    // Voli Diretti (Riempimento)
     console.log("   ↳ Generando voli diretti sparsi...");
     for (let i = 0; i < 50; i++) {
         const shuffledAirports = [...airports].sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -160,7 +132,7 @@ export const seedFlights = async () => {
         if (directFlight) flightsToInsert.push(directFlight);
     }
 
-    // 3. Salvataggio
+    //Salvataggio
     //await Flight.deleteMany({}); // Reset
     await Flight.insertMany(flightsToInsert);
 

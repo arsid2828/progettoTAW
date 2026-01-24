@@ -29,12 +29,12 @@ mongoose.connect(MONGO_URI).then(() => {
 });*/
 const startServer = async () => {
   try {
-    // A. Connessione al database
+    // Connessione al database
     await mongoose.connect(MONGO_URI);
-    // B. Esecuzione del seed (solo dopo connessione DB)
+    // Esecuzione del seed (solo dopo connessione DB)
 
     await seedAll();
-    // C. Avvio del server (solo dopo preparazione dati)
+    // Avvio del server (solo dopo preparazione dati)
     app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
 
   } catch (err) {
@@ -43,7 +43,7 @@ const startServer = async () => {
   }
 };
 
-// 3. Esecuzione funzione avvio
+// Esecuzione funzione avvio
 startServer();
 // Definizione rotte
 app.use('/api/flights', flightsRoute);

@@ -17,6 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     </main>
   `
 })
+// Componente deprecato, non viene usato
 export class PaymentProcessingComponent {
   route = inject(ActivatedRoute);
   router = inject(Router);

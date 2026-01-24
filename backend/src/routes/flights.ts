@@ -7,7 +7,7 @@ import { Airport } from '../models/Airport';
 import { Flight } from '../models/Flight';
 import { SeatType } from '../models/SeatType';
 import { Ticket } from '../models/Ticket';
-import { Profile } from '../models/Profile';
+
 
 const router = Router();
 
@@ -37,7 +37,7 @@ router.get('/stats', auth, authorize('airline'), async (req, res) => {
     for (const t of tickets) {
       const fid = t.flight.toString();
       if (!routeMap[fid]) {
-        const f = getFlightInfo(fid) as any; // Popolato? No, ma servono i nomi. 
+        const f = getFlightInfo(fid) as any;
         // Non popolato sopra. Si raggruppa per ID.
         // Più semplice: raggruppa per ID volo prima.
         routeMap[fid] = { sold: 0, revenue: 0, from_name: '', to_name: '' };
@@ -49,7 +49,6 @@ router.get('/stats', auth, authorize('airline'), async (req, res) => {
     // Ora popola i nomi per le rotte con vendite
     // Usiamo la logica /my-flights e qui ritorniamo totali + top 3
 
-    // Raffiniamo la logica topRoutes:
     const salesByFlight = Object.keys(routeMap).map(fid => ({
       flightId: fid,
       sold: routeMap[fid].sold,
@@ -104,8 +103,8 @@ router.get('/my-flights', auth, async (req, res) => {
       return {
         ...f.toObject(),
         seat_types: seats,
-        sold,    //Aggiunto
-        revenue   //Aggiunto
+        sold,
+        revenue
       };
     }));
 
@@ -126,7 +125,6 @@ router.post('/', auth, authorize('airline'), async (req, res) => {
       priceBusiness, seatsBusiness,
       priceFirst, seatsFirst,
       priceBag, priceBaggage,
-      // Optionali: date già calcolate in UTC dal frontend
       dateTimeDepartureUTC, dateTimeArrivalUTC
     } = req.body;
 
@@ -148,7 +146,7 @@ router.post('/', auth, authorize('airline'), async (req, res) => {
 
     // Crea Volo
     const newFlight = await Flight.create({
-      airline: req.user?._id, // Presume che il middleware auth popoli user (airline)
+      airline: req.user?._id,
       from_airport: fromAirportId,
       to_airport: toAirportId,
       plane: planeId,
@@ -156,7 +154,7 @@ router.post('/', auth, authorize('airline'), async (req, res) => {
       date_arrival: endDateTime,
       departure: timeDeparture,
       arrival: timeArrival,
-      check_in: 'Open', // Default
+      check_in: 'Open',
       price_of_bag: priceBag,
       price_of_baggage: priceBaggage
     });
@@ -229,7 +227,7 @@ router.get('', async (req, res) => {
     const startOfDay = new Date(searchDate);
     startOfDay.setHours(0, 0, 0, 0);
 
-    //STRATEGIA A: VOLI DIRETTI
+    //VOLI DIRETTI
     const query: any = {
       from_airport: { $in: originAirports.map(a => a._id) }, // Controlla QUALSIASI aeroporto corrispondente
       date_departure: { $gte: startOfDay }
@@ -263,7 +261,7 @@ router.get('', async (req, res) => {
         legs: [f]
       };
     }));
-    //STRATEGIA B: VOLI CON 1 SCALO
+    //VOLI CON 1 SCALO
     // Eseguiamo solo se non richiesto "directOnly"
     const directOnly = req.query.directOnly === 'true';
 

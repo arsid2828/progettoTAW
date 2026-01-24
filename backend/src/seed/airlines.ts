@@ -1,7 +1,7 @@
 // Seed compagnie aeree
 // Popola il DB con compagnie aeree iniziali
 import bcrypt from 'bcrypt';
-import { Airline, AirlineDoc } from '../models/Airline'; // Aggiusta il percorso se necessario
+import { Airline, AirlineDoc } from '../models/Airline';
 
 // Dati grezzi (senza password hashata per ora)
 const rawAirlines = [
@@ -29,25 +29,25 @@ const rawAirlines = [
 
 export const seedAirlines = async () => {
   try {
-    // 1. Controllo esistenza
+    // Controllo esistenza
     const count = await Airline.countDocuments();
 
     if (count === 0) {
       console.log('Avvio seeding Airlines...');
 
-      // 2. Hash della password
+      // Hash della password
       // Usiamo una password uguale per tutti per comodità di test: "password123"
       const SALT_ROUNDS = 10;
       const hashedPassword = await bcrypt.hash('password123', SALT_ROUNDS);
 
-      // 3. Preparazione dei dati completi
+      // Preparazione dei dati completi
       const airlinesToInsert: AirlineDoc[] = rawAirlines.map(airline => ({
         name: airline.name,
         email: airline.email,
         password: hashedPassword // Assegniamo la password hashata
       }));
 
-      // 4. Inserimento
+      //Inserimento
       await Airline.insertMany(airlinesToInsert);
       console.log('5 Compagnie aeree caricate (Password per tutte: "password123")');
     } else {

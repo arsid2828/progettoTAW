@@ -1,6 +1,5 @@
 // Seed tipi di posto
 // Popola il DB con i tipi di posto per i voli
-import mongoose from 'mongoose';
 import { Flight } from '../models/Flight';
 import { SeatType, SeatTypeDoc } from '../models/SeatType';
 
@@ -19,7 +18,7 @@ export const seedSeatTypes = async () => {
     if (count === 0) {
         console.log(" Inizio seeding SeatTypes...");
 
-        // 1. Recuperiamo tutti i voli
+        // Recuperiamo tutti i voli
         const flights = await Flight.find().select('_id'); // Ci servono solo gli ID
 
         if (flights.length === 0) {
@@ -27,7 +26,7 @@ export const seedSeatTypes = async () => {
             return;
         }
 
-        // 2. Ottimizzazione: Troviamo gli ID dei voli che hanno GIÀ dei posti
+        // Ottimizzazione: Troviamo gli ID dei voli che hanno GIÀ dei posti
         // "distinct" ci restituisce un array di ID univoci presenti nella collection SeatType
         const flightsWithSeats = await SeatType.distinct('flight');
         const processedFlightIds = new Set(flightsWithSeats.map(id => id.toString()));
@@ -37,7 +36,7 @@ export const seedSeatTypes = async () => {
 
         console.log(` Analisi di ${flights.length} voli...`);
 
-        // 3. Cicliamo i voli e generiamo i posti solo per quelli "vuoti"
+        // Cicliamo i voli e generiamo i posti solo per quelli "vuoti"
         for (const flight of flights) {
             const flightIdStr = flight._id.toString();
 
@@ -56,7 +55,7 @@ export const seedSeatTypes = async () => {
 
             // --- CREAZIONE OGGETTI ---
 
-            // 1. Economy
+            // Economy
             seatsToInsert.push({
                 flight: flight._id,
                 seat_class: "ECONOMY",
@@ -65,7 +64,7 @@ export const seedSeatTypes = async () => {
                 price: economyPrice
             });
 
-            // 2. Business
+            // Business
             seatsToInsert.push({
                 flight: flight._id,
                 seat_class: "BUSINESS",
@@ -74,7 +73,7 @@ export const seedSeatTypes = async () => {
                 price: businessPrice
             });
 
-            // 3. First
+            // First
             seatsToInsert.push({
                 flight: flight._id,
                 seat_class: "FIRST",
@@ -86,7 +85,7 @@ export const seedSeatTypes = async () => {
             flightsProcessedCount++;
         }
 
-        // 4. Inserimento massivo (Molto più veloce di inserire uno alla volta)
+        // Inserimento
         if (seatsToInsert.length > 0) {
             await SeatType.insertMany(seatsToInsert);
             console.log(`Seed completato! Aggiunti ${seatsToInsert.length} tipi di posto per ${flightsProcessedCount} voli.`);

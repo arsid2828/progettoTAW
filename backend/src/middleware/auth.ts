@@ -2,8 +2,7 @@
 // Estende i tipi di Express per includere l'utente nella richiesta
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { Profile } from '../models/Profile';
-import { Airline } from '../models/Airline';
+
 
 declare module 'express-serve-static-core' {
   interface Request {
